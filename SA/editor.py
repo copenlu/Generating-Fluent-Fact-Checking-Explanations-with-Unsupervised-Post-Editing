@@ -47,6 +47,10 @@ class RobertaEditor():
         return " ".join(input_texts_with_mask_list)
 
     def get_word_at_mask(self, output_tensors, mask_idxs):
-
         mask_idxs = mask_idxs.unsqueeze(dim=1)
         return [self.tokenizer.decode(word_idx) for word_idx in torch.argmax(output_tensors.logits, dim=2).gather(1, mask_idxs).squeeze().cpu().numpy().tolist()]
+
+    def get_contextual_word_embeddings(self, input_texts):
+        inputs = {k: v.to(self.device) for k, v in self.tokenizer(input_texts, padding=True, return_tensors="pt").items()}
+        outputs = self.model(**inputs, output_hidden_states=True)
+        return outputs.hidden_states[-1][:, 1:-1, :]
