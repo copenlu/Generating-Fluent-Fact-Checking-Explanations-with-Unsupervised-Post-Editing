@@ -4,7 +4,6 @@ from multiprocessing import Pool
 from typing import List
 
 import numpy as np
-from nltk.tokenize import sent_tokenize
 from rouge_score import rouge_scorer
 from tqdm import tqdm
 
