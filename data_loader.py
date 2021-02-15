@@ -63,7 +63,7 @@ class LIARDataset(Dataset):
 
             dict_['text_answer'] = None
 
-            dict_['explanation_text'] = row['justification']
+            dict_['explanation_text'] = sent_tokenize(row['justification'])
 
             dict_['explanation_sentences'] = json.loads(row['oracle_ids'])
             dict_['explanation_sentences_hot'] = [
@@ -107,7 +107,7 @@ def get_datasets(dataset_dir: str,
                 for i in range(len(ds)):
                     ds.dataset[i]['logits'] = logits[i]
 
-    return datasets
+    return tuple(datasets)
 
 
 def collate_explanations(instances: List[Dict],

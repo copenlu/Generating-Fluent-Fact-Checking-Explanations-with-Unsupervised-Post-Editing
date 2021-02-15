@@ -98,7 +98,7 @@ if __name__ == "__main__":
             for instance in dataset:
                 prediction = instance['text'][:4]
                 score = scorer.score(prediction='\n'.join(prediction),
-                                     target='\n'.join(sent_tokenize(instance['explanation_text'])))
+                                     target='\n'.join(instance['explanation_text']))
                 scores.append(score)
 
         if args.baseline == 'claim':
@@ -106,7 +106,7 @@ if __name__ == "__main__":
             for instance in dataset:
                 prediction = instance['text_query']
                 score = scorer.score(prediction=prediction,
-                                     target='\n'.join(sent_tokenize(instance['explanation_text'])))
+                                     target='\n'.join(instance['explanation_text']))
                 scores.append(score)
 
         elif args.baseline == 'oracle_claim_rouge':
@@ -115,7 +115,7 @@ if __name__ == "__main__":
                 prediction = greedy_beam_search(instance['text'],
                                         instance['text_query'], scorer)
                 score = scorer.score(prediction='\n'.join(prediction),
-                                     target='\n'.join(sent_tokenize(instance['explanation_text'])))
+                                     target='\n'.join(instance['explanation_text']))
                 scores.append(score)
 
         print(f'Average baseline {args.baseline} score:')
