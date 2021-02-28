@@ -1,11 +1,36 @@
 import json
-import math
 import argparse
+import pandas as pd
+from nltk.tokenize import word_tokenize
 
-from NLI_objective import nli_scorer
-from editor import RobertaEditor
-from generator_gpt import scorer_batch as gpt_scorer
-from scoring_algos import SimulatedAnnealing
+from SA.NLI_objective import nli_scorer
+from SA.editor import RobertaEditor
+from SA.generator_gpt import scorer_batch as gpt_scorer
+from SA.scoring_algos import SimulatedAnnealing
+
+
+def get_dataset(scored_sentences_path, dataset_path, top_n):
+    df = pd.read_csv(dataset_path, sep='\t', index_col=0)
+    df = df.dropna()
+    columns = ['dummy', 'id', 'statement', 'justification',
+               'ruling_without_summary', 'label', 'just_tokenized',
+               'ruling_tokenized', 'statement_tokenized', 'oracle_ids']
+    df.columns = columns
+
+    scored_sentences = [json.loads(line) for line in open(scored_sentences_path)]
+    scored_sentences = {item['id']: sorted(item['sentence_scores'], key=lambda x: x[1], reverse=True)[:top_n] for item in scored_sentences}
+    scored_sentences = {k: [word_tokenize(sentence[0]) for sentence in v] for k, v in scored_sentences.items()}
+
+    df['scored_sentences'] = df.apply(lambda x: scored_sentences.get(x['id'], None), axis=1)
+    df = df[df['scored_sentences'] != None]
+    df = df[['id', 'statement', 'justification', 'label', 'scored_sentences']]
+    dataset = [row.to_dict() for i, row in df.iterrows()]
+
+    print(f'Size of dataset: {len(dataset)}')
+    print('Sample: ', dataset[0])
+
+    return dataset
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
