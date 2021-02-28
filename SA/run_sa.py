@@ -3,7 +3,7 @@ import argparse
 import pandas as pd
 from nltk.tokenize import word_tokenize
 
-from SA.NLI_objective import nli_scorer
+from SA.NLI_objective import NLIScorer
 from SA.editor import RobertaEditor
 from SA.generator_gpt import scorer_batch as gpt_scorer
 from SA.scoring_algos import SimulatedAnnealing
@@ -76,9 +76,10 @@ if __name__ == "__main__":
 
     editor = RobertaEditor()
     editor.cuda()
+    device = 'cpu'
     simulated_annealing = SimulatedAnnealing(editor,
                                              gpt_scorer,
-                                             nli_scorer,
+                                             NLIScorer(device),
                                              sa_args)
 
     sa_outputs = []

@@ -52,7 +52,7 @@ class SimulatedAnnealing:
     def power(self, my_list, weight):
         return [x**weight for x in my_list]
 
-    def scorer(self, new_justs, original_justs):
+    def scorer(self, new_justs, original_justs, positions):
         # TODO: optimise to compute the scores for the edited sentence only?
 
         new_justs_text = [' '.join(sum(sentences, [])) for sentences in new_justs]
@@ -61,16 +61,29 @@ class SimulatedAnnealing:
         fluency_scores = self.gpt_scorer(new_justs_text)
         semantic_scores = self.word_level_semantic_scorer(new_justs_text, original_justs_text)
         length_score = self.length_penality(new_justs)
+
+        # TODO pass in one batch
+        nli_score = [
+            self.nli_scorer(' '.join(original_justs[i][idx[0]]),
+                            ' '.join(new_justs[i][idx[0]]))
+                     for i, idx in enumerate(positions)]
+        weighted_nli = self.power(nli_score, self.args.nli_weight)
+
         weighted_length_scores = self.power(length_score, self.args.length_weight)
         sentence_semantic_scores = self.sentence_level_semantic_scorer(new_justs_text, original_justs_text)
 
-        total_scores = fluency_scores.pow(self.args.fluency_weight) * semantic_scores.pow(self.args.semantic_weight) * sentence_semantic_scores.pow(self.args.semantic_weight) * torch.FloatTensor(weighted_length_scores)
+        total_scores = fluency_scores.pow(self.args.fluency_weight) * \
+                       torch.FloatTensor(weighted_nli) * \
+                       semantic_scores.pow(self.args.semantic_weight) * \
+                       sentence_semantic_scores.pow(self.args.semantic_weight) * \
+                       torch.FloatTensor(weighted_length_scores)
 
         return total_scores
 
-    def acceptance_prob(self, edited_justs, pre_edit_justs, original_justs, T):
+    def acceptance_prob(self, edited_justs, pre_edit_justs, original_justs, T, positions):
         # TODO save previous scores for optimisation
-        accept_hat = torch.exp((self.scorer(edited_justs, original_justs) - self.scorer(pre_edit_justs, original_justs)) / T)
+        accept_hat = torch.exp((self.scorer(edited_justs, original_justs, positions) -
+                                self.scorer(pre_edit_justs, original_justs, positions)) / T)
         return accept_hat.clamp(0.0, 1.0).squeeze().cpu().detach().numpy().tolist()
 
     def run(self, input_batch):
@@ -112,7 +125,8 @@ class SimulatedAnnealing:
             accept_probs = self.acceptance_prob(edited_justs.tolist(),
                                                 pre_edit_justs,
                                                 original_justs,
-                                                T)
+                                                T,
+                                                positions)
 
             for idx, accept_prob in enumerate(accept_probs):
                 if accept_prob == 1.0:

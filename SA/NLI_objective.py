@@ -3,6 +3,37 @@ import torch
 import numpy as np
 
 
+class NLIScorer():
+    def __init__(self, device):
+        hg_model_hub_name = "ynie/roberta-large-snli_mnli_fever_anli_R1_R2_R3" \
+                            "-nli"
+
+        self.tokenizer = AutoTokenizer.from_pretrained(hg_model_hub_name)
+        self.model = AutoModelForSequenceClassification.from_pretrained(
+            hg_model_hub_name).to(device)
+        self.max_length = 256
+
+    def __call__(self, original_text, new_text):
+        tokenized_input_seq_pair = self.tokenizer.encode_plus(original_text, new_text,
+                                                         max_length=self.max_length,
+                                                         return_token_type_ids=True,
+                                                         truncation=True)
+
+        input_ids = torch.Tensor(
+            tokenized_input_seq_pair['input_ids']).long().unsqueeze(0)
+        token_type_ids = torch.Tensor(
+            tokenized_input_seq_pair['token_type_ids']).long().unsqueeze(0)
+        attention_mask = torch.Tensor(
+            tokenized_input_seq_pair['attention_mask']).long().unsqueeze(0)
+
+        outputs = self.model(input_ids,
+                        attention_mask=attention_mask,
+                        token_type_ids=token_type_ids,
+                        labels=None)
+
+        return 1 - torch.softmax(outputs[0], dim=1)[0].detach().tolist()[2]
+
+
 def compute_nli_score(premise, hypothesis):
 
     max_length = 256
@@ -44,6 +75,7 @@ def compute_nli_score(premise, hypothesis):
 
     return entailment_score, neutral_score, contradiction_score
 
+
 def nli_scorer(new_justs, org_justs):
     print("all_new_justs", new_justs)
     print("all_org_justs", org_justs)
@@ -69,6 +101,7 @@ def nli_scorer(new_justs, org_justs):
         contradict_scores.append(np.mean(contradict_just))
 
     return entail_scores, neutral_scores, contradict_scores
+
 
 if __name__== "__main__":
 
