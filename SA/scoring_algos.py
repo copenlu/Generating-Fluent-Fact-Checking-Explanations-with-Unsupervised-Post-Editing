@@ -8,20 +8,15 @@ import numpy as np
 from rake_nltk import Rake
 from sklearn.metrics.pairwise import cosine_similarity
 
+
 class SimulatedAnnealing:
 
-    def __init__(self, editor, gpt_scorer, nli_scorer, t_init, C, fluency_weight, semantic_weight, length_weight, nli_weight, max_steps):
+    def __init__(self, editor, gpt_scorer, nli_scorer, args):
 
         self.editor = editor
         self.gpt_scorer = gpt_scorer
         self.nli_scorer = nli_scorer
-        self.t_init = t_init
-        self.C = C
-        self.fluency_weight = fluency_weight
-        self.semantic_weight = semantic_weight
-        self.length_weight = length_weight
-        self.nli_weight = nli_weight
-        self.max_steps = max_steps
+        self.args = args
 
     def ref_to_keywords(self, refs):
 
@@ -65,15 +60,15 @@ class SimulatedAnnealing:
         fluency_scores = self.gpt_scorer(new_justs)
         semantic_scores = self.word_level_semantic_scorer(new_justs, original_justs)
         length_score = self.length_penality(new_justs)
-        weighted_length_scores = self.power(length_score, self.length_weight)
+        weighted_length_scores = self.power(length_score, self.args.length_weight)
         sentence_semantic_scores = self.sentence_level_semantic_scorer(new_justs, original_justs)
 
-        total_scores = fluency_scores.pow(self.fluency_weight) * semantic_scores.pow(self.semantic_weight) * sentence_semantic_scores.pow(self.semantic_weight) * torch.FloatTensor(weighted_length_scores)
+        total_scores = fluency_scores.pow(self.args.fluency_weight) * semantic_scores.pow(self.args.semantic_weight) * sentence_semantic_scores.pow(self.args.semantic_weight) * torch.FloatTensor(weighted_length_scores)
 
         return total_scores
 
     def acceptance_prob(self, edited_justs, pre_edit_justs, original_justs, T):
-
+        # TODO save previous for optimised
         accept_hat = torch.exp((self.scorer(edited_justs, original_justs) - self.scorer(pre_edit_justs, original_justs)) / T)
         return accept_hat.clamp(0.0, 1.0).squeeze().cpu().detach().numpy().tolist()
 
@@ -88,8 +83,8 @@ class SimulatedAnnealing:
         pre_edit_justs = list(input_batch[1])#The justifications on which SA will be applied
 
         batch_size =  len(ids)
-        for t in range(self.max_steps):
-            T = max(self.t_init - self.C * t, 0)
+        for t in range(self.args.max_steps):
+            T = max(self.args.t_init - self.args.C * t, 0)
             
             ops = np.random.randint(0, 3, batch_size) #gives random values of len==batch size between 0 and 3
             positions = [random.randint(0,len(i.strip().split(" "))-1) for i in pre_edit_justs]
