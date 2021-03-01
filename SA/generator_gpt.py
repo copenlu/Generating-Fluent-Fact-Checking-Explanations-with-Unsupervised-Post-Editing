@@ -12,7 +12,7 @@ from torch.nn import functional as F
 from torch.nn import CrossEntropyLoss
 
 from transformers import GPT2LMHeadModel, GPT2Tokenizer, T5ForConditionalGeneration
-device = 'cpu' #cuda
+device = 'cpu' 
 model_id = 'gpt2'
 model = GPT2LMHeadModel.from_pretrained(model_id).to(device)
 tokenizer = GPT2Tokenizer.from_pretrained(model_id)

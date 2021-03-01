@@ -3,13 +3,14 @@ import argparse
 import pandas as pd
 from nltk.tokenize import word_tokenize
 
-from SA.NLI_objective import NLIScorer
-from SA.editor import RobertaEditor
-from SA.generator_gpt import scorer_batch as gpt_scorer
-from SA.scoring_algos import SimulatedAnnealing
+from NLI_objective import NLIScorer
+from editor import RobertaEditor
+from generator_gpt import scorer_batch as gpt_scorer
+from scoring_algos import SimulatedAnnealing
 
 
 def get_dataset(scored_sentences_path, dataset_path, top_n):
+
     df = pd.read_csv(dataset_path, sep='\t', index_col=0)
     df = df.dropna()
     columns = ['dummy', 'id', 'statement', 'justification',
@@ -37,9 +38,10 @@ if __name__ == "__main__":
     parser.add_argument("--sentences_path",
                         help="Path to pre-selected sentences.",
                         type=str,
-                        default='data/top6_val_justifications.json')
+                        default='../../results_serialized_val_filtered.jsonl')
+
     parser.add_argument("--dataset_path", help="Path to dataset", type=str,
-                        default='data/top6_val_justifications.json')
+                        default='../../liar_data/ruling_oracles_val.tsv')
 
     parser.add_argument("--seed", help="Random seed", type=int, default=33)
     parser.add_argument("--t_init",
@@ -56,8 +58,8 @@ if __name__ == "__main__":
                         help="Weight for semantic similarity score.",
                         type=int, default=5)
     parser.add_argument("--length_weight",
-                        help="Weight for lenght score.",
-                        type=int, default=8)
+                        help="Weight for length score.",
+                        type=int, default=20)
     parser.add_argument("--nli_weight",
                         help="Weight for nli score.", type=int, default=8)
     parser.add_argument("--max_steps",
@@ -70,6 +72,7 @@ if __name__ == "__main__":
                         help="Batch size.", type=int, default=5)
 
     sa_args = parser.parse_args()
+
     print(sa_args)
 
     dataset = get_dataset(sa_args.sentences_path, sa_args.dataset_path, sa_args.top_n)
@@ -77,6 +80,7 @@ if __name__ == "__main__":
     editor = RobertaEditor()
     editor.cuda()
     device = 'cpu'
+
     simulated_annealing = SimulatedAnnealing(editor,
                                              gpt_scorer,
                                              NLIScorer(device),
@@ -87,10 +91,20 @@ if __name__ == "__main__":
     for i in range(0, len(dataset), sa_args.batch_size):
         batch_data = dataset[i: i + sa_args.batch_size]
         sa_outputs_batch = simulated_annealing.run(batch_data)
+
         for inp_just, out_just in zip(batch_data, sa_outputs_batch):
-            print(inp_just)
-            print(out_just)
-            print("------------------------")
+
+            temp_inp = []
+            temp_out = []
+            for sent in inp_just['scored_sentences']:
+                temp_inp.append(" ".join(sent))
+
+            for out in out_just:
+                temp_out.append(" ".join(out))
+
+            print("Input to SA:", " ".join(temp_inp))
+            print("Output from SA:", " ".join(temp_out))
+            print("*********************")
 
         sa_outputs += sa_outputs_batch
         break

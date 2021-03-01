@@ -67,6 +67,7 @@ class SimulatedAnnealing:
             self.nli_scorer(' '.join(original_justs[i][idx[0]]),
                             ' '.join(new_justs[i][idx[0]]))
                      for i, idx in enumerate(positions)]
+
         weighted_nli = self.power(nli_score, self.args.nli_weight)
 
         weighted_length_scores = self.power(length_score, self.args.length_weight)
@@ -97,8 +98,10 @@ class SimulatedAnnealing:
         },...]
         :return:
         """
+
         original_justs = [instance['scored_sentences'] for
             instance in input_batch]  # To keep track of the original input
+
         pre_edit_justs = copy.deepcopy(original_justs)
 
         batch_size = len(input_batch)
@@ -120,7 +123,7 @@ class SimulatedAnnealing:
 
             edited_justs = self.editor.edit(pre_edit_justs, ops, positions)
             # TODO add marking of the changed content
-            print(edited_justs[0])
+
             T = max(self.args.t_init - self.args.C * step, 0)
             accept_probs = self.acceptance_prob(edited_justs.tolist(),
                                                 pre_edit_justs,
