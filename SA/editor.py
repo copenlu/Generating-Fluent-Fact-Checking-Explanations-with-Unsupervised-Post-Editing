@@ -2,9 +2,12 @@ import copy
 from typing import List, Tuple
 
 import numpy as np
+import random
 import torch
 from transformers import RobertaForMaskedLM, RobertaTokenizer
 
+from SA.extract_phrases import extract_phrases
+from nltk.tokenize import word_tokenize
 
 class RobertaEditor():
     def __init__(self):
@@ -75,12 +78,25 @@ class RobertaEditor():
             "<mask>"] + edited_text[mask_idx[0]][mask_idx[1] + 1:]
         return edited_text
 
-    def delete(self, input_texts: List[List[str]], mask_idx: Tuple[int,
+    def delete_word_level(self, input_texts: List[List[str]], mask_idx: Tuple[int,
                                                                    int]) -> \
     List[List[str]]:
         edited_text = copy.deepcopy(input_texts)
         edited_text[mask_idx[0]].pop(mask_idx[1])
         return edited_text
+
+    def delete(self, input_texts: List[List[str]], mask_idx: Tuple[int,int]) -> \
+            List[List[str]]: #phrase level delete operation
+
+        #edited_text = copy.deepcopy(input_texts)
+        out_sent = copy.deepcopy(input_texts)
+
+        complete_text = " ".join(input_texts[mask_idx[0]]) #['', '']
+        unique_phrases = extract_phrases(complete_text)
+        phrase_2_remove = unique_phrases[random.randint(0, len(unique_phrases) - 1)]
+        out_sent[mask_idx[0]] = word_tokenize(complete_text.replace(phrase_2_remove, ""))
+
+        return out_sent
 
     def get_word_at_mask(self, output_tensors, mask_idxs):
         mask_idxs = mask_idxs.unsqueeze(dim=1)

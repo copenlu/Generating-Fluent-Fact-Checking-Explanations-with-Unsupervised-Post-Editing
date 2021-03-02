@@ -3,10 +3,10 @@ import argparse
 import pandas as pd
 from nltk.tokenize import word_tokenize
 
-from NLI_objective import NLIScorer
-from editor import RobertaEditor
-from generator_gpt import scorer_batch as gpt_scorer
-from scoring_algos import SimulatedAnnealing
+from SA.NLI_objective import NLIScorer
+from SA.editor import RobertaEditor
+from SA.generator_gpt import scorer_batch as gpt_scorer
+from SA.scoring_algos import SimulatedAnnealing
 
 
 def get_dataset(scored_sentences_path, dataset_path, top_n):
@@ -18,7 +18,7 @@ def get_dataset(scored_sentences_path, dataset_path, top_n):
                'ruling_tokenized', 'statement_tokenized', 'oracle_ids']
     df.columns = columns
 
-    scored_sentences = [json.loads(line) for line in open(scored_sentences_path)]
+    scored_sentences = [json.loads(line, encoding='utf-8') for line in open(scored_sentences_path)]
     scored_sentences = {item['id']: sorted(item['sentence_scores'], key=lambda x: x[1], reverse=True)[:top_n] for item in scored_sentences}
     scored_sentences = {k: [word_tokenize(sentence[0]) for sentence in v] for k, v in scored_sentences.items()}
 
