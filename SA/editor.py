@@ -93,8 +93,11 @@ class RobertaEditor():
 
         complete_text = " ".join(input_texts[mask_idx[0]]) #['', '']
         unique_phrases = extract_phrases(complete_text)
-        phrase_2_remove = unique_phrases[random.randint(0, len(unique_phrases) - 1)]
-        out_sent[mask_idx[0]] = word_tokenize(complete_text.replace(phrase_2_remove, ""))
+        if len(unique_phrases) > 0: #no phrases in an empty sentence
+            phrase_2_remove = unique_phrases[random.randint(0, len(unique_phrases) - 1)]
+            out_sent[mask_idx[0]] = word_tokenize(complete_text.replace(phrase_2_remove, ""))
+        else:
+            return out_sent
 
         return out_sent
 

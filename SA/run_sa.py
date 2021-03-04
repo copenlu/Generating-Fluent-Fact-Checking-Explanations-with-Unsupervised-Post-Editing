@@ -1,6 +1,8 @@
 import json
 import argparse
 import pandas as pd
+import numpy as np
+import random
 from nltk.tokenize import word_tokenize
 
 from SA.NLI_objective import NLIScorer
@@ -18,7 +20,7 @@ def get_dataset(scored_sentences_path, dataset_path, top_n):
                'ruling_tokenized', 'statement_tokenized', 'oracle_ids']
     df.columns = columns
 
-    scored_sentences = [json.loads(line, encoding='utf-8') for line in open(scored_sentences_path)]
+    scored_sentences = [json.loads(line) for line in open(scored_sentences_path)] #, encoding='utf-8'
     scored_sentences = {item['id']: sorted(item['sentence_scores'], key=lambda x: x[1], reverse=True)[:top_n] for item in scored_sentences}
     scored_sentences = {k: [word_tokenize(sentence[0]) for sentence in v] for k, v in scored_sentences.items()}
 
@@ -31,6 +33,8 @@ def get_dataset(scored_sentences_path, dataset_path, top_n):
     print('Sample: ', dataset[0])
 
     return dataset
+
+# def get_rouge_scores(batch_data):
 
 
 if __name__ == "__main__":
@@ -53,15 +57,15 @@ if __name__ == "__main__":
                         type=float, default=3e-4)
     parser.add_argument("--fluency_weight",
                         help="Weight for fluency score.",
-                        type=int, default=3)
+                        type=int, default=8)
     parser.add_argument("--semantic_weight",
                         help="Weight for semantic similarity score.",
-                        type=int, default=5)
+                        type=int, default=10)
     parser.add_argument("--length_weight",
                         help="Weight for length score.",
                         type=int, default=20)
     parser.add_argument("--nli_weight",
-                        help="Weight for nli score.", type=int, default=8)
+                        help="Weight for nli score.", type=int, default=12)
     parser.add_argument("--max_steps",
                         help="Max steps for running SA.", type=int, default=30)
     parser.add_argument("--top_n",
@@ -69,11 +73,14 @@ if __name__ == "__main__":
                         type=int, default=6)
 
     parser.add_argument("--batch_size",
-                        help="Batch size.", type=int, default=5)
+                        help="Batch size.", type=int, default=3)
 
     sa_args = parser.parse_args()
 
     print(sa_args)
+
+    random.seed(sa_args.seed)
+    np.random.seed(sa_args.seed)
 
     dataset = get_dataset(sa_args.sentences_path, sa_args.dataset_path, sa_args.top_n)
 
