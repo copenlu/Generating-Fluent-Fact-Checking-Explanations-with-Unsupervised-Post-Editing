@@ -8,8 +8,6 @@ from nltk.parse.corenlp import CoreNLPParser
 parser = CoreNLPParser('http://localhost:9000', encoding="utf-8")
 phrase_tags = ['S', 'ADJP', 'ADVP', 'CONJP', 'FRAG', 'INTJ', 'LST', 'NAC', 'NP', 'NX', 'PP', 'PRN', 'PRT','QP', 'RRC', 'UCP', 'VP', 'WHADJP', 'WHAVP', 'WHNP', 'WHPP', 'X', 'SBAR']
 
-
-
 def extract_phrases(sent):
     phrases = []
     ordered_phrases = []

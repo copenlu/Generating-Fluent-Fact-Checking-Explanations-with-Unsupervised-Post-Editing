@@ -7,9 +7,12 @@ from nltk.tokenize import word_tokenize
 
 from SA.NLI_objective import NLIScorer
 from SA.editor import RobertaEditor
-from SA.generator_gpt import scorer_batch as gpt_scorer
+from SA.generator_gpt import GPT2FluencyScorer
 from SA.scoring_algos import SimulatedAnnealing
+from SA.args import get_model_args
 
+from rouge_score import rouge_scorer
+import os
 
 def get_dataset(scored_sentences_path, dataset_path, top_n):
 
@@ -34,84 +37,75 @@ def get_dataset(scored_sentences_path, dataset_path, top_n):
 
     return dataset
 
-# def get_rouge_scores(batch_data):
-
-
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--sentences_path",
-                        help="Path to pre-selected sentences.",
-                        type=str,
-                        default='../../results_serialized_val_filtered.jsonl')
 
-    parser.add_argument("--dataset_path", help="Path to dataset", type=str,
-                        default='../../liar_data/ruling_oracles_val.tsv')
-
-    parser.add_argument("--seed", help="Random seed", type=int, default=33)
-    parser.add_argument("--t_init",
-                        help="Temperature initial value.",
-                        type=float, default=3e-2)
-    # TODO (Shailza): add help
-    parser.add_argument("--C",
-                        help="",
-                        type=float, default=3e-4)
-    parser.add_argument("--fluency_weight",
-                        help="Weight for fluency score.",
-                        type=int, default=8)
-    parser.add_argument("--semantic_weight",
-                        help="Weight for semantic similarity score.",
-                        type=int, default=10)
-    parser.add_argument("--length_weight",
-                        help="Weight for length score.",
-                        type=int, default=20)
-    parser.add_argument("--nli_weight",
-                        help="Weight for nli score.", type=int, default=12)
-    parser.add_argument("--max_steps",
-                        help="Max steps for running SA.", type=int, default=30)
-    parser.add_argument("--top_n",
-                        help="Number of top sentences to start SA with",
-                        type=int, default=6)
-
-    parser.add_argument("--batch_size",
-                        help="Batch size.", type=int, default=3)
-
-    sa_args = parser.parse_args()
-
-    print(sa_args)
+    sa_args = get_model_args()
 
     random.seed(sa_args.seed)
     np.random.seed(sa_args.seed)
 
     dataset = get_dataset(sa_args.sentences_path, sa_args.dataset_path, sa_args.top_n)
 
-    editor = RobertaEditor()
+    editor = RobertaEditor(sa_args.editor_model_id, sa_args.device_type)
+    fluency_scorer  =  GPT2FluencyScorer(sa_args.fluencyscorer_model_id, sa_args.device_type)
     editor.cuda()
-    device = 'cpu'
+    fluency_scorer.cuda()
+
+    score_names = ['rouge1', 'rouge2', 'rougeLsum']
+    scorer = rouge_scorer.RougeScorer(score_names, use_stemmer=True)
 
     simulated_annealing = SimulatedAnnealing(editor,
-                                             gpt_scorer,
-                                             NLIScorer(device),
+                                             fluency_scorer,
+                                             NLIScorer(sa_args.device_type),
                                              sa_args)
 
     sa_outputs = []
+    os.remove('sa_inp.txt')
+    os.remove('sa_out.txt')
+
+    sa_inp = open('sa_inp.txt', 'a+')
+    sa_out = open('sa_out.txt', 'a+')
+
 
     for i in range(0, len(dataset), sa_args.batch_size):
         batch_data = dataset[i: i + sa_args.batch_size]
         sa_outputs_batch = simulated_annealing.run(batch_data)
 
-        for inp_just, out_just in zip(batch_data, sa_outputs_batch):
+        scores_sa_justs = []
+        scores_scored_justs = []
+
+        for inp_batch, sa_just in zip(batch_data, sa_outputs_batch):
+
 
             temp_inp = []
             temp_out = []
-            for sent in inp_just['scored_sentences']:
+            for sent in inp_batch['scored_sentences']:
                 temp_inp.append(" ".join(sent))
 
-            for out in out_just:
+            for out in sa_just:
                 temp_out.append(" ".join(out))
 
-            print("Input to SA:", " ".join(temp_inp))
-            print("Output from SA:", " ".join(temp_out))
-            print("*********************")
+            sa_inp.write(" ".join(temp_inp) + "\n")
+            sa_out.write(" ".join(temp_out) + "\n")
+
+            score1 = scorer.score(prediction='\n'.join(temp_out), target=inp_batch['justification'])
+            scores_sa_justs.append(score1)
+
+            score2 = scorer.score(prediction='\n'.join(temp_inp), target=inp_batch['justification'])
+            scores_scored_justs.append(score2)
 
         sa_outputs += sa_outputs_batch
+
+        print("Scores for justifications obtained by saliency scores")
+        for score_name in score_names:
+            print(f'{score_name} P: {np.mean([s[score_name].precision for s in scores_scored_justs]) * 100:.3f} '
+                  f'R: {np.mean([s[score_name].recall for s in scores_scored_justs]) * 100:.3f} '
+                  f'F1: {np.mean([s[score_name].fmeasure for s in scores_scored_justs]) * 100:.3f}')
+
+        print("Scores for justifications given by SA")
+        for score_name in score_names:
+            print(f'{score_name} P: {np.mean([s[score_name].precision for s in scores_sa_justs]) * 100:.3f} '
+                  f'R: {np.mean([s[score_name].recall for s in scores_sa_justs]) * 100:.3f} '
+                  f'F1: {np.mean([s[score_name].fmeasure for s in scores_sa_justs]) * 100:.3f}')
+
         break

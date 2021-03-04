@@ -58,7 +58,7 @@ class SimulatedAnnealing:
         new_justs_text = [' '.join(sum(sentences, [])) for sentences in new_justs]
         original_justs_text = [' '.join(sum(sentences, [])) for sentences in original_justs]
 
-        fluency_scores = self.gpt_scorer(new_justs_text)
+        fluency_scores = self.gpt_scorer.scorer_batch(new_justs_text)
         semantic_scores = self.word_level_semantic_scorer(new_justs_text, original_justs_text)
         length_score = self.length_penality(new_justs)
 

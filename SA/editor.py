@@ -10,13 +10,13 @@ from SA.extract_phrases import extract_phrases
 from nltk.tokenize import word_tokenize
 
 class RobertaEditor():
-    def __init__(self):
-        # TODO move these hard coded to parameters
-        self.model_id = 'roberta-base'
-        self.device = 'cpu'
+    def __init__(self, model_id, editor_device):
+
+        self.model_id = model_id
+        self.device = editor_device
         self.tokenizer = RobertaTokenizer.from_pretrained(self.model_id)
-        self.model = RobertaForMaskedLM.from_pretrained(self.model_id,
-                                                        return_dict=True)
+        self.model = RobertaForMaskedLM.from_pretrained(self.model_id,return_dict=True)
+
         self.ops_map = [self.insert, self.replace, self.delete]
         self.mask_vocab_idx = 50264
         print("Editor built")
