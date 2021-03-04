@@ -13,6 +13,7 @@ from SA.args import get_model_args
 
 from rouge_score import rouge_scorer
 import os
+import os.path
 
 def get_dataset(scored_sentences_path, dataset_path, top_n):
 
@@ -49,7 +50,6 @@ if __name__ == "__main__":
     editor = RobertaEditor(sa_args.editor_model_id, sa_args.device_type)
     fluency_scorer  =  GPT2FluencyScorer(sa_args.fluencyscorer_model_id, sa_args.device_type)
     editor.cuda()
-    fluency_scorer.cuda()
 
     score_names = ['rouge1', 'rouge2', 'rougeLsum']
     scorer = rouge_scorer.RougeScorer(score_names, use_stemmer=True)
@@ -60,8 +60,11 @@ if __name__ == "__main__":
                                              sa_args)
 
     sa_outputs = []
-    os.remove('sa_inp.txt')
-    os.remove('sa_out.txt')
+    if os.path.exists('sa_inp.txt'): #remove because file is opened in append mode
+        os.remove('sa_inp.txt')
+
+    if os.path.exists('sa_out.txt'):
+        os.remove('sa_out.txt')
 
     sa_inp = open('sa_inp.txt', 'a+')
     sa_out = open('sa_out.txt', 'a+')
