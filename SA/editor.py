@@ -15,14 +15,13 @@ class RobertaEditor():
         self.model_id = model_id
         self.device = editor_device
         self.tokenizer = RobertaTokenizer.from_pretrained(self.model_id)
-        self.model = RobertaForMaskedLM.from_pretrained(self.model_id,return_dict=True)
+        self.model = RobertaForMaskedLM.from_pretrained(self.model_id,
+                                                        return_dict=True).to(self.device)
 
         self.ops_map = [self.insert, self.replace, self.delete]
         self.mask_vocab_idx = 50264
         print("Editor built")
 
-    def cuda(self):
-        self.model.to(self.device)
 
     def edit(self, inputs, ops, positions):
         edited_inputs = np.array(

@@ -8,9 +8,10 @@ class NLIScorer():
         hg_model_hub_name = "ynie/roberta-large-snli_mnli_fever_anli_R1_R2_R3" \
                             "-nli"
 
+        self.device = device
         self.tokenizer = AutoTokenizer.from_pretrained(hg_model_hub_name)
         self.model = AutoModelForSequenceClassification.from_pretrained(
-            hg_model_hub_name).to(device)
+            hg_model_hub_name).to(self.device)
         self.max_length = 256
 
     def __call__(self, original_text, new_text):
@@ -26,12 +27,12 @@ class NLIScorer():
         attention_mask = torch.Tensor(
             tokenized_input_seq_pair['attention_mask']).long().unsqueeze(0)
 
-        outputs = self.model(input_ids,
-                        attention_mask=attention_mask,
-                        token_type_ids=token_type_ids,
+        outputs = self.model(input_ids.to(self.device),
+                        attention_mask=attention_mask.to(self.device),
+                        token_type_ids=token_type_ids.to(self.device),
                         labels=None)
 
-        return 1 - torch.softmax(outputs[0], dim=1)[0].detach().tolist()[2]
+        return 1 - torch.softmax(outputs[0], dim=1)[0].detach().cpu().tolist()[2]
 
 
 def compute_nli_score(premise, hypothesis):
