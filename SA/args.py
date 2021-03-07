@@ -14,9 +14,8 @@ def get_model_args():
 
     parser.add_argument("--seed", help="Random seed", type=int, default=33)
 
-    parser.add_argument("--device_type",
-                        help="Type of device, CPU or GPU", type=str,
-                        default='cpu')
+    parser.add_argument("--device_type", help="Type of device, CPU or GPU", type=str,
+                        default='gpu')
 
     parser.add_argument("--sample",
                         help="Number of instances to sample from "

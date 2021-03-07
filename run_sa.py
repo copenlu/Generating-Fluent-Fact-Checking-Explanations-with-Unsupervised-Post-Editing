@@ -12,6 +12,7 @@ from SA.args import get_model_args
 
 from rouge_score import rouge_scorer
 import os.path
+import torch
 
 
 def get_dataset(scored_sentences_path, dataset_path, top_n):
@@ -62,16 +63,26 @@ if __name__ == "__main__":
         print(f"Sampling {sa_args.sample} instances from the dataset")
         dataset = np.random.choice(dataset, sa_args.sample)
 
-    editor = RobertaEditor(sa_args.editor_model_id, sa_args.device_type)
-    fluency_scorer = GPT2FluencyScorer(sa_args.fluencyscorer_model_id, sa_args.device_type)
-    editor.cuda()
+    if sa_args.device_type=="gpu":
+        num_gpus = torch.cuda.device_count()
+        assert (num_gpus >= 3, f"SA needs atleast 3 GPUs. No. of GPUs available = {num_gpus}")
+        editor_device = "cuda:0"
+        gpt_device = "cuda:1"
+        nli_device = "cuda:2"
+    else:
+        editor_device = gpt_device = nli_device = sa_args.device_type
+
+
+    editor = RobertaEditor(sa_args.editor_model_id, editor_device)
+    fluency_scorer  =  GPT2FluencyScorer(sa_args.fluencyscorer_model_id, gpt_device)
+    nli_scorer = NLIScorer(nli_device)
 
     score_names = ['rouge1', 'rouge2', 'rougeLsum']
     scorer = rouge_scorer.RougeScorer(score_names, use_stemmer=True)
 
     simulated_annealing = SimulatedAnnealing(editor,
                                              fluency_scorer,
-                                             NLIScorer(sa_args.device_type),
+                                             nli_scorer,
                                              sa_args)
 
     sa_outputs = []
