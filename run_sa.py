@@ -48,7 +48,7 @@ if __name__ == "__main__":
 
     if sa_args.device_type=="gpu":
         num_gpus = torch.cuda.device_count()
-        assert (num_gpus >= 3, f"SA needs atleast 3 GPUs. No. of GPUs available = {num_gpus}")
+        assert num_gpus >= 3, f"SA needs atleast 3 GPUs. No. of GPUs available = {num_gpus}"
         editor_device = "cuda:0"
         gpt_device = "cuda:1"
         nli_device = "cuda:2"

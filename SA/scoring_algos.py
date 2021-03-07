@@ -30,7 +30,7 @@ class SimulatedAnnealing:
         keyword_embeds = self.editor.get_contextual_word_embeddings(list(self.ref_to_keywords(org_justs)))
         ref_embeds = self.editor.get_contextual_word_embeddings(new_justs)
 
-        return keyword_embeds.bmm(ref_embeds.permute(0, 2, 1)).max(dim=2).values.min(dim=1).values
+        return keyword_embeds.bmm(ref_embeds.permute(0, 2, 1)).max(dim=2).values.min(dim=1).values.cpu()
 
     def sentence_level_semantic_scorer(self, new_justs, org_justs):
 
@@ -39,7 +39,7 @@ class SimulatedAnnealing:
         cos = torch.nn.CosineSimilarity(dim=1, eps=1e-6)
         output = cos(new_justs_embeds, org_embeds)
 
-        return output
+        return output.cpu()
 
     def length_penality(self, justifications):
 
