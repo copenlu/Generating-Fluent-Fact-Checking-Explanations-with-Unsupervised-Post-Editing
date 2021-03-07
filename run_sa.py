@@ -12,7 +12,6 @@ from SA.scoring_algos import SimulatedAnnealing
 from SA.args import get_model_args
 
 from rouge_score import rouge_scorer
-import os
 import os.path
 
 def get_dataset(scored_sentences_path, dataset_path, top_n):
@@ -68,17 +67,18 @@ if __name__ == "__main__":
 
     sa_inp = open('sa_inp.txt', 'a+')
     sa_out = open('sa_out.txt', 'a+')
+    scores_sa_justs = []
+    scores_scored_justs = []
+    processed_samples = 0
 
 
     for i in range(0, len(dataset), sa_args.batch_size):
         batch_data = dataset[i: i + sa_args.batch_size]
         sa_outputs_batch = simulated_annealing.run(batch_data)
-
-        scores_sa_justs = []
-        scores_scored_justs = []
-
+        processed_samples+=len(batch_data)
+        print("Processing: ", processed_samples)
+        print("------------")
         for inp_batch, sa_just in zip(batch_data, sa_outputs_batch):
-
 
             temp_inp = []
             temp_out = []
@@ -99,16 +99,17 @@ if __name__ == "__main__":
 
         sa_outputs += sa_outputs_batch
 
-        print("Scores for justifications obtained by saliency scores")
-        for score_name in score_names:
-            print(f'{score_name} P: {np.mean([s[score_name].precision for s in scores_scored_justs]) * 100:.3f} '
-                  f'R: {np.mean([s[score_name].recall for s in scores_scored_justs]) * 100:.3f} '
-                  f'F1: {np.mean([s[score_name].fmeasure for s in scores_scored_justs]) * 100:.3f}')
+    print("Scores for justifications obtained by saliency scores")
+    for score_name in score_names:
+        print(f'{score_name} P: {np.mean([s[score_name].precision for s in scores_scored_justs]) * 100:.3f} '
+            f'R: {np.mean([s[score_name].recall for s in scores_scored_justs]) * 100:.3f} '
+            f'F1: {np.mean([s[score_name].fmeasure for s in scores_scored_justs]) * 100:.3f}')
 
-        print("Scores for justifications given by SA")
-        for score_name in score_names:
-            print(f'{score_name} P: {np.mean([s[score_name].precision for s in scores_sa_justs]) * 100:.3f} '
-                  f'R: {np.mean([s[score_name].recall for s in scores_sa_justs]) * 100:.3f} '
-                  f'F1: {np.mean([s[score_name].fmeasure for s in scores_sa_justs]) * 100:.3f}')
+    print("Scores for justifications given by SA")
+    for score_name in score_names:
+        print(f'{score_name} P: {np.mean([s[score_name].precision for s in scores_sa_justs]) * 100:.3f} '
+            f'R: {np.mean([s[score_name].recall for s in scores_sa_justs]) * 100:.3f} '
+            f'F1: {np.mean([s[score_name].fmeasure for s in scores_sa_justs]) * 100:.3f}')
 
-        break
+    print("Processed: ", processed_samples)
+        #break

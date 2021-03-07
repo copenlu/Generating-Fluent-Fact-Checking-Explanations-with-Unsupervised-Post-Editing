@@ -7,10 +7,10 @@ def get_model_args():
     parser.add_argument("--sentences_path",
                         help="Path to pre-selected sentences.",
                         type=str,
-                        default='../../results_serialized_val_filtered.jsonl')
+                        default='../results_serialized_val_filtered.jsonl')
 
     parser.add_argument("--dataset_path", help="Path to dataset", type=str,
-                        default='../../liar_data/ruling_oracles_val.tsv')
+                        default='../liar_data/ruling_oracles_val.tsv')
 
     parser.add_argument("--seed", help="Random seed", type=int, default=33)
 
