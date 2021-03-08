@@ -9,6 +9,7 @@ from transformers import RobertaForMaskedLM, RobertaTokenizer
 from SA.extract_phrases import extract_phrases
 from nltk.tokenize import word_tokenize
 
+
 class RobertaEditor():
     def __init__(self, model_id, editor_device):
 
@@ -31,11 +32,13 @@ class RobertaEditor():
 
         insert_and_replace_inputs = edited_inputs[np.where(
             ops < 2)]  # select those sentences which have mask token in them.
-        insert_and_replace_outputs = self.generate(
-            insert_and_replace_inputs.tolist(), np.array(positions)[np.where(
-            ops < 2)])
 
-        edited_inputs[np.where(ops < 2)] = insert_and_replace_outputs
+        if len(insert_and_replace_inputs) > 0:
+            insert_and_replace_outputs = self.generate(
+                insert_and_replace_inputs.tolist(), np.array(positions)[np.where(
+                ops < 2)])
+
+            edited_inputs[np.where(ops < 2)] = insert_and_replace_outputs
 
         return edited_inputs
 
