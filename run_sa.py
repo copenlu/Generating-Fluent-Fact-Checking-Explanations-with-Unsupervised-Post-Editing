@@ -1,9 +1,8 @@
 import json
-import argparse
 import pandas as pd
 import numpy as np
 import random
-from nltk.tokenize import word_tokenize
+from nltk.tokenize import word_tokenize, sent_tokenize
 
 from SA.NLI_objective import NLIScorer
 from SA.editor import RobertaEditor
@@ -13,6 +12,7 @@ from SA.args import get_model_args
 
 from rouge_score import rouge_scorer
 import os.path
+
 
 def get_dataset(scored_sentences_path, dataset_path, top_n):
 
@@ -29,13 +29,25 @@ def get_dataset(scored_sentences_path, dataset_path, top_n):
 
     df['scored_sentences'] = df.apply(lambda x: scored_sentences.get(x['id'], None), axis=1)
     df = df[df['scored_sentences'] != None]
-    df = df[['id', 'statement', 'justification', 'label', 'scored_sentences']]
+
+    df['justification_sentences'] = df.apply(lambda x: sent_tokenize(x['justification']), axis=1)
+
+    df = df[['id', 'statement', 'justification', 'label', 'scored_sentences',
+             'justification_sentences']]
     dataset = [row.to_dict() for i, row in df.iterrows()]
 
     print(f'Size of dataset: {len(dataset)}')
     print('Sample: ', dataset[0])
 
     return dataset
+
+
+def get_string_scores(scores, score_names):
+    for score_name in score_names:
+        print(f'{score_name} P: {np.mean([s[score_name].precision for s in scores]) * 100:.3f} '
+              f'R: {np.mean([s[score_name].recall for s in scores]) * 100:.3f} '
+              f'F1: {np.mean([s[score_name].fmeasure for s in scores]) * 100:.3f}')
+
 
 if __name__ == "__main__":
 
@@ -46,8 +58,12 @@ if __name__ == "__main__":
 
     dataset = get_dataset(sa_args.sentences_path, sa_args.dataset_path, sa_args.top_n)
 
+    if sa_args.sample:
+        print(f"Sampling {sa_args.sample} instances from the dataset")
+        dataset = np.random.choice(dataset, sa_args.sample)
+
     editor = RobertaEditor(sa_args.editor_model_id, sa_args.device_type)
-    fluency_scorer  =  GPT2FluencyScorer(sa_args.fluencyscorer_model_id, sa_args.device_type)
+    fluency_scorer = GPT2FluencyScorer(sa_args.fluencyscorer_model_id, sa_args.device_type)
     editor.cuda()
 
     score_names = ['rouge1', 'rouge2', 'rougeLsum']
@@ -59,7 +75,9 @@ if __name__ == "__main__":
                                              sa_args)
 
     sa_outputs = []
-    if os.path.exists('sa_inp.txt'): #remove because file is opened in append mode
+    # TODO write is needed once for gold and separately for each step
+    # remove because file is opened in append mode
+    if os.path.exists('sa_inp.txt'):
         os.remove('sa_inp.txt')
 
     if os.path.exists('sa_out.txt'):
@@ -67,49 +85,48 @@ if __name__ == "__main__":
 
     sa_inp = open('sa_inp.txt', 'a+')
     sa_out = open('sa_out.txt', 'a+')
-    scores_sa_justs = []
-    scores_scored_justs = []
-    processed_samples = 0
 
+    processed_samples = 0
+    scores_sa_justs = []
 
     for i in range(0, len(dataset), sa_args.batch_size):
         batch_data = dataset[i: i + sa_args.batch_size]
         sa_outputs_batch = simulated_annealing.run(batch_data)
-        processed_samples+=len(batch_data)
+        processed_samples += len(batch_data)
         print("Processing: ", processed_samples)
         print("------------")
-        for inp_batch, sa_just in zip(batch_data, sa_outputs_batch):
+
+        print(sa_outputs_batch)
+        for instance, instance_edit in zip(batch_data, sa_outputs_batch):
 
             temp_inp = []
             temp_out = []
-            for sent in inp_batch['scored_sentences']:
+            for sent in instance['scored_sentences']:
                 temp_inp.append(" ".join(sent))
 
-            for out in sa_just:
+            for out in instance_edit:
                 temp_out.append(" ".join(out))
 
+            # TODO write new text and what was the edit operation
             sa_inp.write(" ".join(temp_inp) + "\n")
             sa_out.write(" ".join(temp_out) + "\n")
-
-            score1 = scorer.score(prediction='\n'.join(temp_out), target=inp_batch['justification'])
+            print(temp_out, instance['justification'])
+            score1 = scorer.score(prediction='\n'.join(temp_out),
+                                  target='\n'.join(instance['justification_sentences']))
             scores_sa_justs.append(score1)
-
-            score2 = scorer.score(prediction='\n'.join(temp_inp), target=inp_batch['justification'])
-            scores_scored_justs.append(score2)
 
         sa_outputs += sa_outputs_batch
 
-    print("Scores for justifications obtained by saliency scores")
-    for score_name in score_names:
-        print(f'{score_name} P: {np.mean([s[score_name].precision for s in scores_scored_justs]) * 100:.3f} '
-            f'R: {np.mean([s[score_name].recall for s in scores_scored_justs]) * 100:.3f} '
-            f'F1: {np.mean([s[score_name].fmeasure for s in scores_scored_justs]) * 100:.3f}')
+    scores_original_sentences = [scorer.score(prediction='\n'.join(
+        [' '.join(s) for s in instance['scored_sentences']]),
+                                              target='\n'.join(instance[
+                                                                   'justification_sentences']))
+                                 for instance in dataset]
+
+    print(f"Scores for originally selected {sa_args.top_n} sentences")
+    get_string_scores(scores_original_sentences, score_names)
 
     print("Scores for justifications given by SA")
-    for score_name in score_names:
-        print(f'{score_name} P: {np.mean([s[score_name].precision for s in scores_sa_justs]) * 100:.3f} '
-            f'R: {np.mean([s[score_name].recall for s in scores_sa_justs]) * 100:.3f} '
-            f'F1: {np.mean([s[score_name].fmeasure for s in scores_sa_justs]) * 100:.3f}')
+    get_string_scores(scores_sa_justs, score_names)
 
     print("Processed: ", processed_samples)
-        #break

@@ -14,8 +14,14 @@ def get_model_args():
 
     parser.add_argument("--seed", help="Random seed", type=int, default=33)
 
-    parser.add_argument("--device_type", help="Type of device, CPU or GPU", type=str,
+    parser.add_argument("--device_type",
+                        help="Type of device, CPU or GPU", type=str,
                         default='cpu')
+
+    parser.add_argument("--sample",
+                        help="Number of instances to sample from "
+                             "original dataset.",
+                        type=int, default=None)
 
     #SA Args
     parser.add_argument("--t_init",
@@ -51,11 +57,13 @@ def get_model_args():
     parser.add_argument("--batch_size",
                         help="Batch size.", type=int, default=3)
 
-    parser.add_argument("--editor_model_id", help="Model-id for editor.", type=str, default='roberta-base')
+    parser.add_argument("--editor_model_id", help="Model-id for editor.",
+                        type=str, default='roberta-base')
 
-    parser.add_argument("--fluencyscorer_model_id", help="Model-id for fluency scorer.", type=str, default='gpt2')
-
-
+    parser.add_argument("--fluencyscorer_model_id",
+                        help="Model-id for fluency scorer.",
+                        type=str,
+                        default='gpt2')
 
     args, unparsed = parser.parse_known_args()
     print(args)
