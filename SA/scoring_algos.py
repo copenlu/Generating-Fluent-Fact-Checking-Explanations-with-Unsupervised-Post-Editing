@@ -44,8 +44,9 @@ class SimulatedAnnealing:
     def length_penality(self, justifications):
 
         len_penalities = []
-        for just in justifications:
-            len_penalities.append(1/(len(sum(just, []))))
+        for justification in justifications:
+            length = len(justification.strip().split(" "))
+            len_penalities.append(1.0/length)
 
         return len_penalities
 
@@ -55,23 +56,17 @@ class SimulatedAnnealing:
     def scorer(self, new_justs, original_justs, positions):
         # TODO: optimise to compute the scores for the edited sentence only?
 
-        new_justs_text = [' '.join(sum(sentences, [])) for sentences in new_justs]
-        original_justs_text = [' '.join(sum(sentences, [])) for sentences in original_justs]
-
-        fluency_scores = self.gpt_scorer.scorer_batch(new_justs_text)
-        semantic_scores = self.word_level_semantic_scorer(new_justs_text, original_justs_text)
+        fluency_scores = self.gpt_scorer.scorer_batch(new_justs)
+        semantic_scores = self.word_level_semantic_scorer(new_justs, original_justs)
         length_score = self.length_penality(new_justs)
 
         # TODO pass in one batch
-        nli_score = [
-            self.nli_scorer(' '.join(original_justs[i][idx[0]]),
-                            ' '.join(new_justs[i][idx[0]]))
-                     for i, idx in enumerate(positions)]
+        nli_score = [self.nli_scorer(org, new) for org, new in zip(original_justs, new_justs)]
 
         weighted_nli = self.power(nli_score, self.args.nli_weight)
 
         weighted_length_scores = self.power(length_score, self.args.length_weight)
-        sentence_semantic_scores = self.sentence_level_semantic_scorer(new_justs_text, original_justs_text)
+        sentence_semantic_scores = self.sentence_level_semantic_scorer(new_justs, original_justs)
 
         total_scores = fluency_scores.pow(self.args.fluency_weight) * \
                        torch.FloatTensor(weighted_nli) * \
@@ -94,37 +89,30 @@ class SimulatedAnnealing:
         'statement': 'We have less Americans working now than in the 70s.',
         'justification': 'Hartzler said, ...',
         'label': 'barely-true',
-        'scored_sentences':  'scored_sentences': [['U.S.', 'Rep.', 'Vicky', 'Hartzler', ',', 'R-Columbia', ',', 'said', ',', '``', 'We', 'have', 'less', 'Americans', 'working', 'now', 'than', 'back', 'in', 'the', '‘', '70s', ',', 'so', 'we', 'do', 'need', 'to', 'still', 'address', 'that', 'and', 'get', 'our', 'economy', 'going', '.', "''"], ['This', 'chart', 'shows', 'the', 'ratio', 'throughout', 'the', '1970s', '.'], ['In', '2015', ',', 'that', 'number', 'had', 'reached', 'more', 'than', '155', 'million', '.'], ['The', 'data', 'show', 'that', 'in', 'only', 'one', 'year', ',', '1979', ',', 'the', 'employment-population', 'ratio', 'was', 'higher', 'than', 'it', 'was', 'in', '2015', '.'], ['The', 'rate', 'in', '1970', 'was', '60.4', 'percent', 'and', 'it', 'grew', 'steadily', 'to', '62.3', 'percent', 'in', '1977', ',', 'but', 'it', 'didn', '’', 't', 'rise', 'above', '2015', '’', 's', 'rate', 'in', 'that', 'time', '.'], ['These', 'data', 'show', 'a', 'nearly', '50', 'percent', 'increase', 'in', 'the', 'absolute', 'number', 'of', 'Americans', 'working', 'in', '2015', 'compared', 'to', 'the', 'late', '1970s', '.']
+        'scored_sentences': 'U.S. Rep. Vicky Hartzler, R-Columbia, said, .....',
         },...]
         :return:
         """
 
-        original_justs = [instance['scored_sentences'] for
-            instance in input_batch]  # To keep track of the original input
-
+        original_justs = [instance['scored_sentences'] for instance in input_batch]  # To keep track of the original input
         pre_edit_justs = copy.deepcopy(original_justs)
 
         batch_size = len(input_batch)
 
         for step in range(self.args.max_steps):
-            # gives random values of len==batch size between 0 and 3, mapping
-            # to operation functions in the editor
+
+            T = max(self.args.t_init - self.args.C * step, 0)
             ops = np.random.randint(0, 3, batch_size)
-            # positions consist of index of the sentence and the index of the
-            # word in the sentence
-            sentence_ids = [random.randint(0, len(instance)-1)
-                            for instance in pre_edit_justs]
-            sentence_words = [random.randint(0, len(instance[sentence_idx])-1)
-                              for instance, sentence_idx in zip(pre_edit_justs,
-                                                                sentence_ids)]
-            positions = [(sent_id, word_id)
-                         for sent_id, word_id in zip(sentence_ids,
-                                                     sentence_words)]
+            # gives random values of len==batch size between 0 and 3, mapping to operation functions in the editor
+
+
+            # positions consist of index of the sentence and the index of the word in the sentence
+
+            positions = [random.randint(0, len(i.strip().split(" ")) - 1) for i in pre_edit_justs]
 
             edited_justs = self.editor.edit(pre_edit_justs, ops, positions)
             # TODO add marking of the changed content
 
-            T = max(self.args.t_init - self.args.C * step, 0)
             accept_probs = self.acceptance_prob(edited_justs.tolist(),
                                                 pre_edit_justs,
                                                 original_justs,

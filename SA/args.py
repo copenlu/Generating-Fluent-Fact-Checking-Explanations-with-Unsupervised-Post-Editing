@@ -7,15 +7,15 @@ def get_model_args():
     parser.add_argument("--sentences_path",
                         help="Path to pre-selected sentences.",
                         type=str,
-                        default='../results_serialized_val_filtered.jsonl')
+                        default='/Users/jolly/PycharmProjects/COPENLU/results_serialized_val_filtered.jsonl')
 
     parser.add_argument("--dataset_path", help="Path to dataset", type=str,
-                        default='../liar_data/ruling_oracles_val.tsv')
+                        default='/Users/jolly/PycharmProjects/COPENLU/liar_data/ruling_oracles_val.tsv')
 
     parser.add_argument("--seed", help="Random seed", type=int, default=33)
 
     parser.add_argument("--device_type", help="Type of device, CPU or GPU", type=str,
-                        default='gpu')
+                        default='cpu')#gpu
 
     parser.add_argument("--sample",
                         help="Number of instances to sample from "

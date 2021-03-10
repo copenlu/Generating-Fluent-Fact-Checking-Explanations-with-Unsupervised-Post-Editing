@@ -24,9 +24,17 @@ def get_dataset(scored_sentences_path, dataset_path, top_n):
                'ruling_tokenized', 'statement_tokenized', 'oracle_ids']
     df.columns = columns
 
-    scored_sentences = [json.loads(line) for line in open(scored_sentences_path)] #, encoding='utf-8'
+    scored_sentences = [json.loads(line) for line in open(scored_sentences_path)]
     scored_sentences = {item['id']: sorted(item['sentence_scores'], key=lambda x: x[1], reverse=True)[:top_n] for item in scored_sentences}
-    scored_sentences = {k: [word_tokenize(sentence[0]) for sentence in v] for k, v in scored_sentences.items()}
+    #scored_sentences = {k: [word_tokenize(sentence[0]) for sentence in v] for k, v in scored_sentences.items()}
+    #Modification to take input as a complete justification instead of separate sentences.
+    inp_scored_sentences = {}
+    for k, v in scored_sentences.items():
+        temp = []
+        for sent in v:
+            temp.append(sent[0])
+        inp_scored_sentences[k] = " ".join(temp)
+    scored_sentences = inp_scored_sentences
 
     df['scored_sentences'] = df.apply(lambda x: scored_sentences.get(x['id'], None), axis=1)
     df = df[df['scored_sentences'] != None]
@@ -101,6 +109,7 @@ if __name__ == "__main__":
     scores_sa_justs = []
 
     for i in range(0, len(dataset), sa_args.batch_size):
+
         batch_data = dataset[i: i + sa_args.batch_size]
         sa_outputs_batch = simulated_annealing.run(batch_data)
         processed_samples += len(batch_data)
