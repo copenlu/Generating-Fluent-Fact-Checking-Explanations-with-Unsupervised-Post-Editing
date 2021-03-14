@@ -28,23 +28,23 @@ def get_model_args():
                         type=float, default=3e-2)
 
     parser.add_argument("--C",
-                        help="",
+                        help="scale of temp",
                         type=float, default=3e-4)
 
     parser.add_argument("--fluency_weight",
                         help="Weight for fluency score.",
-                        type=int, default=8)
+                        type=int, default=0.25)
 
     parser.add_argument("--semantic_weight",
                         help="Weight for semantic similarity score.",
-                        type=int, default=10)
+                        type=int, default=0.25)
 
     parser.add_argument("--length_weight",
                         help="Weight for length score.",
-                        type=int, default=20)
+                        type=int, default=0.5)
 
     parser.add_argument("--nli_weight",
-                        help="Weight for nli score.", type=int, default=12)
+                        help="Weight for nli score.", type=int, default=1)
 
     parser.add_argument("--max_steps",
                         help="Max steps for running SA.", type=int, default=30)
@@ -54,7 +54,7 @@ def get_model_args():
                         type=int, default=6)
 
     parser.add_argument("--batch_size",
-                        help="Batch size.", type=int, default=3)
+                        help="Batch size.", type=int, default=1)
 
     parser.add_argument("--editor_model_id", help="Model-id for editor.",
                         type=str, default='roberta-base')

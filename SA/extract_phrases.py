@@ -21,7 +21,10 @@ def extract_phrases(sent):
                 phrases.append(tree[pos[i]].leaves())
 
     for p in phrases[::-1]: #reversed list to get phrase order as in sentence.
-        ordered_phrases.append(" ".join(p)) #list of phrases
+        if len(p) > 20:
+            continue
+        temp_p = " ".join(p).replace("-LRB-", "(").replace("-RRB-", ")")
+        ordered_phrases.append(temp_p) #list of phrases
 
     unique_phrases = [x for x in set(ordered_phrases)]
 

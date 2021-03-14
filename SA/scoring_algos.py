@@ -53,7 +53,7 @@ class SimulatedAnnealing:
     def power(self, my_list, weight):
         return [x**weight for x in my_list]
 
-    def scorer(self, new_justs, original_justs, positions):
+    def scorer(self, new_justs, original_justs):
         # TODO: optimise to compute the scores for the edited sentence only?
 
         fluency_scores = self.gpt_scorer.scorer_batch(new_justs)
@@ -61,26 +61,33 @@ class SimulatedAnnealing:
         length_score = self.length_penality(new_justs)
 
         # TODO pass in one batch
-        nli_score = [self.nli_scorer(org, new) for org, new in zip(original_justs, new_justs)]
+        #nli_score = [self.nli_scorer(org, new) for org, new in zip(original_justs, new_justs)]
 
-        weighted_nli = self.power(nli_score, self.args.nli_weight)
+        #weighted_nli = self.power(nli_score, self.args.nli_weight)
 
         weighted_length_scores = self.power(length_score, self.args.length_weight)
         sentence_semantic_scores = self.sentence_level_semantic_scorer(new_justs, original_justs)
 
+        # torch.FloatTensor(weighted_nli) * \
         total_scores = fluency_scores.pow(self.args.fluency_weight) * \
-                       torch.FloatTensor(weighted_nli) * \
                        semantic_scores.pow(self.args.semantic_weight) * \
                        sentence_semantic_scores.pow(self.args.semantic_weight) * \
                        torch.FloatTensor(weighted_length_scores)
 
+        print(fluency_scores.item(), fluency_scores.pow(self.args.fluency_weight).item())
+        print(semantic_scores.item(), semantic_scores.pow(self.args.semantic_weight).item())
+        print(sentence_semantic_scores.item(), sentence_semantic_scores.pow(self.args.semantic_weight).item())
+        print(length_score[0], torch.FloatTensor(weighted_length_scores).item())
+        print(total_scores.item())
+        print("--------------")
         return total_scores
 
-    def acceptance_prob(self, edited_justs, pre_edit_justs, original_justs, T, positions):
+    def acceptance_prob(self, edited_justs, pre_edit_justs, original_justs, T):
         # TODO save previous scores for optimisation
-        accept_hat = torch.exp((self.scorer(edited_justs, original_justs, positions) -
-                                self.scorer(pre_edit_justs, original_justs, positions)) / T)
-        return accept_hat.clamp(0.0, 1.0).squeeze().cpu().detach().numpy().tolist()
+        accept_hat = torch.exp((self.scorer(edited_justs, original_justs) -
+                                self.scorer(pre_edit_justs, original_justs)) / T)
+
+        return accept_hat.clamp(0.0, 1.0).cpu().detach().numpy().tolist()
 
     def run(self, input_batch):
         """
@@ -104,23 +111,22 @@ class SimulatedAnnealing:
             T = max(self.args.t_init - self.args.C * step, 0)
             ops = np.random.randint(0, 3, batch_size)
             # gives random values of len==batch size between 0 and 3, mapping to operation functions in the editor
-
-
-            # positions consist of index of the sentence and the index of the word in the sentence
-
-            positions = [random.randint(0, len(i.strip().split(" ")) - 1) for i in pre_edit_justs]
-
-            edited_justs = self.editor.edit(pre_edit_justs, ops, positions)
+            print(ops)
+            edited_justs = self.editor.edit(pre_edit_justs, ops)
             # TODO add marking of the changed content
+
+            print("\n")
+            print(pre_edit_justs[0])
+            print(edited_justs[0])
 
             accept_probs = self.acceptance_prob(edited_justs.tolist(),
                                                 pre_edit_justs,
                                                 original_justs,
-                                                T,
-                                                positions)
+                                                T)
 
             for idx, accept_prob in enumerate(accept_probs):
                 if accept_prob == 1.0:
                     pre_edit_justs[idx] = edited_justs[idx]
+                    print("Accepted!")
 
         return pre_edit_justs

@@ -10,12 +10,23 @@ from SA.generator_gpt import GPT2FluencyScorer
 from SA.scoring_algos import SimulatedAnnealing
 from SA.args import get_model_args
 
+from SA.extract_phrases import parser
+
 from rouge_score import rouge_scorer
 import os.path
 import torch
 
+def clean_str(sent):
+    sent = sent.replace("’", "'")
+    sent = sent.replace("‘", "`")
+    sent = sent.replace('"', "''")
+    sent = sent.replace("—", "--")
+    sent = sent.replace("…", "...")
+    sent = sent.replace("–", "--")
 
-def get_dataset(scored_sentences_path, dataset_path, top_n):
+    return sent
+
+def get_dataset(scored_sentences_path, dataset_path, top_n, parser):
 
     df = pd.read_csv(dataset_path, sep='\t', index_col=0)
     df = df.dropna()
@@ -33,7 +44,7 @@ def get_dataset(scored_sentences_path, dataset_path, top_n):
         temp = []
         for sent in v:
             temp.append(sent[0])
-        inp_scored_sentences[k] = " ".join(temp)
+        inp_scored_sentences[k] = clean_str(" ".join(parser.tokenize(" ".join(temp))))
     scored_sentences = inp_scored_sentences
 
     df['scored_sentences'] = df.apply(lambda x: scored_sentences.get(x['id'], None), axis=1)
@@ -65,7 +76,7 @@ if __name__ == "__main__":
     random.seed(sa_args.seed)
     np.random.seed(sa_args.seed)
 
-    dataset = get_dataset(sa_args.sentences_path, sa_args.dataset_path, sa_args.top_n)
+    dataset = get_dataset(sa_args.sentences_path, sa_args.dataset_path, sa_args.top_n, parser)
 
     if sa_args.sample:
         print(f"Sampling {sa_args.sample} instances from the dataset")
