@@ -85,6 +85,13 @@ class RobertaEditor():
 
         return [input_texts.replace(phrases_in_input[i], "") for i in random.sample(range(0, len(phrases_in_input)), self.max_phrases)][0]
 
+    def remove_phrase(self, text, reorder_phrase):
+
+        text = text.strip()
+        text = text.replace(" " + reorder_phrase, "")
+        text = text.replace(reorder_phrase, "")
+
+        return text.strip()
 
     def reorder(self, input_texts: str) -> str: #phrase level delete operation
 
@@ -99,10 +106,10 @@ class RobertaEditor():
 
         start_idx = input_texts.index(anchor_phrase)
         end_idx = start_idx + len(anchor_phrase)
-        start_str = input_texts[:end_idx].replace(" " + reorder_phrase, "")
-        end_str = input_texts[end_idx:].replace(" " + reorder_phrase, "")
+        start_str = self.remove_phrase(input_texts[:end_idx], reorder_phrase)
+        end_str = self.remove_phrase(input_texts[end_idx:], reorder_phrase)
 
-        return start_str + " " + reorder_phrase + end_str
+        return (start_str + " " + reorder_phrase + " " + end_str).strip()
 
 
     def get_word_at_mask(self, output_tensors, mask_idxs):

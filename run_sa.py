@@ -104,9 +104,8 @@ if __name__ == "__main__":
                                              nli_scorer,
                                              sa_args)
 
-    sa_outputs = []
+
     # TODO write is needed once for gold and separately for each step
-    # remove because file is opened in append mode
     if os.path.exists('sa_inp.txt'):
         os.remove('sa_inp.txt')
 
@@ -118,6 +117,7 @@ if __name__ == "__main__":
 
     processed_samples = 0
     scores_sa_justs = []
+    sa_outputs = []
 
     for i in range(0, len(dataset), sa_args.batch_size):
 
@@ -130,28 +130,21 @@ if __name__ == "__main__":
         print(sa_outputs_batch)
         for instance, instance_edit in zip(batch_data, sa_outputs_batch):
 
-            temp_inp = []
-            temp_out = []
-            for sent in instance['scored_sentences']:
-                temp_inp.append(" ".join(sent))
-
-            for out in instance_edit:
-                temp_out.append(" ".join(out))
-
             # TODO write new text and what was the edit operation
-            sa_inp.write(" ".join(temp_inp) + "\n")
-            sa_out.write(" ".join(temp_out) + "\n")
-            print(temp_out, instance['justification'])
-            score1 = scorer.score(prediction='\n'.join(temp_out),
-                                  target='\n'.join(instance['justification_sentences']))
+            sa_inp.write(instance['scored_sentences'] + "\n")
+            sa_out.write(instance_edit + "\n")
+
+            print("SA_input: ", instance['scored_sentences'] )
+            print("SA_output: ", instance_edit)
+            print("Golden_just: ", instance['justification'])
+
+
+            score1 = scorer.score(prediction=instance_edit, target=instance['justification'])
             scores_sa_justs.append(score1)
 
         sa_outputs += sa_outputs_batch
 
-    scores_original_sentences = [scorer.score(prediction='\n'.join(
-        [' '.join(s) for s in instance['scored_sentences']]),
-                                              target='\n'.join(instance[
-                                                                   'justification_sentences']))
+    scores_original_sentences = [scorer.score(prediction=instance['scored_sentences'],target=instance['justification'])
                                  for instance in dataset]
 
     print(f"Scores for originally selected {sa_args.top_n} sentences")

@@ -33,11 +33,15 @@ def get_model_args():
 
     parser.add_argument("--fluency_weight",
                         help="Weight for fluency score.",
-                        type=int, default=0.25)
+                        type=int, default=0.75)
 
-    parser.add_argument("--semantic_weight",
+    parser.add_argument("--semantic_weight_keywords",
                         help="Weight for semantic similarity score.",
-                        type=int, default=0.25)
+                        type=int, default=0.75)
+
+    parser.add_argument("--semantic_weight_sentences",
+                        help="Weight for semantic similarity score.",
+                        type=int, default=1.0)
 
     parser.add_argument("--length_weight",
                         help="Weight for length score.",
