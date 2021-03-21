@@ -137,6 +137,7 @@ if __name__ == "__main__":
             print("SA_input: ", instance['scored_sentences'] )
             print("SA_output: ", instance_edit)
             print("Golden_just: ", instance['justification'])
+            print("----------------------------------------------------------------------\n")
 
 
             score1 = scorer.score(prediction=instance_edit, target=instance['justification'])

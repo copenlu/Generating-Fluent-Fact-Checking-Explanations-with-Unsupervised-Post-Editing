@@ -95,22 +95,22 @@ class SimulatedAnnealing:
                        torch.FloatTensor(weighted_length_scores) * \
                        torch.FloatTensor(weighted_entity_scores)
 
-        print("Fluency: ", fluency_scores.item(), fluency_scores.pow(self.args.fluency_weight).item())
-        print("Semanctic_wordlevel: ", word_semantic_scores.item(), word_semantic_scores.pow(self.args.semantic_weight_keywords).item())
-        print("Semanctic_sentencelevel: ",sentence_semantic_scores.item(), sentence_semantic_scores.pow(self.args.semantic_weight_sentences).item())
-        print("Length_score: ", length_score, torch.FloatTensor(weighted_length_scores).item())
-        print("Entity_score: ", entity_score, torch.FloatTensor(weighted_entity_scores).item())
-        print("Total_score: ",total_scores.item())
+        # print("Fluency: ", fluency_scores.item(), fluency_scores.pow(self.args.fluency_weight).item())
+        # print("Semanctic_wordlevel: ", word_semantic_scores.item(), word_semantic_scores.pow(self.args.semantic_weight_keywords).item())
+        # print("Semanctic_sentencelevel: ",sentence_semantic_scores.item(), sentence_semantic_scores.pow(self.args.semantic_weight_sentences).item())
+        # print("Length_score: ", length_score, torch.FloatTensor(weighted_length_scores).item())
+        # print("Entity_score: ", entity_score, torch.FloatTensor(weighted_entity_scores).item())
+        # print("Total_score: ",total_scores.item())
 
         return total_scores
 
     def acceptance_prob(self, edited_justs, pre_edit_justs, original_justs, T):
         # TODO save previous scores for optimisation
 
-        print("Scores of pre-edit sentences")
+        # print("Scores of pre-edit sentences")
         last_scores = self.scorer(pre_edit_justs, original_justs)
-        print("----------")
-        print("Scores of edited sentences")
+        # print("----------")
+        # print("Scores of edited sentences")
         candidates_scores = self.scorer(edited_justs, original_justs)
 
         accept_hat = torch.exp((candidates_scores - last_scores) / T)
@@ -139,16 +139,16 @@ class SimulatedAnnealing:
             T = max(self.args.t_init - self.args.C * step, 0)
             ops = np.random.randint(0, 3, batch_size)
             # gives random values of len==batch size between 0 and 3, mapping to operation functions in the editor
-            print(ops)
+            # print(ops)
             edited_justs = self.editor.edit(pre_edit_justs, ops)
             # TODO add marking of the changed content
 
-            print("\n")
-            print("Step: ", step)
-            print("Pre-edit sentence: ")
-            print(pre_edit_justs[0])
-            print("Edited sentence:")
-            print(edited_justs[0])
+            # print("\n")
+            # print("Step: ", step)
+            # print("Pre-edit sentence: ")
+            # print(pre_edit_justs[0])
+            # print("Edited sentence:")
+            # print(edited_justs[0])
 
             accept_probs = self.acceptance_prob(edited_justs.tolist(),
                                                 pre_edit_justs,
@@ -156,10 +156,10 @@ class SimulatedAnnealing:
                                                 T)
 
             for idx, accept_prob in enumerate(accept_probs):
-                print("Prob:", accept_prob)
+                #print("Prob:", accept_prob)
                 if accept_prob > 0.75: #random.random(): #To check if the accepted probability is greater than random number
                     pre_edit_justs[idx] = edited_justs[idx]
-                    print("Accepted!")
+                    #print("Accepted!")
 
 
 
