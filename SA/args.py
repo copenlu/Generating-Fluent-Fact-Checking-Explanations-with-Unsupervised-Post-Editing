@@ -25,33 +25,37 @@ def get_model_args():
     #SA Args
     parser.add_argument("--t_init",
                         help="Temperature initial value.",
-                        type=float, default=3e-2)
+                        type=float, default=3e4)
 
     parser.add_argument("--C",
                         help="scale of temp",
-                        type=float, default=3e-4)
+                        type=float, default=3e2)
 
     parser.add_argument("--fluency_weight",
                         help="Weight for fluency score.",
-                        type=int, default=0.75)
+                        type=int, default=1.3)
 
     parser.add_argument("--semantic_weight_keywords",
                         help="Weight for semantic similarity score.",
-                        type=int, default=0.75)
+                        type=int, default=1.0)
 
     parser.add_argument("--semantic_weight_sentences",
                         help="Weight for semantic similarity score.",
                         type=int, default=1.0)
 
+    parser.add_argument("--named_entity_score_weight",
+                        help="Weight for entity scorer.",
+                        type=int, default=1.0)
+
     parser.add_argument("--length_weight",
                         help="Weight for length score.",
-                        type=int, default=0.5)
+                        type=int, default=1.15)
 
     parser.add_argument("--nli_weight",
                         help="Weight for nli score.", type=int, default=1)
 
     parser.add_argument("--max_steps",
-                        help="Max steps for running SA.", type=int, default=30)
+                        help="Max steps for running SA.", type=int, default=100)
 
     parser.add_argument("--top_n",
                         help="Number of top sentences to start SA with",
@@ -59,6 +63,9 @@ def get_model_args():
 
     parser.add_argument("--batch_size",
                         help="Batch size.", type=int, default=1)
+
+    parser.add_argument("--min_length_of_edited_sent",
+                        help="Minimum size of a justification. Stopping Criterion", type=int, default=40)
 
     parser.add_argument("--editor_model_id", help="Model-id for editor.",
                         type=str, default='roberta-base')

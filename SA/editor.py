@@ -11,16 +11,18 @@ from nltk.tokenize import word_tokenize
 
 
 class RobertaEditor():
-    def __init__(self, model_id, editor_device, max_phrases=1):
+    def __init__(self, model_id, editor_device, min_length_of_edited_sent, max_phrases=1):
 
         self.model_id = model_id
+
         self.device = editor_device
         self.tokenizer = RobertaTokenizer.from_pretrained(self.model_id)
-        self.model = RobertaForMaskedLM.from_pretrained(self.model_id,
-                                                        return_dict=True).to(self.device)
+        self.model = RobertaForMaskedLM.from_pretrained(self.model_id, return_dict=True).to(self.device).eval()
+
 
         self.ops_map = [self.insert, self.reorder, self.delete]
         self.max_phrases = max_phrases
+        self.min_length_of_edited_sent = min_length_of_edited_sent
         self.mask_vocab_idx = 50264
         print("Editor built")
 
@@ -80,10 +82,19 @@ class RobertaEditor():
 
 
     def delete(self, input_texts: str) -> str: #phrase level delete operation
+
+        org_inp = input_texts[:]
         unique_phrases = extract_phrases(input_texts)
         phrases_in_input = [i for i in unique_phrases if i in input_texts]
 
-        return [input_texts.replace(phrases_in_input[i], "") for i in random.sample(range(0, len(phrases_in_input)), self.max_phrases)][0]
+        for i in random.sample(range(0, len(phrases_in_input)), self.max_phrases):
+            if len(phrases_in_input[i].split()) ==1:
+                phrases_in_input[i] = phrases_in_input[i] + " "
+            input_texts = input_texts.replace(phrases_in_input[i], "")
+            if len(input_texts.split(' ')) < self.min_length_of_edited_sent:
+                return org_inp
+            else:
+                return input_texts
 
     def remove_phrase(self, text, reorder_phrase):
 

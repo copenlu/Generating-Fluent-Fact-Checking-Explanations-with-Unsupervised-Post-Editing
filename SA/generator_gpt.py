@@ -11,19 +11,7 @@ class GPT2FluencyScorer():
         self.model_id = model_id
         self.device = fluency_device
         self.tokenizer = GPT2Tokenizer.from_pretrained(self.model_id)
-        self.model = GPT2LMHeadModel.from_pretrained(model_id).to(self.device)
-
-        #to get scores sentence by sentence
-    def scorer(self, sentence):
-
-        tokenize_input = self.tokenizer.tokenize(sentence, return_tensors='pt')
-        tensor_input = torch.tensor([self.tokenizer.convert_tokens_to_ids(tokenize_input)]).to(self.device)
-        outputs = self.model(tensor_input, labels=tensor_input)
-
-        loss = outputs[0]
-        logits = outputs[1]
-
-        return math.exp(loss.item()) #fluency per sentence
+        self.model = GPT2LMHeadModel.from_pretrained(model_id).to(self.device).eval()
 
     def scorer_batch(self, sentences):
         #Gpt for fluency
@@ -45,4 +33,4 @@ class GPT2FluencyScorer():
         loss_fct = CrossEntropyLoss(ignore_index=-100, reduction='none')  # give CE loss at each word generation step
         loss = loss_fct(shift_logits.view(-1, shift_logits.size(-1)), shift_labels.view(-1))
         prob_products_per_sample = torch.exp(-1 * loss.reshape(-1, shift_labels.shape[-1]).sum(dim=1)/(tensor_input["attention_mask"][..., 1:].contiguous().sum(dim=1))).cpu()
-        return (prob_products_per_sample)
+        return (prob_products_per_sample * 100)

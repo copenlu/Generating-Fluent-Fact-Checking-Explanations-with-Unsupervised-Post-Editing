@@ -92,7 +92,7 @@ if __name__ == "__main__":
         editor_device = gpt_device = nli_device = sa_args.device_type
 
 
-    editor = RobertaEditor(sa_args.editor_model_id, editor_device)
+    editor = RobertaEditor(sa_args.editor_model_id, editor_device, sa_args.min_length_of_edited_sent)
     fluency_scorer  =  GPT2FluencyScorer(sa_args.fluencyscorer_model_id, gpt_device)
     nli_scorer = NLIScorer(nli_device)
 

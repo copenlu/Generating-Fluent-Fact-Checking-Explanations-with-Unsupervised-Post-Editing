@@ -27,7 +27,6 @@ def extract_phrases(sent):
         ordered_phrases.append(temp_p) #list of phrases
 
     unique_phrases = [x for x in set(ordered_phrases)]
-
     return list(set(unique_phrases))
 
 
