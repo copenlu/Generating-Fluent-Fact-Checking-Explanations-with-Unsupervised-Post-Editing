@@ -112,8 +112,13 @@ class RobertaEditor():
         reorder_phrase = phrases_in_input[random.sample(range(0, len(phrases_in_input)), self.max_phrases)[0]]
 
         anchor_phrase = phrases_in_input[random.sample(range(0, len(phrases_in_input)), self.max_phrases)[0]]
-        while (reorder_phrase in anchor_phrase) or (anchor_phrase in reorder_phrase):
+        try_counter = 0
+        while ((reorder_phrase in anchor_phrase) or (anchor_phrase in reorder_phrase)) and try_counter < 10:
             anchor_phrase = phrases_in_input[random.sample(range(0, len(phrases_in_input)), self.max_phrases)[0]]
+            try_counter+=1
+
+        if try_counter==10:
+            return input_texts
 
         start_idx = input_texts.index(anchor_phrase)
         end_idx = start_idx + len(anchor_phrase)
