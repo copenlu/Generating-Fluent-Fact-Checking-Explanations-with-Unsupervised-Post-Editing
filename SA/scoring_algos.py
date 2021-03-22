@@ -4,10 +4,12 @@ import numpy as np
 import copy
 import spacy
 import nlp
+from tqdm import tqdm
 
 from sentence_transformers import SentenceTransformer, util
 
 from rake_nltk import Rake
+
 
 nlp = spacy.load("en_core_web_lg")
 
@@ -134,7 +136,7 @@ class SimulatedAnnealing:
 
         batch_size = len(input_batch)
 
-        for step in range(self.args.max_steps):
+        for step in tqdm(range(self.args.max_steps)):
 
             T = max(self.args.t_init - self.args.C * step, 0)
             ops = np.random.randint(0, 3, batch_size)
