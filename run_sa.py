@@ -139,13 +139,15 @@ if __name__ == "__main__":
             print("Golden_just: ", instance['justification'])
             print("----------------------------------------------------------------------\n")
 
-
-            score1 = scorer.score(prediction=instance_edit, target=instance['justification'])
+            score1 = scorer.score(prediction='\n'.join(sent_tokenize(instance_edit)),
+                                  target='\n'.join(instance['justification_sentences']))
             scores_sa_justs.append(score1)
+
 
         sa_outputs += sa_outputs_batch
 
-    scores_original_sentences = [scorer.score(prediction=instance['scored_sentences'],target=instance['justification'])
+    scores_original_sentences = [scorer.score(prediction='\n'.join(sent_tokenize(instance['scored_sentences'])),
+                                              target='\n'.join(instance['justification_sentences']))
                                  for instance in dataset]
 
     print(f"Scores for originally selected {sa_args.top_n} sentences")
