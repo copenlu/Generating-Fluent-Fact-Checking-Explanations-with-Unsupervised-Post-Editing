@@ -5,3 +5,5 @@ nltk==3.5
 torch==1.6.0
 tqdm==4.50.0
 rake-nltk==1.0.4
+spacy==3.0.5
+sentence-transformers==1.0.3
