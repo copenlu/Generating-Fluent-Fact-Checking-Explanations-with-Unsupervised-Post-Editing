@@ -1,5 +1,4 @@
-import copy
-from typing import List, Tuple
+from typing import List
 
 import numpy as np
 import random
@@ -7,7 +6,6 @@ import torch
 from transformers import RobertaForMaskedLM, RobertaTokenizer
 
 from SA.extract_phrases import extract_phrases
-from nltk.tokenize import word_tokenize
 
 
 class RobertaEditor():

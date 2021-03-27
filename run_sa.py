@@ -4,7 +4,6 @@ import numpy as np
 import random
 from nltk.tokenize import word_tokenize, sent_tokenize
 
-from SA.NLI_objective import NLIScorer
 from SA.editor import RobertaEditor
 from SA.generator_gpt import GPT2FluencyScorer
 from SA.scoring_algos import SimulatedAnnealing
@@ -15,6 +14,7 @@ from SA.extract_phrases import parser
 from rouge_score import rouge_scorer
 import os.path
 import torch
+
 
 def clean_str(sent):
     sent = sent.replace("’", "'")
@@ -93,16 +93,14 @@ if __name__ == "__main__":
 
 
     editor = RobertaEditor(sa_args.editor_model_id, editor_device, sa_args.min_length_of_edited_sent)
-    fluency_scorer  =  GPT2FluencyScorer(sa_args.fluencyscorer_model_id, gpt_device)
-    nli_scorer = NLIScorer(nli_device)
+    fluency_scorer = GPT2FluencyScorer(sa_args.fluencyscorer_model_id, gpt_device)
 
     score_names = ['rouge1', 'rouge2', 'rougeLsum']
     scorer = rouge_scorer.RougeScorer(score_names, use_stemmer=True)
 
     simulated_annealing = SimulatedAnnealing(editor,
                                              fluency_scorer,
-                                             nli_scorer,
-                                             sa_args)
+                                             sa_args, nli_device)
 
 
     # TODO write is needed once for gold and separately for each step

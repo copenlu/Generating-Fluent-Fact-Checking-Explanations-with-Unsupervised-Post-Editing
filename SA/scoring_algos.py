@@ -3,7 +3,7 @@ import random
 import numpy as np
 import copy
 import spacy
-import nlp
+# import nlp
 from tqdm import tqdm
 
 from sentence_transformers import SentenceTransformer, util
@@ -13,16 +13,16 @@ from rake_nltk import Rake
 
 nlp = spacy.load("en_core_web_lg")
 
+
 class SimulatedAnnealing:
 
-    def __init__(self, editor, gpt_scorer, nli_scorer, args):
+    def __init__(self, editor, gpt_scorer, args, device):
 
         self.editor = editor
         self.gpt_scorer = gpt_scorer
-        self.nli_scorer = nli_scorer
         self.args = args
 
-        self.sbert = SentenceTransformer('stsb-distilbert-base', device=nli_scorer.device)
+        self.sbert = SentenceTransformer('stsb-distilbert-base', device=device)
 
     def ref_to_keywords(self, refs):
 
