@@ -15,7 +15,7 @@ def get_model_args():
     parser.add_argument("--seed", help="Random seed", type=int, default=33)
 
     parser.add_argument("--device_type", help="Type of device, CPU or GPU", type=str,
-                        default='cpu')#gpu
+                        default='cpu')
 
     parser.add_argument("--sample",
                         help="Number of instances to sample from "
@@ -50,9 +50,6 @@ def get_model_args():
     parser.add_argument("--length_weight",
                         help="Weight for length score.",
                         type=int, default=1.15)
-
-    parser.add_argument("--nli_weight",
-                        help="Weight for nli score.", type=int, default=1)
 
     parser.add_argument("--max_steps",
                         help="Max steps for running SA.", type=int, default=100)

@@ -18,4 +18,4 @@ python -m spacy download en_core_web_lg
 ```
 
 # Running SA
-python run_sa.py --sentences_path /image/image-copenlu/unsupervised_fc/sup_sccores/results_serialized_val_filtered.jsonl --dataset_path ../just_summ/oracles/ruling_oracles_val.tsv --length_weight 20 --sample 4
+python run_sa.py --sentences_path /image/image-copenlu/unsupervised_fc/sup_sccores/results_serialized_val_filtered.jsonl --dataset_path ../just_summ/oracles/ruling_oracles_val.tsv --length_weight 20 --sample 4 --batch_size 4

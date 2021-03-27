@@ -8,7 +8,7 @@ import json
 from nltk.parse.corenlp import CoreNLPParser
 from functools import lru_cache
 
-parser = CoreNLPParser('http://localhost:9013', encoding="utf-8")
+parser = CoreNLPParser('http://localhost:9000', encoding="utf-8")
 phrase_tags = ['S', 'ADJP', 'ADVP', 'CONJP', 'FRAG', 'INTJ', 'LST', 'NAC', 'NP',
                'NX', 'PP', 'PRN', 'PRT', 'QP', 'RRC', 'UCP', 'VP', 'WHADJP',
                'WHAVP', 'WHNP', 'WHPP', 'X', 'SBAR']

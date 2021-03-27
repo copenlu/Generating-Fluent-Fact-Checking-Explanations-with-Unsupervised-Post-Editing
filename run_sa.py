@@ -2,7 +2,7 @@ import json
 import pandas as pd
 import numpy as np
 import random
-from nltk.tokenize import word_tokenize, sent_tokenize
+from nltk.tokenize import sent_tokenize
 
 from SA.editor import RobertaEditor
 from SA.generator_gpt import GPT2FluencyScorer
@@ -82,26 +82,29 @@ if __name__ == "__main__":
         print(f"Sampling {sa_args.sample} instances from the dataset")
         dataset = np.random.choice(dataset, sa_args.sample)
 
-    if sa_args.device_type=="gpu":
-        num_gpus = torch.cuda.device_count()
-        assert num_gpus >= 3, f"SA needs atleast 3 GPUs. No. of GPUs available = {num_gpus}"
-        editor_device = "cuda:0"
-        gpt_device = "cuda:1"
-        nli_device = "cuda:2"
+    if sa_args.device_type == "gpu":
+        device = "cuda"
     else:
-        editor_device = gpt_device = nli_device = sa_args.device_type
+        device = sa_args.device_type
 
+    num_gpus = torch.cuda.device_count()
 
-    editor = RobertaEditor(sa_args.editor_model_id, editor_device, sa_args.min_length_of_edited_sent)
-    fluency_scorer = GPT2FluencyScorer(sa_args.fluencyscorer_model_id, gpt_device)
+    editor = RobertaEditor(sa_args.editor_model_id, device, sa_args.min_length_of_edited_sent)
+    fluency_scorer = GPT2FluencyScorer(sa_args.fluencyscorer_model_id, device)
 
     score_names = ['rouge1', 'rouge2', 'rougeLsum']
     scorer = rouge_scorer.RougeScorer(score_names, use_stemmer=True)
 
     simulated_annealing = SimulatedAnnealing(editor,
                                              fluency_scorer,
-                                             sa_args, nli_device)
+                                             sa_args, device)
 
+    if num_gpus > 1:
+        print(f'Using {num_gpus} GPUs')
+        editor.model = torch.nn.DataParallel(editor.model, device_ids=[0, 1])
+        fluency_scorer.model = torch.nn.DataParallel(fluency_scorer.model, device_ids=[0, 1])
+        # TODO add parallel computation for the sentence sim model
+        # simulated_annealing.sbert = torch.nn.DataParallel(simulated_annealing.sbert, device_ids=[0, 1])
 
     # TODO write is needed once for gold and separately for each step
     if os.path.exists('sa_inp.txt'):
@@ -140,7 +143,6 @@ if __name__ == "__main__":
             score1 = scorer.score(prediction='\n'.join(sent_tokenize(instance_edit)),
                                   target='\n'.join(instance['justification_sentences']))
             scores_sa_justs.append(score1)
-
 
         sa_outputs += sa_outputs_batch
 
