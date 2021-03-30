@@ -33,4 +33,4 @@ class GPT2FluencyScorer():
         loss_fct = CrossEntropyLoss(ignore_index=-100, reduction='none')  # give CE loss at each word generation step
         loss = loss_fct(shift_logits.view(-1, shift_logits.size(-1)), shift_labels.view(-1))
         prob_products_per_sample = torch.exp(-1 * loss.reshape(-1, shift_labels.shape[-1]).sum(dim=1)/(tensor_input["attention_mask"][..., 1:].contiguous().sum(dim=1))).cpu()
-        return (prob_products_per_sample * 100)
+        return (prob_products_per_sample * 1000)

@@ -44,7 +44,8 @@ def get_dataset(scored_sentences_path, dataset_path, top_n, parser):
         temp = []
         for sent in v:
             temp.append(sent[0])
-        inp_scored_sentences[k] = clean_str(" ".join(parser.tokenize(" ".join(temp))))
+        #inp_scored_sentences[k] = clean_str(" ".join(parser.tokenize(" ".join(temp))))
+        inp_scored_sentences[k] = clean_str(" ".join(temp))
     scored_sentences = inp_scored_sentences
 
     df['scored_sentences'] = df.apply(lambda x: scored_sentences.get(x['id'], None), axis=1)
@@ -135,9 +136,12 @@ if __name__ == "__main__":
             sa_inp.write(instance['scored_sentences'] + "\n")
             sa_out.write(instance_edit + "\n")
 
-            print("SA_input: ", instance['scored_sentences'] )
+            print("SA_input: ", instance['scored_sentences'])
+            print("\n")
             print("SA_output: ", instance_edit)
+            print("\n")
             print("Golden_just: ", instance['justification'])
+            print("\n")
             print("----------------------------------------------------------------------\n")
 
             score1 = scorer.score(prediction='\n'.join(sent_tokenize(instance_edit)),

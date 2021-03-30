@@ -135,7 +135,7 @@ class SimulatedAnnealing:
         pre_edit_justs = copy.deepcopy(original_justs)
 
         batch_size = len(input_batch)
-
+        #num_steps=0
         for step in tqdm(range(self.args.max_steps)):
 
             T = max(self.args.t_init - self.args.C * step, 0)
@@ -146,7 +146,7 @@ class SimulatedAnnealing:
             # TODO add marking of the changed content
 
             # print("\n")
-            # print("Step: ", step)
+            # print(f"Step: {step} | Op: {ops[0]}")
             # print("Pre-edit sentence: ")
             # print(pre_edit_justs[0])
             # print("Edited sentence:")
@@ -159,10 +159,10 @@ class SimulatedAnnealing:
 
             for idx, accept_prob in enumerate(accept_probs):
                 #print("Prob:", accept_prob)
-                if accept_prob > 0.75: #random.random(): #To check if the accepted probability is greater than random number
+                if accept_prob > random.random(): #To check if the accepted probability is greater than random number
                     pre_edit_justs[idx] = edited_justs[idx]
                     #print("Accepted!")
-
-
+                    #num_accepts += 1
+            #print(num_accepts)
 
         return pre_edit_justs

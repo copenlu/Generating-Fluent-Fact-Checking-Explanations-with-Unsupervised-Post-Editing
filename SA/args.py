@@ -25,15 +25,19 @@ def get_model_args():
     #SA Args
     parser.add_argument("--t_init",
                         help="Temperature initial value.",
-                        type=float, default=3e4)
+                        type=float, default=60000)
 
     parser.add_argument("--C",
                         help="scale of temp",
-                        type=float, default=3e2)
+                        type=float, default=300)
 
     parser.add_argument("--fluency_weight",
                         help="Weight for fluency score.",
-                        type=int, default=1.3)
+                        type=int, default=1.5)
+
+    parser.add_argument("--length_weight",
+                        help="Weight for length score.",
+                        type=int, default=1.2)
 
     parser.add_argument("--semantic_weight_keywords",
                         help="Weight for semantic similarity score.",
@@ -47,12 +51,9 @@ def get_model_args():
                         help="Weight for entity scorer.",
                         type=int, default=1.0)
 
-    parser.add_argument("--length_weight",
-                        help="Weight for length score.",
-                        type=int, default=1.15)
 
     parser.add_argument("--max_steps",
-                        help="Max steps for running SA.", type=int, default=100)
+                        help="Max steps for running SA.", type=int, default=200)
 
     parser.add_argument("--top_n",
                         help="Number of top sentences to start SA with",
