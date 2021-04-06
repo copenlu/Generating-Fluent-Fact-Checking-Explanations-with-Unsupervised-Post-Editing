@@ -24,7 +24,7 @@ def clean_str(sent):
     sent = sent.replace("…", "...")
     sent = sent.replace("–", "--")
 
-    return sent
+    return sent.strip()
 
 def get_dataset(scored_sentences_path, dataset_path, top_n, parser):
 
@@ -44,7 +44,11 @@ def get_dataset(scored_sentences_path, dataset_path, top_n, parser):
         temp = []
         for sent in v:
             temp.append(sent[0])
-        inp_scored_sentences[k] = clean_str(" ".join(parser.tokenize(" ".join(temp))))
+        #inp_scored_sentences[k] = clean_str(" ".join(parser.tokenize(" ".join(temp))))
+        inp_scored_sentences[k] = clean_str(" ".join(temp))
+        if len(inp_scored_sentences[k]) == 0:
+            inp_scored_sentences[k] = None
+
     scored_sentences = inp_scored_sentences
 
     df['scored_sentences'] = df.apply(lambda x: scored_sentences.get(x['id'], None), axis=1)
@@ -55,11 +59,18 @@ def get_dataset(scored_sentences_path, dataset_path, top_n, parser):
     df = df[['id', 'statement', 'justification', 'label', 'scored_sentences',
              'justification_sentences']]
     dataset = [row.to_dict() for i, row in df.iterrows()]
+    new_dataset = []
+    for i in dataset:
+        if i["scored_sentences"] is None or i["id"] == '2001.json' #Sentence in Liarplus is too long:
+            continue
+        else:
+            new_dataset.append(i)
 
     print(f'Size of dataset: {len(dataset)}')
-    print('Sample: ', dataset[0])
+    print(f'Size of new dataset: {len(new_dataset)}')
+    print('Sample: ', new_dataset[0])
 
-    return dataset
+    return new_dataset
 
 
 def get_string_scores(scores, score_names):
@@ -80,7 +91,7 @@ if __name__ == "__main__":
 
     if sa_args.sample:
         print(f"Sampling {sa_args.sample} instances from the dataset")
-        dataset = np.random.choice(dataset, sa_args.sample)
+        dataset = np.random.choice(dataset, sa_args.sampl)
 
     if sa_args.device_type == "gpu":
         device = "cuda"
@@ -89,8 +100,8 @@ if __name__ == "__main__":
 
     num_gpus = torch.cuda.device_count()
 
-    editor = RobertaEditor(sa_args.editor_model_id, device, sa_args.min_length_of_edited_sent)
     fluency_scorer = GPT2FluencyScorer(sa_args.fluencyscorer_model_id, device)
+    editor = RobertaEditor(sa_args.editor_model_id, device, sa_args.min_length_of_edited_sent, fluency_scorer)
 
     score_names = ['rouge1', 'rouge2', 'rougeLsum']
     scorer = rouge_scorer.RougeScorer(score_names, use_stemmer=True)
@@ -121,23 +132,25 @@ if __name__ == "__main__":
     sa_outputs = []
 
     for i in range(0, len(dataset), sa_args.batch_size):
-
+       
         batch_data = dataset[i: i + sa_args.batch_size]
         sa_outputs_batch = simulated_annealing.run(batch_data)
         processed_samples += len(batch_data)
         print("Processing: ", processed_samples)
         print("------------")
 
-        print(sa_outputs_batch)
         for instance, instance_edit in zip(batch_data, sa_outputs_batch):
 
             # TODO write new text and what was the edit operation
             sa_inp.write(instance['scored_sentences'] + "\n")
             sa_out.write(instance_edit + "\n")
 
-            print("SA_input: ", instance['scored_sentences'] )
+            print("SA_input: ", instance['scored_sentences'])
+            print("\n")
             print("SA_output: ", instance_edit)
+            print("\n")
             print("Golden_just: ", instance['justification'])
+            print("\n")
             print("----------------------------------------------------------------------\n")
 
             score1 = scorer.score(prediction='\n'.join(sent_tokenize(instance_edit)),

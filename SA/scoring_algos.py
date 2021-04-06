@@ -109,15 +109,20 @@ class SimulatedAnnealing:
     def acceptance_prob(self, edited_justs, pre_edit_justs, original_justs, T):
         # TODO save previous scores for optimisation
 
-        # print("Scores of pre-edit sentences")
+        #print("Scores of pre-edit sentences")
         last_scores = self.scorer(pre_edit_justs, original_justs)
-        # print("----------")
-        # print("Scores of edited sentences")
+        #print("----------")
+        #print("Scores of edited sentences")
         candidates_scores = self.scorer(edited_justs, original_justs)
+        #print("Difference: ", candidates_scores - last_scores)
+        
+        if self.args.algo_type == 'SA':
+            accept_hat = torch.exp((candidates_scores - last_scores) / T)
+            return accept_hat.clamp(0.0, 10.0).cpu().detach().numpy().tolist()
 
-        accept_hat = torch.exp((candidates_scores - last_scores) / T)
-
-        return accept_hat.clamp(0.0, 1.0).cpu().detach().numpy().tolist()
+        elif self.args.algo_type == 'noSA':
+            accept_hat = candidates_scores / last_scores
+            return accept_hat.clamp(0.0, 10.0).cpu().detach().numpy().tolist()
 
     def run(self, input_batch):
         """
@@ -135,7 +140,9 @@ class SimulatedAnnealing:
         pre_edit_justs = copy.deepcopy(original_justs)
 
         batch_size = len(input_batch)
-
+        #num_steps=0
+        #ops_prob = [0.99, 0.95, 0.97]
+        ops_prob = [self.args.insert_th, self.args.reorder_th, self.args.delete_th]
         for step in tqdm(range(self.args.max_steps)):
 
             T = max(self.args.t_init - self.args.C * step, 0)
@@ -146,7 +153,7 @@ class SimulatedAnnealing:
             # TODO add marking of the changed content
 
             # print("\n")
-            # print("Step: ", step)
+            # print(f"Step: {step} | Op: {ops[0]}")
             # print("Pre-edit sentence: ")
             # print(pre_edit_justs[0])
             # print("Edited sentence:")
@@ -159,10 +166,14 @@ class SimulatedAnnealing:
 
             for idx, accept_prob in enumerate(accept_probs):
                 #print("Prob:", accept_prob)
-                if accept_prob > 0.75: #random.random(): #To check if the accepted probability is greater than random number
-                    pre_edit_justs[idx] = edited_justs[idx]
+                if self.args.algo_type == 'SA':
+                    if accept_prob >=random.random():#To check if the accepted probability is greater than random number
+                        pre_edit_justs[idx] = edited_justs[idx]
+                elif self.args.algo_type == 'noSA':
+                    if accept_prob >= ops_prob[ops[idx]]:
+                        pre_edit_justs[idx] = edited_justs[idx]
                     #print("Accepted!")
-
-
+                    # num_accepts += 1
+            #print(num_accepts)
 
         return pre_edit_justs

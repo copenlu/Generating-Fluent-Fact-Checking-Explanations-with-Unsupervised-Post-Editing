@@ -25,34 +25,49 @@ def get_model_args():
     #SA Args
     parser.add_argument("--t_init",
                         help="Temperature initial value.",
-                        type=float, default=3e4)
+                        type=float, default=60000)
 
     parser.add_argument("--C",
                         help="scale of temp",
-                        type=float, default=3e2)
+                        type=float, default=300)
 
     parser.add_argument("--fluency_weight",
                         help="Weight for fluency score.",
-                        type=int, default=1.3)
+                        type=int, default=1.4)
+
+    parser.add_argument("--length_weight",
+                        help="Weight for length score.",
+                        type=int, default=1.25)
 
     parser.add_argument("--semantic_weight_keywords",
                         help="Weight for semantic similarity score.",
                         type=int, default=1.0)
 
     parser.add_argument("--semantic_weight_sentences",
-                        help="Weight for semantic similarity score.",
-                        type=int, default=1.0)
+                        help="Weight for sentence semantic similarity score.",
+                        type=int, default=1.1)
 
     parser.add_argument("--named_entity_score_weight",
                         help="Weight for entity scorer.",
-                        type=int, default=1.0)
+                        type=int, default=0.95)
+   
+    parser.add_argument("--insert_th",
+                        help="accept threshold for insert",
+                        type=int, default=0.99)
 
-    parser.add_argument("--length_weight",
-                        help="Weight for length score.",
-                        type=int, default=1.15)
+    parser.add_argument("--reorder_th",
+                        help="accept threshold for reorder",
+                        type=int, default=0.95)
+
+    parser.add_argument("--delete_th",
+                        help="accept threshold for delete",
+                        type=int, default=0.97)
+
+    parser.add_argument("--algo_type",
+                        help="Type of iterative algorithm.", type=str, default="noSA")
 
     parser.add_argument("--max_steps",
-                        help="Max steps for running SA.", type=int, default=100)
+                        help="Max steps for running SA.", type=int, default=200)
 
     parser.add_argument("--top_n",
                         help="Number of top sentences to start SA with",

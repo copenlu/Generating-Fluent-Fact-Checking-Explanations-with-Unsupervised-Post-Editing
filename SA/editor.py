@@ -9,9 +9,11 @@ from SA.extract_phrases import extract_phrases
 
 
 class RobertaEditor():
-    def __init__(self, model_id, editor_device, min_length_of_edited_sent, max_phrases=1):
+    def __init__(self, model_id, editor_device, min_length_of_edited_sent, fluency_scorer, max_phrases=1):
 
         self.model_id = model_id
+
+        self.fluency_scorer = fluency_scorer
 
         self.device = editor_device
         self.tokenizer = RobertaTokenizer.from_pretrained(self.model_id)
@@ -53,10 +55,14 @@ class RobertaEditor():
 
 
     def insert(self, input_texts: str) -> str:
-
+        
+        org_inp = input_texts[:]
+        if len(input_texts.split(' ')) < self.min_length_of_edited_sent:
+            return org_inp
         unique_phrases = extract_phrases(input_texts)
         phrases_in_input = [i for i in unique_phrases if i in input_texts]
-
+        if len(phrases_in_input) == 0:
+            return org_inp
         anchor_phrase = phrases_in_input[random.sample(range(0, len(phrases_in_input)), self.max_phrases)[0]]
 
         start_idx = input_texts.index(anchor_phrase)
@@ -67,23 +73,15 @@ class RobertaEditor():
         return start_str + " " + "<mask>" + end_str
 
 
-    # def replace(self, input_texts: str, mask_idx: int) -> str:
-    #     edited_text = input_texts.strip().split(" ")
-    #     edited_text = edited_text[:mask_idx] + ["<mask>"] + edited_text[mask_idx+1:]
-    #     return " ".join(edited_text)
-    #
-    #
-    # def delete_word_level(self, input_texts: str, mask_idx: int) -> str:
-    #     edited_text = input_texts.strip().split(" ")
-    #     edited_text = edited_text[:mask_idx] + edited_text[mask_idx + 1:]
-    #     return " ".join(edited_text)
-
-
     def delete(self, input_texts: str) -> str: #phrase level delete operation
 
         org_inp = input_texts[:]
+        if len(input_texts.split(' ')) < self.min_length_of_edited_sent:
+            return org_inp
         unique_phrases = extract_phrases(input_texts)
         phrases_in_input = [i for i in unique_phrases if i in input_texts]
+        if len(phrases_in_input) == 0:
+            return org_inp
 
         for i in random.sample(range(0, len(phrases_in_input)), self.max_phrases):
             if len(phrases_in_input[i].split()) ==1:
@@ -102,21 +100,7 @@ class RobertaEditor():
 
         return text.strip()
 
-    def reorder(self, input_texts: str) -> str: #phrase level delete operation
-
-        unique_phrases = extract_phrases(input_texts)
-        phrases_in_input = [i for i in unique_phrases if i in input_texts]
-
-        reorder_phrase = phrases_in_input[random.sample(range(0, len(phrases_in_input)), self.max_phrases)[0]]
-
-        anchor_phrase = phrases_in_input[random.sample(range(0, len(phrases_in_input)), self.max_phrases)[0]]
-        try_counter = 0
-        while ((reorder_phrase in anchor_phrase) or (anchor_phrase in reorder_phrase)) and try_counter < 10:
-            anchor_phrase = phrases_in_input[random.sample(range(0, len(phrases_in_input)), self.max_phrases)[0]]
-            try_counter+=1
-
-        if try_counter==10:
-            return input_texts
+    def get_reorder_sent(self, input_texts, reorder_phrase, anchor_phrase):
 
         start_idx = input_texts.index(anchor_phrase)
         end_idx = start_idx + len(anchor_phrase)
@@ -125,6 +109,57 @@ class RobertaEditor():
 
         return (start_str + " " + reorder_phrase + " " + end_str).strip()
 
+    def get_anchor_phrases(self, org_inp, phrases_in_input, reorder_phrase, max_anchors=1):
+
+        phrases_in_input = phrases_in_input[:]
+        anchor_counts = 0
+        anchor_phrases = []
+        
+        while anchor_counts < max_anchors:
+
+            if len(phrases_in_input) < 1:
+                return anchor_phrases
+
+            rnd_idx = random.sample(range(0, len(phrases_in_input)), 1)[0]
+            anchor_phrase = phrases_in_input[rnd_idx]
+
+            while ((reorder_phrase in anchor_phrase) or (anchor_phrase in reorder_phrase)):
+                phrases_in_input.pop(rnd_idx)
+                if len(phrases_in_input) < 1:
+                    return anchor_phrases
+
+                rnd_idx = random.sample(range(0, len(phrases_in_input)), 1)[0]
+                anchor_phrase = phrases_in_input[random.sample(range(0, len(phrases_in_input)), 1)[0]]
+
+            phrases_in_input.pop(rnd_idx)
+            anchor_phrases.append(anchor_phrase)
+            anchor_counts+=1
+
+        return anchor_phrases
+
+    def reorder(self, input_texts: str) -> str:
+        
+        org_inp = input_texts[:]
+        if len(input_texts.split(' ')) < self.min_length_of_edited_sent:
+            return org_inp
+
+        unique_phrases = extract_phrases(input_texts)
+        phrases_in_input = [i for i in unique_phrases if i in input_texts]
+        if len(phrases_in_input) == 0:
+            return org_inp
+
+        reorder_phrase = phrases_in_input[random.sample(range(0, len(phrases_in_input)), 1)[0]]
+        anchor_phrases = self.get_anchor_phrases(org_inp, phrases_in_input, reorder_phrase, max_anchors=10)
+
+        if len(anchor_phrases) < 1:
+            return input_texts
+        elif len(anchor_phrases) == 1:
+            return self.get_reorder_sent(input_texts, reorder_phrase, anchor_phrases[0])
+        else:
+            reordered_sents = [self.get_reorder_sent(input_texts, reorder_phrase, anchor_phrase)
+                               for anchor_phrase in anchor_phrases]
+
+            return reordered_sents[np.argmax(self.fluency_scorer.scorer_batch(reordered_sents).detach().numpy()).item(0)]
 
     def get_word_at_mask(self, output_tensors, mask_idxs):
         mask_idxs = mask_idxs.unsqueeze(dim=1)
