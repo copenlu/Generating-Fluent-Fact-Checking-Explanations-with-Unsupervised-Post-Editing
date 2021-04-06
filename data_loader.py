@@ -16,6 +16,47 @@ THREE_LABEL_IDS_LIAR = {
     'pants-fire': 0, 'barely-true': 1, 'mostly-true': 1, 'false': 0, 'true': 2,
     'half-true': 1
 }
+LABEL_IDS_PUBH = {'false': 0, 'mixture': 1, 'true': 2, 'unproven': 3}
+
+
+class PubHealth(Dataset):
+    def __init__(self, path: str):
+        columns = ['claim_id',	'claim', 'date_published', 'explanation',
+                   'fact_checkers',	'main_text', 'sources', 'label', 'subjects']
+
+        df = pd.read_csv(path, sep='\t')
+        df = df.dropna()
+
+        if len(df.columns) == 10:
+            columns = ['dummy'] + columns
+
+        df.columns = columns
+
+        self.dataset = []
+        for i, row in df.iterrows():
+            dict_ = dict()
+            dict_['id'] = str(row['claim_id'])
+
+            dict_['text'] = sent_tokenize(row['main_text'])
+            dict_['text_query'] = row['claim']
+
+            dict_['label'] = row['label']
+            dict_['explanation_sentences'] = []
+            dict_['explanation_sentences_hot'] = []
+
+            dict_['label_id'] = LABEL_IDS_PUBH[row['label']]
+
+            dict_['text_answer'] = None
+
+            dict_['explanation_text'] = sent_tokenize(row['explanation'])
+
+            self.dataset.append(dict_)
+
+    def __getitem__(self, item: int):
+        return self.dataset[item]
+
+    def __len__(self):
+        return len(self.dataset)
 
 
 class LIARDataset(Dataset):
@@ -93,8 +134,12 @@ def get_datasets(dataset_dir: str,
             ds = LIARDataset(f'{dataset_dir}/{ds_name}',
                              num_labels=num_nabels)
             datasets.append(ds)
-    elif dataset_type == 'pubmed':
-        raise NotImplementedError
+    elif dataset_type == 'pubhealth':
+        dataset_list = ['train.tsv', 'dev.tsv', 'test.tsv']
+
+        for ds_name in dataset_list:
+            ds = PubHealth(f'{dataset_dir}/{ds_name}')
+            datasets.append(ds)
 
     if add_logits:
         with open(dataset_dir + '/logits.json') as out:

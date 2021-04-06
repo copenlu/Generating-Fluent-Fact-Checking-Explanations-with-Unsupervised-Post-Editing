@@ -11,53 +11,24 @@ import torch
 from captum.attr import IntegratedGradients, InputXGradient
 from torch.utils.data import DataLoader
 from transformers import BertTokenizerFast
-from transformers.optimization import AdamW
-from data_loader import collate_explanations, get_datasets
+from data_loader import collate_explanations_joint, get_datasets
 from saliency.pretrain_longformer import BertLongForMaskedLM
+from saliency.model_builder import ExtractClassifyJointModel, ClassifyExtractJointModel, ClassifierModel
 
 
-class ClassifierModel(torch.nn.Module):
-    """Prediction is conditioned on the extracted sentences."""
-    def __init__(self, args, transformer_model, transformer_config):
+class ModelWrapper(torch.nn.Module):
+    def __init__(self, model):
         super().__init__()
-        self.args = args
-        self.transformer_model = transformer_model
+        self.model = model
 
-        # pooler
-        self.dense = torch.nn.Linear(transformer_config.hidden_size, transformer_config.hidden_size)
-        self.activation_tanh = torch.nn.Tanh()
-
-        # classification
-        self.dropout = torch.nn.Dropout(transformer_config.hidden_dropout_prob)
-        self.classifier = torch.nn.Linear(transformer_config.hidden_size, transformer_config.num_labels)
-
-        self.softmax_pred = torch.nn.Softmax(dim=-1)
-
-    def encode(self, token_ids, attention_mask):
-        # Gradient of the input is computed for the embeddings
-        # Here we allow the embeddings to be passed as an input
-        # instead of the token ids which are not differentiable
-        if len(token_ids.size()) == 3:
-            return self.transformer_model(inputs_embeds=token_ids, attention_mask=attention_mask)[0]
-        else:
-            return self.transformer_model(token_ids, attention_mask=attention_mask)[0]
-
-    def forward(self, token_ids, attention_mask):
-        hidden_states = self.encode(token_ids, attention_mask)
-
-        first_token_tensor = hidden_states[:, 0]
-        pooled_output = self.dense(first_token_tensor)
-        pooled_output = self.activation_tanh(pooled_output)
-
-        pooled_output = self.dropout(pooled_output)
-        logits_pred = self.classifier(pooled_output)
-
-        return logits_pred
+    def forward(self, tokens, batch):
+        output = self.model(tokens, batch)
+        return output[0]
 
 
 def get_model_embedding_emb(model):
     if args.model == 'trans':
-        return model.transformer_model.embeddings.embedding.word_embeddings
+        return model.model.transformer_model.embeddings.embedding.word_embeddings
     else:
         return model.embedding.embedding
 
@@ -95,10 +66,9 @@ def eval_sentence_saliency(model,
         token_ids += batch['input_ids_tensor'].detach().cpu().numpy().tolist()
 
         input_embeddings = model.transformer_model.embeddings(batch['input_ids_tensor'])
-        attention_mask = batch['input_ids_tensor'] != tokenizer.pad_token_id
         for cls_ in range(labels):
             attributions = ablator.attribute(input_embeddings, target=cls_,
-                                             additional_forward_args=(attention_mask,))
+                                             additional_forward_args=(batch,))
 
             attributions = summarize_attributions(attributions,
                                                   type=token_aggregation,
@@ -109,16 +79,17 @@ def eval_sentence_saliency(model,
             class_attr_list[cls_] += attributions
 
         if cls_aggregation == 'pred_cls':
-            pred_classes += torch.argmax(model(batch['input_ids_tensor'], attention_mask), dim=-1).detach().cpu().numpy().tolist()
+            pred_classes += torch.argmax(model(batch['input_ids_tensor']), dim=-1).detach().cpu().numpy().tolist()
 
     # [CLS] query tokens [SEP] answer [SEP]
     # [CLS]_opt sentence1 tokens [SEP]_opt
     # [CLS]_opt sentence2 tokens ...
     # [SEP]
     sent_scores, word_scores = [], []
-    output_file_sentences = f'data/{args.model_path}/sentence_scores_{args.mode}.jsonl'
-    output_file_words = f'data/{args.model_path}/word_scores_{args.mode}.jsonl'
-    os.makedirs(f'data/{args.model_path}/', exist_ok=True)
+    model_specific_path = f'data/{args.model_path}_{args.token_aggregation}_{args.cls_aggregation}_{args.sentence_aggregation}'
+    output_file_sentences = f'{model_specific_path}/sentence_scores_{args.mode}.jsonl'
+    output_file_words = f'{model_specific_path}/word_scores_{args.mode}.jsonl'
+    os.makedirs(model_specific_path, exist_ok=True)
 
     score_names = ['rouge1', 'rouge2', 'rougeLsum']
     scorer = rouge_scorer.RougeScorer(score_names, use_stemmer=True)
@@ -143,14 +114,18 @@ def eval_sentence_saliency(model,
                     cls_ = instance['label_id']
                     token_sal = class_attr_list[cls_][instance_i][token_i]
                 elif cls_aggregation == 'sum':
-                    token_sal = sum(
-                        [class_attr_list[cls_][instance_i][token_i] for cls_ in
-                         range(labels)])
+                    try:
+                        token_sal = sum(
+                            [class_attr_list[cls_][instance_i][token_i] for cls_ in
+                             range(labels)])
+                    except:
+                        print(class_attr_list[cls_], class_attr_list[cls_][instance_i], class_attr_list[cls_][instance_i][token_i])
+                        raise ValueError
                 elif cls_aggregation == 'max':
                     token_sal = max(
                         [class_attr_list[cls_][instance_i][token_i] for cls_ in
                          range(labels)])
-                word_json['word_scores'].append([token_id, tokenizer.decode([token_id])[0], token_sal])
+                word_json['word_scores'].append([token_id, tokenizer.decode([token_id]), token_sal])
 
                 # when reaching a new sentence, first aggregate saliency for the
                 # previous
@@ -215,13 +190,18 @@ if __name__ == "__main__":
     parser.add_argument("--seed", help="Random seed", type=int, default=73)
     parser.add_argument("--labels", help="num of lables", type=int, default=6)
     parser.add_argument("--dataset", help="Flag for training on gpu",
-                        choices=['liar',],
+                        choices=['liar', 'pubhealth'],
                         default='liar')
     parser.add_argument("--dataset_dir", help="Path to the train datasets",
                         default='data/e-SNLI/dataset/', type=str)
     parser.add_argument("--model_path",
                         help="Path where the model will be serialized",
                         type=str)
+    parser.add_argument("--model_type", help="Type of classification model",
+                        choices=['classify',
+                                 'extract_classify',
+                                 'classify_extract'],
+                        default='classify')
 
     parser.add_argument("--pretrained_path",
                         help="Path where the model will be serialized",
@@ -238,7 +218,7 @@ if __name__ == "__main__":
                         default=512)
     parser.add_argument("--epochs", help="Epochs number", type=int, default=4)
     parser.add_argument("--mode", help="Mode for the script", type=str,
-                        default='val', choices=['train', 'test', 'val'])
+                        choices=['train', 'test', 'val'])
     parser.add_argument("--init_only", help="Whether to train the model",
                         action='store_true', default=False)
 
@@ -286,9 +266,18 @@ if __name__ == "__main__":
     transformer_model = pretrained_bert.bert
 
     config.num_labels = args.labels
-    model = ClassifierModel(args, transformer_model, config).to(device)
 
-    collate_fn = partial(collate_explanations,
+    if args.model_type == 'classify':
+        model = ClassifierModel(args, transformer_model, config).to(device)
+    elif args.model_type == 'extract_classify':
+        model = ExtractClassifyJointModel(args, transformer_model, config).to(
+            device)
+
+    elif args.model_type == 'classify_extract':
+        model = ClassifyExtractJointModel(args, transformer_model, config).to(
+            device)
+
+    collate_fn = partial(collate_explanations_joint,
                          tokenizer=tokenizer,
                          device=device,
                          pad_to_max_length=True,
@@ -297,12 +286,7 @@ if __name__ == "__main__":
                          sep_sentences=True,
                          cls_sentences=True)
 
-    optimizer = AdamW(model.parameters(),
-                      lr=args.lr,
-                      betas=(0.9, 0.98))
-
     if args.mode == 'test':
-
         ds = test
     elif args.mode == 'train':
         ds = train
@@ -315,6 +299,9 @@ if __name__ == "__main__":
     checkpoint = torch.load(args.model_path)
 
     model.load_state_dict(checkpoint['model'])
+
+    if args.model_type in ['classify_extract', 'extract_classify']:
+        model = ModelWrapper(model)
 
     eval_sentence_saliency(model,
                        dl,

@@ -11,46 +11,13 @@ from sklearn.metrics import precision_recall_fscore_support, \
     accuracy_score
 from torch.utils.data import DataLoader
 from tqdm import tqdm
-from transformers import BertConfig, BertModel, BertTokenizerFast
+from transformers import BertTokenizerFast
 from transformers.optimization import AdamW
-from data_loader import collate_explanations, get_datasets
+from data_loader import get_datasets, collate_explanations_joint
 from saliency.pretrain_longformer import BertLongForMaskedLM
-
-
-class ClassifierModel(torch.nn.Module):
-    """Prediction is conditioned on the extracted sentences."""
-    def __init__(self, args, transformer_model, transformer_config):
-        super().__init__()
-        self.args = args
-        self.transformer_model = transformer_model
-
-        # pooler
-        self.dense = torch.nn.Linear(transformer_config.hidden_size, transformer_config.hidden_size)
-        self.activation_tanh = torch.nn.Tanh()
-
-        # classification
-        self.dropout = torch.nn.Dropout(transformer_config.hidden_dropout_prob)
-        self.classifier = torch.nn.Linear(transformer_config.hidden_size, transformer_config.num_labels)
-
-        self.softmax_pred = torch.nn.Softmax(dim=-1)
-
-    def encode(self, token_ids):
-        return self.transformer_model(token_ids, attention_mask=token_ids!=0)[0]
-            # attention_mask=attention_mask,
-
-    def forward(self, batch):
-        token_ids = batch['input_ids_tensor']
-
-        hidden_states = self.encode(token_ids)
-
-        first_token_tensor = hidden_states[:, 0]
-        pooled_output = self.dense(first_token_tensor)
-        pooled_output = self.activation_tanh(pooled_output)
-
-        pooled_output = self.dropout(pooled_output)
-        logits_pred = self.classifier(pooled_output)
-
-        return logits_pred
+from saliency.model_builder import ExtractClassifyJointModel, ClassifyExtractJointModel, ClassifierModel
+from rouge_score import rouge_scorer
+from multiprocessing import Pool
 
 
 def train_model(args: Namespace,
@@ -60,15 +27,35 @@ def train_model(args: Namespace,
     best_score, best_model_weights = {'dev_target_f1': 0}, None
     loss_fct = torch.nn.CrossEntropyLoss()
     model.train()
+    loss_binary_sentences = torch.nn.BCEWithLogitsLoss().to(device) # pos_weight=torch.tensor([args.pos_sent_loss_weight])
 
     for ep in range(args.epochs):
         for batch_i, batch in enumerate(train_dl):
             current_step = (step_per_epoch * args.accum_steps) * ep + batch_i
 
-            logits = model(batch)
+            logits = model(batch=batch)
+            if args.model_type != 'classify':
+                logits, logits_sentences, one_logit_sentences = logits
 
             loss = loss_fct(logits.view(-1, args.labels),
                             batch['target_labels_tensor'].long().view(-1)) / args.accum_steps
+
+            if args.sup_sentences:
+                pred_label = batch['target_labels_tensor'].unsqueeze(1)
+                pred_label = pred_label.repeat(1, batch[
+                    'sentences_target_tensor'].size(1))  #
+                logits_sentences = logits_sentences.view(-1, args.labels)[torch.arange(
+                    logits_sentences.size(0) * logits_sentences.size(1)),
+                                                                pred_label.view(
+                                                                    -1)].view(
+                    batch['sentences_target_tensor'].size()[0],
+                    batch['sentences_target_tensor'].size()[1])
+
+                loss_sent = loss_binary_sentences(logits_sentences.view(-1),
+                                                  pred_label.view(-1).float())
+
+                loss += loss_sent
+
             loss.backward()
 
             if (batch_i + 1) % args.accum_steps == 0:
@@ -86,13 +73,10 @@ def train_model(args: Namespace,
                 '\t'.join([f'{k}: {v:.3f}' for k, v in current_train.items()]),
                 flush=True, end='\r')
 
-            if ep > 0 and ((
+            if  ((
                     batch_i % 200 == 0 and batch_i > 0) or batch_i == \
                     step_per_epoch):
                 print('\n', flush=True)
-                loss=None
-                batch=None
-                logits=None
                 current_val = eval_model(args, model, dev_dl, val)
                 current_val.update(current_train)
 
@@ -125,8 +109,9 @@ def eval_target(args,
     for batch in tqdm(test_dl, desc="Evaluation"):
         optimizer.zero_grad()
 
-        mask = batch['input_ids_tensor'] != tokenizer.pad_token_id
-        logits = model(batch)
+        logits = model(batch=batch)
+        if args.model_type != 'classify':
+            logits = logits[0]
 
         true_class += batch['target_labels_tensor'].detach().cpu().numpy().tolist()
         pred_class += logits.detach().cpu().numpy().tolist()
@@ -166,6 +151,43 @@ def eval_model(args,
     return dev_eval
 
 
+def eval_sentences(args,
+               model: torch.nn.Module,
+               test_dl: DataLoader,
+               ds):
+    model.eval()
+
+    score_names = ['rouge1', 'rouge2', 'rougeLsum']
+    scorer = rouge_scorer.RougeScorer(score_names, use_stemmer=True)
+
+    top_n_sentences, scores = [], []
+    instance_i = 0
+
+    for batch in tqdm(test_dl, desc="Evaluation"):
+        optimizer.zero_grad()
+
+        logits = model(batch=batch)
+        sentence_logits = logits[-1].detach()
+
+        sentence_logits = sentence_logits * batch['sentences_mask'] + (~batch['sentences_mask'] * (-5e10))
+
+        best_sentences = torch.argsort(sentence_logits, dim=1, descending=True)[:, :args.top_n].cpu().numpy().tolist()
+        for instance in best_sentences:
+            top_n_sentences.append('\n'.join([ds.dataset[instance_i]['text'][sentence_i] for sentence_i in instance]))
+            instance_i += 1
+
+    justification = ['\n'.join(instance['explanation_text'])
+                     for instance in ds]
+
+    p = Pool()
+    scores = p.starmap(scorer.score, [(pred, just) for pred, just in zip(top_n_sentences, justification)])
+
+    for score_name in score_names:
+        print(f'{score_name} P: {np.mean([s[score_name].precision for s in scores]) * 100:.3f} '
+              f'R: {np.mean([s[score_name].recall for s in scores]) * 100:.3f} '
+              f'F1: {np.mean([s[score_name].fmeasure for s in scores]) * 100:.3f}')
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--gpu", help="Flag for training on gpu",
@@ -173,24 +195,33 @@ if __name__ == "__main__":
     parser.add_argument("--seed", help="Random seed", type=int, default=73)
     parser.add_argument("--labels", help="num of lables", type=int, default=6)
     parser.add_argument("--dataset", help="Flag for training on gpu",
-                        choices=['liar'],
+                        choices=['liar', 'pubhealth'],
                         default='liar')
     parser.add_argument("--dataset_dir", help="Path to the train datasets",
                         default='data/liar/', type=str)
     parser.add_argument("--model_path",
                         help="Path where the model will be serialized",
-                        nargs='+',
                         type=str)
     parser.add_argument("--pretrained_path",
                         help="Path where the model will be serialized",
                         type=str)
+    parser.add_argument("--model_type", help="Type of classification model",
+                        choices=['classify',
+                                 'extract_classify',
+                                 'classify_extract'],
+                        default='classify')
+    parser.add_argument("--sup_sentences", help="Whether to use labels of the "
+                                                "claims as labels for the "
+                                                "sentences",
+                        action='store_true', default=False)
 
     parser.add_argument("--config_path",
                         help="Path where the model will be serialized",
                         default='nli_bert', type=str)
 
     parser.add_argument("--batch_size", help="Batch size", type=int, default=8)
-    parser.add_argument("--accum_steps", help="Gradient accumulation steps", type=int, default=1)
+    parser.add_argument("--accum_steps", help="Gradient accumulation steps",
+                        type=int, default=1)
     parser.add_argument("--lr", help="Learning Rate", type=float, default=1e-5)
     parser.add_argument("--max_len", help="Learning Rate", type=int,
                         default=512)
@@ -200,9 +231,16 @@ if __name__ == "__main__":
                         default=300)
     parser.add_argument("--epochs", help="Epochs number", type=int, default=4)
     parser.add_argument("--mode", help="Mode for the script", type=str,
-                        default='train', choices=['train', 'test', 'test_dev'])
+                        default='train', choices=['train',
+                                                  'test',
+                                                  'test_dev',
+                                                  'test_sentences',
+                                                  'dev_sentences'])
     parser.add_argument("--init_only", help="Whether to train the model",
                         action='store_true', default=False)
+
+    parser.add_argument("--top_n", help="Eval top n sentences", type=int,
+                        default=6)
 
     args = parser.parse_args()
     print(args)
@@ -230,9 +268,15 @@ if __name__ == "__main__":
     transformer_model = pretrained_bert.bert
 
     config.num_labels = args.labels
-    model = ClassifierModel(args, transformer_model, config).to(device)
 
-    collate_fn = partial(collate_explanations,
+    if args.model_type == 'classify':
+        model = ClassifierModel(args, transformer_model, config).to(device)
+    elif args.model_type == 'extract_classify':
+        model = ExtractClassifyJointModel(args, transformer_model, config).to(device)
+    elif args.model_type == 'classify_extract':
+        model = ClassifyExtractJointModel(args, transformer_model, config).to(device)
+
+    collate_fn = partial(collate_explanations_joint,
                          tokenizer=tokenizer,
                          device=device,
                          pad_to_max_length=True,
@@ -245,7 +289,23 @@ if __name__ == "__main__":
                       lr=args.lr,
                       betas=(0.9, 0.98))
 
-    if args.mode in ['test', 'test_dev']:
+    if args.mode in ['test_sentences', 'dev_sentences']:
+        if args.mode == 'test_sentences':
+            test_dl = DataLoader(test, batch_size=args.batch_size,
+                                 collate_fn=collate_fn, shuffle=False)
+            ds = test
+        else:
+            test_dl = DataLoader(val, batch_size=args.batch_size,
+                                 collate_fn=collate_fn, shuffle=False)
+            ds = val
+
+        checkpoint = torch.load(args.model_path)
+
+        model.load_state_dict(checkpoint['model'])
+        result = eval_sentences(args, model, test_dl, ds)
+        print(result, flush=True)
+
+    elif args.mode in ['test', 'test_dev']:
         if args.mode == 'test':
             test_dl = DataLoader(test, batch_size=args.batch_size,
                                  collate_fn=collate_fn, shuffle=False)
@@ -255,16 +315,11 @@ if __name__ == "__main__":
                                  collate_fn=collate_fn, shuffle=False)
             ds = val
 
-        results = []
-        for mp in args.model_path:
-            checkpoint = torch.load(mp)
+        checkpoint = torch.load(args.model_path)
 
-            model.load_state_dict(checkpoint['model'])
-            result = eval_model(args, model, test_dl, ds)
-            results.append(result)
-            print(result, flush=True)
-
-        print([f'{k}: {np.mean([result[k] for result in results])} ({np.std([result[k] for result in results])})' for k in results[0].keys()], flush=True)
+        model.load_state_dict(checkpoint['model'])
+        result = eval_model(args, model, test_dl, ds)
+        print(result, flush=True)
 
     else:
         train_dl = DataLoader(batch_size=args.batch_size,
@@ -295,4 +350,4 @@ if __name__ == "__main__":
         print(best_perf)
         print(args)
 
-        torch.save(checkpoint, args.model_path[0])
+        torch.save(checkpoint, args.model_path)
