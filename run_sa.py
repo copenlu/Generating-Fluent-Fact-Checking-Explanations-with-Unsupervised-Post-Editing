@@ -61,7 +61,7 @@ def get_dataset(scored_sentences_path, dataset_path, top_n, parser):
     dataset = [row.to_dict() for i, row in df.iterrows()]
     new_dataset = []
     for i in dataset:
-        if i["scored_sentences"] is None or i["id"] == '2001.json' #Sentence in Liarplus is too long:
+        if i["scored_sentences"] is None or i["id"] == '2001.json': #Sentence in Liarplus is too long:
             continue
         else:
             new_dataset.append(i)
@@ -91,7 +91,7 @@ if __name__ == "__main__":
 
     if sa_args.sample:
         print(f"Sampling {sa_args.sample} instances from the dataset")
-        dataset = np.random.choice(dataset, sa_args.sampl)
+        dataset = np.random.choice(dataset, sa_args.sample)
 
     if sa_args.device_type == "gpu":
         device = "cuda"
@@ -119,6 +119,7 @@ if __name__ == "__main__":
 
     # TODO write is needed once for gold and separately for each step
     if os.path.exists('sa_inp.txt'):
+    	print("Removing already present output file")
         os.remove('sa_inp.txt')
 
     if os.path.exists('sa_out.txt'):
@@ -130,6 +131,9 @@ if __name__ == "__main__":
     processed_samples = 0
     scores_sa_justs = []
     sa_outputs = []
+    sa_inp_tokens = []
+    sa_out_tokens = []
+    gold_tokens = []
 
     for i in range(0, len(dataset), sa_args.batch_size):
        
@@ -144,6 +148,10 @@ if __name__ == "__main__":
             # TODO write new text and what was the edit operation
             sa_inp.write(instance['scored_sentences'] + "\n")
             sa_out.write(instance_edit + "\n")
+
+            sa_inp_tokens.append(len(instance['scored_sentences'].split(" ")))
+            sa_out_tokens.append(len(instance_edit.split(" ")))
+            gold_tokens.append(len(instance['justification'].split(" ")))
 
             print("SA_input: ", instance['scored_sentences'])
             print("\n")
@@ -168,5 +176,9 @@ if __name__ == "__main__":
 
     print("Scores for justifications given by SA")
     get_string_scores(scores_sa_justs, score_names)
+
+    print("Average tokens in SA inputs: ", np.mean(sa_inp_tokens))
+    print("Average tokens in SA outputs: ", np.mean(sa_out_tokens))
+    print("Average tokens in gold justifications: ", np.mean(gold_tokens))
 
     print("Processed: ", processed_samples)
