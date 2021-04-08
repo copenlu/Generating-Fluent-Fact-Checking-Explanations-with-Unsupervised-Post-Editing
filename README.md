@@ -2,6 +2,10 @@
 
 # Dependencies can be found in requirements.txt
 
+# Running baselines LEAD-N:
+```python3.9 baselines.py --labels 4 --dataset pubhealth --baseline lead --leadn 6 --dataset_dir data/PUBHEALTH```
+```python3.9 baselines.py --labels 4 --dataset liar --baseline lead --leadn 6 --dataset_dir data/liar```
+
 # Phrase extraction Set-up:
 ```
 wget http://nlp.stanford.edu/software/stanford-corenlp-full-2018-10-05.zip
@@ -19,3 +23,4 @@ python -m spacy download en_core_web_lg
 
 # Running SA
 python run_sa.py --sentences_path /image/image-copenlu/unsupervised_fc/sup_sccores/results_serialized_val_filtered.jsonl --dataset_path ../just_summ/oracles/ruling_oracles_val.tsv --length_weight 20 --sample 4 --batch_size 4
+

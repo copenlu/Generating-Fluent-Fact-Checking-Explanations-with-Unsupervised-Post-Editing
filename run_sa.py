@@ -8,7 +8,7 @@ from SA.editor import RobertaEditor
 from SA.generator_gpt import GPT2FluencyScorer
 from SA.scoring_algos import SimulatedAnnealing
 from SA.args import get_model_args
-
+from baselines import aggregate_print_rouges
 from SA.extract_phrases import parser
 
 from rouge_score import rouge_scorer
@@ -73,13 +73,6 @@ def get_dataset(scored_sentences_path, dataset_path, top_n, parser):
     return new_dataset
 
 
-def get_string_scores(scores, score_names):
-    for score_name in score_names:
-        print(f'{score_name} P: {np.mean([s[score_name].precision for s in scores]) * 100:.3f} '
-              f'R: {np.mean([s[score_name].recall for s in scores]) * 100:.3f} '
-              f'F1: {np.mean([s[score_name].fmeasure for s in scores]) * 100:.3f}')
-
-
 if __name__ == "__main__":
 
     sa_args = get_model_args()
@@ -119,7 +112,7 @@ if __name__ == "__main__":
 
     # TODO write is needed once for gold and separately for each step
     if os.path.exists('sa_inp.txt'):
-    	print("Removing already present output file")
+        print("Removing already present output file")
         os.remove('sa_inp.txt')
 
     if os.path.exists('sa_out.txt'):
@@ -172,10 +165,10 @@ if __name__ == "__main__":
                                  for instance in dataset]
 
     print(f"Scores for originally selected {sa_args.top_n} sentences")
-    get_string_scores(scores_original_sentences, score_names)
+    aggregate_print_rouges(score_names, scores_original_sentences)
 
     print("Scores for justifications given by SA")
-    get_string_scores(scores_sa_justs, score_names)
+    aggregate_print_rouges(score_names, scores_sa_justs)
 
     print("Average tokens in SA inputs: ", np.mean(sa_inp_tokens))
     print("Average tokens in SA outputs: ", np.mean(sa_out_tokens))
