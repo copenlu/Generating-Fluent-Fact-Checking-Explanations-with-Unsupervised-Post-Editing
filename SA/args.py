@@ -33,38 +33,41 @@ def get_model_args():
 
     parser.add_argument("--fluency_weight",
                         help="Weight for fluency score.",
-                        type=int, default=1.4)
+                        type=float, default=1.4)
 
     parser.add_argument("--length_weight",
                         help="Weight for length score.",
-                        type=int, default=1.25)
+                        type=float, default=1.25)
 
     parser.add_argument("--semantic_weight_keywords",
                         help="Weight for semantic similarity score.",
-                        type=int, default=1.0)
+                        type=float, default=1.0)
 
     parser.add_argument("--semantic_weight_sentences",
                         help="Weight for sentence semantic similarity score.",
-                        type=int, default=1.1)
+                        type=float, default=1.1)
 
     parser.add_argument("--named_entity_score_weight",
                         help="Weight for entity scorer.",
-                        type=int, default=0.95)
+                        type=float, default=0.95)
    
     parser.add_argument("--insert_th",
                         help="accept threshold for insert",
-                        type=int, default=0.99)
+                        type=float, default=0.99)
 
     parser.add_argument("--reorder_th",
                         help="accept threshold for reorder",
-                        type=int, default=0.95)
+                        type=float, default=0.95)
 
     parser.add_argument("--delete_th",
                         help="accept threshold for delete",
-                        type=int, default=0.97)
+                        type=float, default=0.97)
 
     parser.add_argument("--algo_type",
                         help="Type of iterative algorithm.", type=str, default="noSA")
+    
+    parser.add_argument("--dataset_name",
+                        help="Name of the dataset.", type=str, default="pub_health")
 
     parser.add_argument("--max_steps",
                         help="Max steps for running SA.", type=int, default=200)

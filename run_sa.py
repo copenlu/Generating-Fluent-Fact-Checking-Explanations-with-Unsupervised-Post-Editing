@@ -26,51 +26,92 @@ def clean_str(sent):
 
     return sent.strip()
 
-def get_dataset(scored_sentences_path, dataset_path, top_n, parser):
+def get_dataset(scored_sentences_path, dataset_path, dataset_name, top_n, parser):
 
-    df = pd.read_csv(dataset_path, sep='\t', index_col=0)
-    df = df.dropna()
-    columns = ['dummy', 'id', 'statement', 'justification',
+    if dataset_name == 'liar_plus':
+        df = pd.read_csv(dataset_path, sep='\t', index_col=0)
+        df = df.dropna()
+        columns = ['dummy', 'id', 'statement', 'justification',
                'ruling_without_summary', 'label', 'just_tokenized',
                'ruling_tokenized', 'statement_tokenized', 'oracle_ids']
-    df.columns = columns
-
+        print(df.columns)
+        print(columns)
+        df.columns = columns
+        
+    elif dataset_name == 'pub_health':
+        df = pd.read_csv(dataset_path, sep='\t', index_col=0)
+        df = df.dropna()
+        
+        columns = ['claim_id', 'claim', 'date_published', 'explanation',
+                   'fact_checkers', 'main_text', 'sources', 'label', 'subjects']
+        
+        if len(df.columns) == 10:
+            columns = ['dummy'] + columns
+        
+        df.columns = columns
+        
     scored_sentences = [json.loads(line) for line in open(scored_sentences_path)]
-    scored_sentences = {item['id']: sorted(item['sentence_scores'], key=lambda x: x[1], reverse=True)[:top_n] for item in scored_sentences}
-    #scored_sentences = {k: [word_tokenize(sentence[0]) for sentence in v] for k, v in scored_sentences.items()}
-    #Modification to take input as a complete justification instead of separate sentences.
+    scored_sentences = {item["id"]: sorted(item['sentence_scores'], key=lambda x: x[1], reverse=True)[:top_n] for item in scored_sentences}
+    
+    
     inp_scored_sentences = {}
     for k, v in scored_sentences.items():
+        
         temp = []
         for sent in v:
             temp.append(sent[0])
-        #inp_scored_sentences[k] = clean_str(" ".join(parser.tokenize(" ".join(temp))))
         inp_scored_sentences[k] = clean_str(" ".join(temp))
-        if len(inp_scored_sentences[k]) == 0:
-            inp_scored_sentences[k] = None
 
     scored_sentences = inp_scored_sentences
-
-    df['scored_sentences'] = df.apply(lambda x: scored_sentences.get(x['id'], None), axis=1)
-    df = df[df['scored_sentences'] != None]
-
-    df['justification_sentences'] = df.apply(lambda x: sent_tokenize(x['justification']), axis=1)
-
-    df = df[['id', 'statement', 'justification', 'label', 'scored_sentences',
+    
+    
+    if dataset_name == 'liar_plus':
+        
+        df['scored_sentences'] = df.apply(lambda x: scored_sentences.get(x['id'], None), axis=1)
+        df = df[df['scored_sentences'] != None]
+        df['justification_sentences'] = df.apply(lambda x: sent_tokenize(x['justification']), axis=1)
+        df = df[['id', 'statement', 'justification', 'label', 'scored_sentences',
              'justification_sentences']]
+        
+    elif dataset_name == 'pub_health':
+        df['claim_id'] = df['claim_id'].astype('str')
+        df['scored_sentences'] = df.apply(lambda x: scored_sentences.get(x['claim_id'], None), axis=1)
+        df = df[df['scored_sentences'] != None]
+        df['justification_sentences'] = df.apply(lambda x: sent_tokenize(x['explanation']), axis=1)
+        df = df[['claim_id', 'claim', 'explanation', 'label', 'scored_sentences',
+             'justification_sentences']]
+        
+        
     dataset = [row.to_dict() for i, row in df.iterrows()]
     new_dataset = []
-    for i in dataset:
-        if i["scored_sentences"] is None or i["id"] == '2001.json': #Sentence in Liarplus is too long:
-            continue
-        else:
-            new_dataset.append(i)
+    if dataset_name == 'liar_plus':
+        for i in dataset:
+            if i["scored_sentences"] is None or i["id"] == '2001.json': #Sentence in Liarplus is too long:
+                continue
+            else:
+                new_dataset.append(i)
+    elif dataset_name == 'pub_health':
+        for i in dataset:
+        
+            if i["scored_sentences"] is None or i["scored_sentences"] == None:
+                continue
+            else:
+                new_dataset.append(i)
+    
 
     print(f'Size of dataset: {len(dataset)}')
     print(f'Size of new dataset: {len(new_dataset)}')
-    print('Sample: ', new_dataset[0])
+    print('Sample: ', dataset[0])
+    if len(new_dataset)!=0:
+        print('Sample: ', new_dataset[0])
 
     return new_dataset
+ 
+def get_string_scores(scores, score_names):
+    for score_name in score_names:
+        print(f'{score_name} P: {np.mean([s[score_name].precision for s in scores]) * 100:.3f} '
+              f'R: {np.mean([s[score_name].recall for s in scores]) * 100:.3f} '
+              f'F1: {np.mean([s[score_name].fmeasure for s in scores]) * 100:.3f}')
 
 
 if __name__ == "__main__":
@@ -111,15 +152,12 @@ if __name__ == "__main__":
         # simulated_annealing.sbert = torch.nn.DataParallel(simulated_annealing.sbert, device_ids=[0, 1])
 
     # TODO write is needed once for gold and separately for each step
-    if os.path.exists('sa_inp.txt'):
+
+    if os.path.exists('sa_inp_out.txt'):
         print("Removing already present output file")
-        os.remove('sa_inp.txt')
+        os.remove('sa_inp_out.txt')
 
-    if os.path.exists('sa_out.txt'):
-        os.remove('sa_out.txt')
-
-    sa_inp = open('sa_inp.txt', 'a+')
-    sa_out = open('sa_out.txt', 'a+')
+    sa_inp_out = open('sa_inp_out.txt', 'a+')
 
     processed_samples = 0
     scores_sa_justs = []
@@ -139,18 +177,22 @@ if __name__ == "__main__":
         for instance, instance_edit in zip(batch_data, sa_outputs_batch):
 
             # TODO write new text and what was the edit operation
-            sa_inp.write(instance['scored_sentences'] + "\n")
-            sa_out.write(instance_edit + "\n")
-
+            
+            sa_inp_out.write(instance['scored_sentences'] + '\t' + instance_edit + "\n")
+            
             sa_inp_tokens.append(len(instance['scored_sentences'].split(" ")))
             sa_out_tokens.append(len(instance_edit.split(" ")))
-            gold_tokens.append(len(instance['justification'].split(" ")))
+            
+            if sa_args.dataset_name == 'liar_plus':
+                gold_tokens.append(len(instance['justification'].split(" ")))
+            elif sa_args.dataset_name == 'pub_health':
+                gold_tokens.append(len(instance['explanation'].split(" ")))
 
             print("SA_input: ", instance['scored_sentences'])
             print("\n")
             print("SA_output: ", instance_edit)
             print("\n")
-            print("Golden_just: ", instance['justification'])
+            print("Golden_just: ", instance['explanation'])
             print("\n")
             print("----------------------------------------------------------------------\n")
 
