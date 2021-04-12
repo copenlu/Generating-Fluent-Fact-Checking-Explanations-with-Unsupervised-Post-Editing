@@ -68,6 +68,9 @@ def get_model_args():
     
     parser.add_argument("--dataset_name",
                         help="Name of the dataset.", type=str, default="pub_health")
+ 
+    parser.add_argument("--outfile",
+                                help="Name of the file in which output is stored.", type=str, default="")
 
     parser.add_argument("--max_steps",
                         help="Max steps for running SA.", type=int, default=200)

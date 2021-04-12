@@ -34,12 +34,10 @@ def get_dataset(scored_sentences_path, dataset_path, dataset_name, top_n, parser
         columns = ['dummy', 'id', 'statement', 'justification',
                'ruling_without_summary', 'label', 'just_tokenized',
                'ruling_tokenized', 'statement_tokenized', 'oracle_ids']
-        print(df.columns)
-        print(columns)
         df.columns = columns
         
     elif dataset_name == 'pub_health':
-        df = pd.read_csv(dataset_path, sep='\t', index_col=0)
+        df = pd.read_csv(dataset_path, sep='\t')
         df = df.dropna()
         
         columns = ['claim_id', 'claim', 'date_published', 'explanation',
@@ -81,9 +79,9 @@ def get_dataset(scored_sentences_path, dataset_path, dataset_name, top_n, parser
         df = df[['claim_id', 'claim', 'explanation', 'label', 'scored_sentences',
              'justification_sentences']]
         
-        
     dataset = [row.to_dict() for i, row in df.iterrows()]
     new_dataset = []
+
     if dataset_name == 'liar_plus':
         for i in dataset:
             if i["scored_sentences"] is None or i["id"] == '2001.json': #Sentence in Liarplus is too long:
@@ -92,8 +90,8 @@ def get_dataset(scored_sentences_path, dataset_path, dataset_name, top_n, parser
                 new_dataset.append(i)
     elif dataset_name == 'pub_health':
         for i in dataset:
-        
-            if i["scored_sentences"] is None or i["scored_sentences"] == None:
+            remove_ids = ['41862', '36094', '30819', '36167', '37958']     
+            if i["scored_sentences"] is None or i["claim_id"] in remove_ids or i["scored_sentences"] == None:
                 continue
             else:
                 new_dataset.append(i)
@@ -121,11 +119,11 @@ if __name__ == "__main__":
     random.seed(sa_args.seed)
     np.random.seed(sa_args.seed)
 
-    dataset = get_dataset(sa_args.sentences_path, sa_args.dataset_path, sa_args.top_n, parser)
+    dataset = get_dataset(sa_args.sentences_path, sa_args.dataset_path, sa_args.dataset_name, sa_args.top_n, parser)
 
     if sa_args.sample:
         print(f"Sampling {sa_args.sample} instances from the dataset")
-        dataset = np.random.choice(dataset, sa_args.sample)
+        dataset = np.random.choice(dataset, sa_args.sample)[612:]
 
     if sa_args.device_type == "gpu":
         device = "cuda"
@@ -153,11 +151,11 @@ if __name__ == "__main__":
 
     # TODO write is needed once for gold and separately for each step
 
-    if os.path.exists('sa_inp_out.txt'):
+    if os.path.exists(sa_args.outfile):
         print("Removing already present output file")
-        os.remove('sa_inp_out.txt')
+        os.remove(sa_args.outfile)
 
-    sa_inp_out = open('sa_inp_out.txt', 'a+')
+    sa_inp_out = open(sa_args.outfile, 'a+')
 
     processed_samples = 0
     scores_sa_justs = []
@@ -169,6 +167,10 @@ if __name__ == "__main__":
     for i in range(0, len(dataset), sa_args.batch_size):
        
         batch_data = dataset[i: i + sa_args.batch_size]
+        for i in batch_data:
+            print(i["claim_id"])
+            print(i["scored_sentences"])
+
         sa_outputs_batch = simulated_annealing.run(batch_data)
         processed_samples += len(batch_data)
         print("Processing: ", processed_samples)
@@ -187,7 +189,7 @@ if __name__ == "__main__":
                 gold_tokens.append(len(instance['justification'].split(" ")))
             elif sa_args.dataset_name == 'pub_health':
                 gold_tokens.append(len(instance['explanation'].split(" ")))
-
+            
             print("SA_input: ", instance['scored_sentences'])
             print("\n")
             print("SA_output: ", instance_edit)
