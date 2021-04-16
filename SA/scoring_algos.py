@@ -9,8 +9,9 @@ from tqdm import tqdm
 from sentence_transformers import SentenceTransformer, util
 
 from rake_nltk import Rake
+import language_tool_python
 
-
+tool = language_tool_python.LanguageTool('en-US')
 nlp = spacy.load("en_core_web_lg")
 
 
@@ -49,6 +50,11 @@ class SimulatedAnnealing:
         output = cos(new_justs_embeds, org_embeds)
 
         return output.cpu()
+
+    def gramatical_tool(sent):
+
+        matches = tool.check(sent)
+        return language_tool_python.utils.correct(sent, matches)
 
     def sentence_level_semantic_scorer_sbert(self, new_justs, org_justs):
 

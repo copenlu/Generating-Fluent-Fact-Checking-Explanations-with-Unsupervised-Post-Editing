@@ -47,7 +47,7 @@ def get_dataset(scored_sentences_path, dataset_path, dataset_name, top_n, parser
             columns = ['dummy'] + columns
         
         df.columns = columns
-        
+    
     scored_sentences = [json.loads(line) for line in open(scored_sentences_path)]
     scored_sentences = {item["id"]: sorted(item['sentence_scores'], key=lambda x: x[1], reverse=True)[:top_n] for item in scored_sentences}
     
@@ -67,6 +67,7 @@ def get_dataset(scored_sentences_path, dataset_path, dataset_name, top_n, parser
         
         df['scored_sentences'] = df.apply(lambda x: scored_sentences.get(x['id'], None), axis=1)
         df = df[df['scored_sentences'] != None]
+        df["scored_sentences"] = df["scored_sentences"].apply(lambda x: x.replace("\n", ""))
         df['justification_sentences'] = df.apply(lambda x: sent_tokenize(x['justification']), axis=1)
         df = df[['id', 'statement', 'justification', 'label', 'scored_sentences',
              'justification_sentences']]
@@ -84,7 +85,8 @@ def get_dataset(scored_sentences_path, dataset_path, dataset_name, top_n, parser
 
     if dataset_name == 'liar_plus':
         for i in dataset:
-            if i["scored_sentences"] is None or i["id"] == '2001.json': #Sentence in Liarplus is too long:
+            remove_ids = ['2161.json', '2001.json', '1777.json']  # in validation, '1777.json-supTest'
+            if i["scored_sentences"] is None or i["id"] in remove_ids: #Sentence in Liarplus is too long:
                 continue
             else:
                 new_dataset.append(i)
