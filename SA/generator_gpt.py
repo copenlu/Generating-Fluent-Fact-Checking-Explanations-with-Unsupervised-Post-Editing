@@ -8,6 +8,7 @@ from transformers import GPT2LMHeadModel, GPT2Tokenizer, T5ForConditionalGenerat
 class GPT2FluencyScorer():
     def __init__(self, model_id, fluency_device):
 
+        print("Loaded weights from: ",model_id)
         self.model_id = model_id
         self.device = fluency_device
         self.tokenizer = GPT2Tokenizer.from_pretrained(self.model_id)

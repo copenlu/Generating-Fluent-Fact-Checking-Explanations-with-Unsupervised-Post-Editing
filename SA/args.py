@@ -53,7 +53,7 @@ def get_model_args():
    
     parser.add_argument("--insert_th",
                         help="accept threshold for insert",
-                        type=float, default=0.99)
+                        type=float, default=1.10)
 
     parser.add_argument("--reorder_th",
                         help="accept threshold for reorder",

@@ -67,7 +67,7 @@ def get_dataset(scored_sentences_path, dataset_path, dataset_name, top_n, parser
         
         df['scored_sentences'] = df.apply(lambda x: scored_sentences.get(x['id'], None), axis=1)
         df = df[df['scored_sentences'] != None]
-        df["scored_sentences"] = df["scored_sentences"].apply(lambda x: x.replace("\n", ""))
+        #df["scored_sentences"] = df["scored_sentences"].apply(lambda x: x.replace("\n", ""))
         df['justification_sentences'] = df.apply(lambda x: sent_tokenize(x['justification']), axis=1)
         df = df[['id', 'statement', 'justification', 'label', 'scored_sentences',
              'justification_sentences']]
@@ -89,7 +89,8 @@ def get_dataset(scored_sentences_path, dataset_path, dataset_name, top_n, parser
             if i["scored_sentences"] is None or i["id"] in remove_ids: #Sentence in Liarplus is too long:
                 continue
             else:
-                new_dataset.append(i)
+            	i["scored_sentences"] = i["scored_sentences"].replace("\n", "")
+            	new_dataset.append(i)
     elif dataset_name == 'pub_health':
         for i in dataset:
             remove_ids = ['41862', '36094', '30819', '36167', '37958']     
@@ -122,10 +123,11 @@ if __name__ == "__main__":
     np.random.seed(sa_args.seed)
 
     dataset = get_dataset(sa_args.sentences_path, sa_args.dataset_path, sa_args.dataset_name, sa_args.top_n, parser)
+    dataset = dataset[:300] #change for hyperparameter tuning
 
     if sa_args.sample:
         print(f"Sampling {sa_args.sample} instances from the dataset")
-        dataset = np.random.choice(dataset, sa_args.sample)[612:]
+        dataset = np.random.choice(dataset, sa_args.sample)
 
     if sa_args.device_type == "gpu":
         device = "cuda"
@@ -169,10 +171,11 @@ if __name__ == "__main__":
     for i in range(0, len(dataset), sa_args.batch_size):
        
         batch_data = dataset[i: i + sa_args.batch_size]
+        '''
         for i in batch_data:
             print(i["claim_id"])
             print(i["scored_sentences"])
-
+        '''
         sa_outputs_batch = simulated_annealing.run(batch_data)
         processed_samples += len(batch_data)
         print("Processing: ", processed_samples)
@@ -192,6 +195,7 @@ if __name__ == "__main__":
             elif sa_args.dataset_name == 'pub_health':
                 gold_tokens.append(len(instance['explanation'].split(" ")))
             
+            '''
             print("SA_input: ", instance['scored_sentences'])
             print("\n")
             print("SA_output: ", instance_edit)
@@ -199,7 +203,7 @@ if __name__ == "__main__":
             print("Golden_just: ", instance['explanation'])
             print("\n")
             print("----------------------------------------------------------------------\n")
-
+			'''
             score1 = scorer.score(prediction='\n'.join(sent_tokenize(instance_edit)),
                                   target='\n'.join(instance['justification_sentences']))
             scores_sa_justs.append(score1)
