@@ -17,6 +17,9 @@ def get_model_args():
     parser.add_argument("--device_type", help="Type of device, CPU or GPU", type=str,
                         default='cpu')
 
+    parser.add_argument("--split", help="Split of data", type=str,
+                        default='test')
+
     parser.add_argument("--sample",
                         help="Number of instances to sample from "
                              "original dataset.",

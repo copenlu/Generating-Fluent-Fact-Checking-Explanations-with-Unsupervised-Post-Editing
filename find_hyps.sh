@@ -32,4 +32,9 @@ echo "7th Run! - Kept default parameters + GPT-finetuned"
 python run_sa.py --sentences_path /home/jolly/projects/COPE/DATA-COPE-Project-DIKUServer/sup_sccores_liar/results_serialized_val_filtered.jsonl --dataset_path /home/jolly/projects/COPE/liar_data/ruling_oracles_val.tsv --outfile liar_sup_val7.txt --batch_size 10 --device_type gpu --max_steps 220 --dataset_name liar_plus --fluencyscorer_model_id /home/jolly/projects/COPE/gpt_ftliar
 #############################
 
+echo "8th Run! - increased fluency, semantic weight, reorder acceptance, decreased deletion acceptance + GPT-finetuned"
+python run_sa.py --sentences_path /home/jolly/projects/COPE/DATA-COPE-Project-DIKUServer/sup_sccores_liar/results_serialized_val_filtered.jsonl --dataset_path /home/jolly/projects/COPE/liar_data/ruling_oracles_val.tsv --outfile liar_sup_val8.txt --batch_size 10 --device_type gpu --max_steps 220 --dataset_name liar_plus --fluencyscorer_model_id /home/jolly/projects/COPE/gpt_ftliar --fluency_weight 1.5 --semantic_weight_sentences 1.3 --reorder_th 0.95 --delete_th 0.97
+ 
+
+
 

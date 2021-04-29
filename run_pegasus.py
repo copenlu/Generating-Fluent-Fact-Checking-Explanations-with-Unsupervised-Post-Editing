@@ -4,6 +4,7 @@ import language_tool_python
 import time
 import numpy as np
 import os
+from tqdm import tqdm
 
 from nltk.tokenize import sent_tokenize
 from SA.args import get_model_args
@@ -21,6 +22,7 @@ tool = language_tool_python.LanguageTool('en-US')
 class PegasusTool():
 
     def __init__(self, pegasus_model_name, model_sbert, device):
+        print(device)
 
         self.model_name = pegasus_model_name
         self.device = device
@@ -37,7 +39,7 @@ class PegasusTool():
         tgt_text = self.tokenizer.batch_decode(translated, skip_special_tokens=True)
         return tgt_text
 
-    def gramatical_tool(sent):
+    def gramatical_tool(self, sent):
         matches = tool.check(sent)
         return language_tool_python.utils.correct(sent, matches)
 
@@ -48,7 +50,7 @@ class PegasusTool():
 
     def filter_justs(self, sa_out):
         temp = []
-        time1 = time.time()
+        
         for i in sent_tokenize(sa_out):
 
             if len(i.split(" ")) == 1:
@@ -77,11 +79,19 @@ if __name__== "__main__":
     score_names = ['rouge1', 'rouge2', 'rougeLsum']
     scorer = rouge_scorer.RougeScorer(score_names, use_stemmer=True)
 
-    post_process = PegasusTool(sa_args.pegasus_modelname, sa_args.sbertname_pegasus, sa_args.device_type)
+    post_process = PegasusTool(sa_args.pegasus_modelname, sa_args.sbertname_pegasus, 'cuda')
 
-    file_path1 = os.join(sa_args.outdir, sa_args.outfile)
-    file_path2 = os.join(sa_args.outdir, sa_args.outfile_filtered)
-    file_path3 = os.join(sa_args.outdir, sa_args.gold_path)
+    file_path1 = os.path.join(sa_args.outdir, sa_args.outfile)
+    file_path2 = os.path.join(sa_args.outdir, sa_args.outfile_filtered)
+    file_path3 = os.path.join(sa_args.outdir, sa_args.gold_path)
+
+    if os.path.exists(file_path2):
+        print("Removing already present output file: ",file_path2)
+        os.remove(file_path2)
+
+    if os.path.exists(file_path3):
+        print("Removing already present output file: ", file_path3)
+        os.remove(file_path3)
 
     sainps_saouts = [line for line in open(file_path1, 'r')]
     filter_saouts = open(file_path2, 'a+')
@@ -96,24 +106,27 @@ if __name__== "__main__":
     dataset = get_dataset(sa_args)
     processed_samples = 0
 
-    for sainp_saout, golds in zip(sainps_saouts, dataset):
+    time1 = time.time()
+    for sainp_saout, org_data in tqdm(zip(sainps_saouts, dataset)):
 
         processed_samples+=1
+
         saout = sainp_saout.split("\t")[1]
-        fliter_saout = post_process.filter_justs(saout)
+        filter_saout = post_process.filter_justs(saout)
 
-        filter_saouts.write(fliter_saout + "\n")
-        golds.write(dataset["justification"]+ "\n")
+        filter_saouts.write(filter_saout + "\n")
+        golds.write(org_data["justification"]+ "\n")
 
-        sa_inp_tokens.append(len(dataset['scored_sentences'].split(" ")))
+        sa_inp_tokens.append(len(org_data['scored_sentences'].split(" ")))
         sa_out_tokens.append(len(saout.split(" ")))
-        gold_tokens.append(len(dataset['justification'].split(" ")))
-        sa_out_filtered_tokens.append(len(fliter_saout.split(" ")))
+        gold_tokens.append(len(org_data['justification'].split(" ")))
+        sa_out_filtered_tokens.append(len(filter_saout.split(" ")))
 
-        score1 = scorer.score(prediction='\n'.join(sent_tokenize(fliter_saout)),
-                              target='\n'.join(dataset['justification_sentences']))
+        score1 = scorer.score(prediction='\n'.join(sent_tokenize(filter_saout)),
+                              target='\n'.join(org_data['justification_sentences']))
         scores_sa_filteredjusts.append(score1)
 
+    print("Time taken: ", time.time()-time1)
     golds.close()
     filter_saouts.close()
 

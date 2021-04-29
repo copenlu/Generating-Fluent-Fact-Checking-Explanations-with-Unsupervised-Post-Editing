@@ -87,13 +87,9 @@ def get_dataset(args):
     #             continue
     #         else:
     #             new_dataset.append(i)
-
+    
     print(f'Size of dataset: {len(dataset)}')
-    # print(f'Size of new dataset: {len(new_dataset)}')
     print('Sample: ', dataset[0])
-    # if len(new_dataset)!=0:
-    #     print('Sample: ', new_dataset[0])
-
     return dataset
  
 def get_string_scores(scores, score_names):
@@ -142,7 +138,7 @@ if __name__ == "__main__":
 
     # TODO write is needed once for gold and separately for each step
 
-    file_path = os.join(sa_args.outdir, sa_args.outfile)
+    file_path = os.path.join(sa_args.outdir, sa_args.outfile)
     if os.path.exists(file_path):
         print("Removing already present output file")
         os.remove(file_path)
