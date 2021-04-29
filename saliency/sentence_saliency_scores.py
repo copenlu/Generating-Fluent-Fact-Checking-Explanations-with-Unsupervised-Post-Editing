@@ -43,7 +43,10 @@ def summarize_attributions(attributions, type='mean', model=None, tokens=None):
         attributions = attributions.mean(dim=-1).squeeze(0)
         attributions = attributions / torch.norm(attributions)
     elif type == 'l2':
-        attributions = attributions.norm(p=1, dim=-1).squeeze(0)
+        attributions = attributions.norm(p=1, dim=-1)
+        if len(attributions.size()) > 2:
+            attributions = attributions.squeeze(0)
+
     return attributions
 
 
@@ -292,8 +295,6 @@ if __name__ == "__main__":
         ds = train
     else:
         ds = val
-
-    # ds.dataset = ds.dataset[:100]
     dl = DataLoader(ds, batch_size=args.batch_size,
                     collate_fn=collate_fn, shuffle=False)
     checkpoint = torch.load(args.model_path)
