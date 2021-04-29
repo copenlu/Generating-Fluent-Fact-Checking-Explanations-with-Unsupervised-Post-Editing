@@ -14,6 +14,7 @@ from data_loader import get_dataset_df
 from rouge_score import rouge_scorer
 import os.path
 import torch
+import os
 
 
 def clean_str(sent):
@@ -110,7 +111,7 @@ if __name__ == "__main__":
     np.random.seed(sa_args.seed)
 
     dataset = get_dataset(sa_args)
-    dataset = dataset[:300] #change for hyperparameter tuning
+    dataset = dataset
 
     if sa_args.sample:
         print(f"Sampling {sa_args.sample} instances from the dataset")
@@ -123,12 +124,11 @@ if __name__ == "__main__":
 
     num_gpus = torch.cuda.device_count()
 
-    fluency_scorer = GPT2FluencyScorer(sa_args.fluencyscorer_model_id, device)
-    editor = RobertaEditor(sa_args.editor_model_id, device, sa_args.min_length_of_edited_sent, fluency_scorer)
-
     score_names = ['rouge1', 'rouge2', 'rougeLsum']
     scorer = rouge_scorer.RougeScorer(score_names, use_stemmer=True)
 
+    fluency_scorer = GPT2FluencyScorer(sa_args.fluencyscorer_model_id, device)
+    editor = RobertaEditor(sa_args.editor_model_id, device, sa_args.min_length_of_edited_sent, fluency_scorer)
     simulated_annealing = SimulatedAnnealing(editor,
                                              fluency_scorer,
                                              sa_args, device)
@@ -142,11 +142,14 @@ if __name__ == "__main__":
 
     # TODO write is needed once for gold and separately for each step
 
-    if os.path.exists(sa_args.outfile):
+    file_path = os.join(sa_args.outdir, sa_args.outfile)
+    if os.path.exists(file_path):
         print("Removing already present output file")
-        os.remove(sa_args.outfile)
+        os.remove(file_path)
 
-    sa_inp_out = open(sa_args.outfile, 'a+')
+    if os.path.isdir(sa_args.outdir) is not True:
+        os.mkdir(sa_args.outdir)
+    sa_inp_out = open(file_path, 'a+')
 
     processed_samples = 0
     scores_sa_justs = []
@@ -176,21 +179,8 @@ if __name__ == "__main__":
             
             sa_inp_tokens.append(len(instance['scored_sentences'].split(" ")))
             sa_out_tokens.append(len(instance_edit.split(" ")))
-            
-            if sa_args.dataset_name == 'liar_plus':
-                gold_tokens.append(len(instance['justification'].split(" ")))
-            elif sa_args.dataset_name == 'pubhealth':
-                gold_tokens.append(len(instance['explanation'].split(" ")))
-            
-            '''
-            print("SA_input: ", instance['scored_sentences'])
-            print("\n")
-            print("SA_output: ", instance_edit)
-            print("\n")
-            print("Golden_just: ", instance['explanation'])
-            print("\n")
-            print("----------------------------------------------------------------------\n")
-			'''
+            gold_tokens.append(len(instance['justification'].split(" ")))
+
             score1 = scorer.score(prediction='\n'.join(sent_tokenize(instance_edit)),
                                   target='\n'.join(instance['justification_sentences']))
             scores_sa_justs.append(score1)
@@ -201,6 +191,7 @@ if __name__ == "__main__":
                                               target='\n'.join(instance['justification_sentences']))
                                  for instance in dataset]
 
+    sa_inp_out.close()
     print(f"Scores for originally selected {sa_args.top_n} sentences")
     aggregate_print_rouges(score_names, scores_original_sentences)
 
