@@ -32,6 +32,7 @@ def get_dataset_df(dataset_type, path):
             columns = ['dummy'] + columns
 
         df.columns = columns
+        df = df[df['label'].isin(LABEL_IDS_PUBH)]
 
     elif dataset_type == 'liar':
         columns = ['dummy', 'claim_id', 'statement', 'justification',
@@ -42,6 +43,8 @@ def get_dataset_df(dataset_type, path):
         df.columns = columns
 
     df = df[df['justification'].notna()]
+    df = df[df['ruling_without_summary'].notna()]
+    df = df[df['label'].notna()]
 
     df = df[['claim_id', 'statement', 'justification', 'ruling_without_summary',
              'label']]
