@@ -67,7 +67,9 @@ def get_model_args():
                         help="Type of iterative algorithm.", type=str, default="noSA")
     
     parser.add_argument("--dataset_name",
-                        help="Name of the dataset.", type=str, default="pub_health")
+                        help="Name of the dataset.",
+                        choices=['liar', 'pubhealth'],
+                        default='pubhealth')
  
     parser.add_argument("--outfile",
                                 help="Name of the file in which output is stored.", type=str, default="")

@@ -1,8 +1,7 @@
 import torch
-import math
 
 from torch.nn import CrossEntropyLoss
-from transformers import GPT2LMHeadModel, GPT2Tokenizer, T5ForConditionalGeneration
+from transformers import GPT2LMHeadModel, GPT2Tokenizer
 
 
 class GPT2FluencyScorer():
@@ -17,7 +16,7 @@ class GPT2FluencyScorer():
     def scorer_batch(self, sentences):
         #Gpt for fluency
         self.tokenizer.pad_token = self.tokenizer.eos_token
-        tensor_input = {k: v.to(self.device) for k,v in self.tokenizer(sentences, padding=True, truncation=True, return_tensors='pt').items()}
+        tensor_input = {k: v.to(self.device) for k, v in self.tokenizer(sentences, padding=True, truncation=True, return_tensors='pt').items()}
 
 
         lm_labels = tensor_input["input_ids"].detach().clone()

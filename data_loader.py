@@ -19,26 +19,47 @@ THREE_LABEL_IDS_LIAR = {
 LABEL_IDS_PUBH = {'false': 0, 'mixture': 1, 'true': 2, 'unproven': 3}
 
 
-class PubHealth(Dataset):
-    def __init__(self, path: str):
-        columns = ['claim_id',	'claim', 'date_published', 'explanation',
-                   'fact_checkers',	'main_text', 'sources', 'label', 'subjects']
+def get_dataset_df(dataset_type, path):
+    df = None
+
+    if dataset_type == 'pubhealth':
+        columns = ['claim_id', 'statement', 'date_published', 'justification',
+                   'fact_checkers', 'ruling_without_summary', 'sources', 'label', 'subjects']
 
         df = pd.read_csv(path, sep='\t')
-        df = df.dropna()
 
         if len(df.columns) == 10:
             columns = ['dummy'] + columns
 
         df.columns = columns
 
+    elif dataset_type == 'liar':
+        columns = ['dummy', 'claim_id', 'statement', 'justification',
+                   'ruling_without_summary', 'label', 'just_tokenized',
+                   'ruling_tokenized', 'statement_tokenized', 'oracle_ids']
+
+        df = pd.read_csv(path, sep='\t', index_col=0)
+        df.columns = columns
+
+    df = df[df['justification'].notna()]
+
+    df = df[['claim_id', 'statement', 'justification', 'ruling_without_summary',
+             'label']]
+
+    return df
+
+
+class PubHealth(Dataset):
+    def __init__(self, path: str):
+        df = get_dataset_df('pubhealth', path)
+
         self.dataset = []
         for i, row in df.iterrows():
             dict_ = dict()
             dict_['id'] = str(row['claim_id'])
 
-            dict_['text'] = sent_tokenize(row['main_text'])
-            dict_['text_query'] = row['claim']
+            dict_['text'] = sent_tokenize(row['ruling_without_summary'])
+            dict_['text_query'] = row['statement']
 
             dict_['label'] = row['label']
             dict_['explanation_sentences'] = []
@@ -48,7 +69,7 @@ class PubHealth(Dataset):
 
             dict_['text_answer'] = None
 
-            dict_['explanation_text'] = sent_tokenize(row['explanation'])
+            dict_['explanation_text'] = sent_tokenize(row['justification'])
 
             self.dataset.append(dict_)
 
@@ -62,35 +83,12 @@ class PubHealth(Dataset):
 class LIARDataset(Dataset):
     def __init__(self, path: str, num_labels: int = 3):
         self.dataset = []
-        """ The format of the instances is a dictionary with keys:
-            id: str/int -- id in the corresponding dataset
-            text: List[str] - main text, where the explanation apply to
-            text_query: str - query or claim
-            text_answer: str, optional - used for QA dataset
 
-            label: str
-
-            explanation_text: str, optional 
-                - abstractive explanation for the instance
-            explanation_sentences:  List[int], optional
-                - indices of the explanation sentences from text
-            explanation_sentences_hot:  List[int], optional
-                - indices of the explanation sentences from text
-            explanation_tokens: List[List[int]], optional
-                - token indices highlighted as explanation from text
-        """
-
-        columns = ['dummy', 'id', 'statement', 'justification',
-                   'ruling_without_summary', 'label', 'just_tokenized',
-                   'ruling_tokenized', 'statement_tokenized', 'oracle_ids']
-
-        df = pd.read_csv(path, sep='\t', index_col=0)
-        df = df.dropna()
-        df.columns = columns
+        df = get_dataset_df('liar', path)
 
         for i, row in df.iterrows():
             dict_ = dict()
-            dict_['id'] = str(row['id'])
+            dict_['id'] = str(row['claim_id'])
 
             dict_['text'] = sent_tokenize(row['ruling_without_summary'])
             dict_['text_query'] = row['statement']
@@ -102,15 +100,13 @@ class LIARDataset(Dataset):
             else:
                 dict_['label_id'] = LABEL_IDS_LIAR[row['label']]
 
+            dict_['explanation_sentences'] = []
+            dict_['explanation_sentences_hot'] = []
+
             dict_['text_answer'] = None
 
             dict_['explanation_text'] = sent_tokenize(row['justification'])
 
-            dict_['explanation_sentences'] = json.loads(row['oracle_ids'])
-            dict_['explanation_sentences_hot'] = [
-                1 if i in dict_['explanation_sentences']
-                else 0 for i in range(len(dict_['text']))
-            ]
 
             self.dataset.append(dict_)
 

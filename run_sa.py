@@ -1,5 +1,4 @@
 import json
-import pandas as pd
 import numpy as np
 import random
 from nltk.tokenize import sent_tokenize
@@ -10,6 +9,7 @@ from SA.scoring_algos import SimulatedAnnealing
 from SA.args import get_model_args
 from baselines import aggregate_print_rouges
 from SA.extract_phrases import parser
+from data_loader import get_dataset_df
 
 from rouge_score import rouge_scorer
 import os.path
@@ -26,87 +26,74 @@ def clean_str(sent):
 
     return sent.strip()
 
-def get_dataset(scored_sentences_path, dataset_path, dataset_name, top_n, parser):
 
-    if dataset_name == 'liar_plus':
-        df = pd.read_csv(dataset_path, sep='\t', index_col=0)
-        df = df.dropna()
-        columns = ['dummy', 'id', 'statement', 'justification',
-               'ruling_without_summary', 'label', 'just_tokenized',
-               'ruling_tokenized', 'statement_tokenized', 'oracle_ids']
-        df.columns = columns
-        
-    elif dataset_name == 'pub_health':
-        df = pd.read_csv(dataset_path, sep='\t')
-        df = df.dropna()
-        
-        columns = ['claim_id', 'claim', 'date_published', 'explanation',
-                   'fact_checkers', 'main_text', 'sources', 'label', 'subjects']
-        
-        if len(df.columns) == 10:
-            columns = ['dummy'] + columns
-        
-        df.columns = columns
-    
-    scored_sentences = [json.loads(line) for line in open(scored_sentences_path)]
-    scored_sentences = {item["id"]: sorted(item['sentence_scores'], key=lambda x: x[1], reverse=True)[:top_n] for item in scored_sentences}
-    
-    
+def get_dataset(args):
+    df = get_dataset_df(args.dataset_name, args.dataset_path)
+    df['claim_id'] = df['claim_id'].astype('str')
+
+    scored_sentences = [json.loads(line) for line in open(args.sentences_path)]
+    scored_sentences = {str(item["id"]): sorted(item['sentence_scores'], key=lambda x: x[1], reverse=True)[:args.top_n] for item in scored_sentences}
+
     inp_scored_sentences = {}
     for k, v in scored_sentences.items():
-        
         temp = []
         for sent in v:
             temp.append(sent[0])
         inp_scored_sentences[k] = clean_str(" ".join(temp))
 
     scored_sentences = inp_scored_sentences
-    
-    
-    if dataset_name == 'liar_plus':
-        
-        df['scored_sentences'] = df.apply(lambda x: scored_sentences.get(x['id'], None), axis=1)
-        df = df[df['scored_sentences'] != None]
-        #df["scored_sentences"] = df["scored_sentences"].apply(lambda x: x.replace("\n", ""))
-        df['justification_sentences'] = df.apply(lambda x: sent_tokenize(x['justification']), axis=1)
-        df = df[['id', 'statement', 'justification', 'label', 'scored_sentences',
-             'justification_sentences']]
-        
-    elif dataset_name == 'pub_health':
-        df['claim_id'] = df['claim_id'].astype('str')
-        df['scored_sentences'] = df.apply(lambda x: scored_sentences.get(x['claim_id'], None), axis=1)
-        df = df[df['scored_sentences'] != None]
-        df['justification_sentences'] = df.apply(lambda x: sent_tokenize(x['explanation']), axis=1)
-        df = df[['claim_id', 'claim', 'explanation', 'label', 'scored_sentences',
-             'justification_sentences']]
+
+    df['scored_sentences'] = df.apply(
+        lambda x: scored_sentences.get(x['claim_id'], None), axis=1)
+    df = df[df['scored_sentences'].notna()]
+
+    df["scored_sentences"] = df["scored_sentences"].apply(
+        lambda x: x.replace("\n", ""))
+    df['justification_sentences'] = df.apply(
+        lambda x: sent_tokenize(x['justification']), axis=1)
+
+    # if dataset_name == 'liar':
+    #     df['scored_sentences'] = df.apply(lambda x: scored_sentences.get(x['id'], None), axis=1)
+    #     # df = df[df['scored_sentences'] != None]
+    #     df["scored_sentences"] = df["scored_sentences"].apply(lambda x: x.replace("\n", ""))
+    #     df['justification_sentences'] = df.apply(lambda x: sent_tokenize(x['justification']), axis=1)
+    #     df = df[['id', 'statement', 'justification', 'label', 'scored_sentences',
+    #          'justification_sentences']]
+    #
+    # elif dataset_name == 'pub_health':
+    #     # df['claim_id'] = df['claim_id'].astype('str')
+    #     df['scored_sentences'] = df.apply(lambda x: scored_sentences.get(x['claim_id'], None), axis=1)
+    #     # df = df[df['scored_sentences'] != None]
+    #     df['justification_sentences'] = df.apply(lambda x: sent_tokenize(x['explanation']), axis=1)
+    #     df = df[['claim_id', 'claim', 'explanation', 'label', 'scored_sentences',
+    #          'justification_sentences']]
         
     dataset = [row.to_dict() for i, row in df.iterrows()]
-    new_dataset = []
+    # new_dataset = []
 
-    if dataset_name == 'liar_plus':
-        for i in dataset:
-            remove_ids = ['2161.json', '2001.json', '1777.json']  # in validation, '1777.json-supTest'
-            if i["scored_sentences"] is None or i["id"] in remove_ids: #Sentence in Liarplus is too long:
-                continue
-            else:
-            	i["scored_sentences"] = i["scored_sentences"].replace("\n", "")
-            	new_dataset.append(i)
-    elif dataset_name == 'pub_health':
-        for i in dataset:
-            remove_ids = ['41862', '36094', '30819', '36167', '37958']     
-            if i["scored_sentences"] is None or i["claim_id"] in remove_ids or i["scored_sentences"] == None:
-                continue
-            else:
-                new_dataset.append(i)
-    
+    # if dataset_name == 'liar':
+    #     for i in dataset:
+    #         # remove_ids = ['2161.json', '2001.json', '1777.json']  # in validation, '1777.json-supTest'
+    #         if i["scored_sentences"] is None or i["id"] in remove_ids: #Sentence in Liarplus is too long:
+    #             continue
+    #         else:
+    #         	i["scored_sentences"] = i["scored_sentences"].replace("\n", "")
+    #         	new_dataset.append(i)
+    # elif dataset_name == 'pub_health':
+    #     for i in dataset:
+    #         # remove_ids = ['41862', '36094', '30819', '36167', '37958']
+    #         if i["scored_sentences"] is None or i["claim_id"] in remove_ids or i["scored_sentences"] == None:
+    #             continue
+    #         else:
+    #             new_dataset.append(i)
 
     print(f'Size of dataset: {len(dataset)}')
-    print(f'Size of new dataset: {len(new_dataset)}')
+    # print(f'Size of new dataset: {len(new_dataset)}')
     print('Sample: ', dataset[0])
-    if len(new_dataset)!=0:
-        print('Sample: ', new_dataset[0])
+    # if len(new_dataset)!=0:
+    #     print('Sample: ', new_dataset[0])
 
-    return new_dataset
+    return dataset
  
 def get_string_scores(scores, score_names):
     for score_name in score_names:
@@ -122,7 +109,7 @@ if __name__ == "__main__":
     random.seed(sa_args.seed)
     np.random.seed(sa_args.seed)
 
-    dataset = get_dataset(sa_args.sentences_path, sa_args.dataset_path, sa_args.dataset_name, sa_args.top_n, parser)
+    dataset = get_dataset(sa_args)
     dataset = dataset[:300] #change for hyperparameter tuning
 
     if sa_args.sample:
@@ -192,7 +179,7 @@ if __name__ == "__main__":
             
             if sa_args.dataset_name == 'liar_plus':
                 gold_tokens.append(len(instance['justification'].split(" ")))
-            elif sa_args.dataset_name == 'pub_health':
+            elif sa_args.dataset_name == 'pubhealth':
                 gold_tokens.append(len(instance['explanation'].split(" ")))
             
             '''
