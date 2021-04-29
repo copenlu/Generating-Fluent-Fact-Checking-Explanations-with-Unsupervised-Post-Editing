@@ -17,6 +17,9 @@ def get_model_args():
     parser.add_argument("--device_type", help="Type of device, CPU or GPU", type=str,
                         default='cpu')
 
+    parser.add_argument("--split", help="Split of data", type=str,
+                        default='test')
+
     parser.add_argument("--sample",
                         help="Number of instances to sample from "
                              "original dataset.",
@@ -74,6 +77,15 @@ def get_model_args():
     parser.add_argument("--outfile",
                                 help="Name of the file in which output is stored.", type=str, default="")
 
+    parser.add_argument("--outdir",
+                        help="Name of the directory for one set of files.", type=str, default="")
+
+    parser.add_argument("--gold_path",
+                        help="Name of the file in which gold justifications are stored.", type=str, default="")
+
+    parser.add_argument("--outfile_filtered",
+                        help="Name of the file in which output is stored.", type=str, default="")
+
     parser.add_argument("--max_steps",
                         help="Max steps for running SA.", type=int, default=200)
 
@@ -94,6 +106,16 @@ def get_model_args():
                         help="Model-id for fluency scorer.",
                         type=str,
                         default='gpt2')
+
+    parser.add_argument("--pegasus_modelname",
+                        help="Model-name for pegasus.",
+                        type=str,
+                        default='tuner007/pegasus_paraphrase')
+
+    parser.add_argument("--sbertname_pegasus",
+                        help="sbert model for filtering.",
+                        type=str,
+                        default='paraphrase-distilroberta-base-v1')
 
     args, unparsed = parser.parse_known_args()
     print(args)
