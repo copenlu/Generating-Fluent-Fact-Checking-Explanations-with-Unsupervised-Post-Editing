@@ -18,7 +18,7 @@ echo "2. Running SA code for supervised test justifications!"
 
 python run_sa.py --sentences_path /home/jolly/projects/COPE/FilteredData/sup_sccores_liar/results_serialized_test_filtered.jsonl --dataset_path /home/jolly/projects/COPE/liar_data/ruling_oracles_test.tsv --outfile liar_sup_test.txt --outdir liar_sup --batch_size 10 --device_type gpu --max_steps 220 --dataset_name liar --length_weight 1.4 --fluency_weight 1.5 --semantic_weight_sentences 1.2 --reorder_th 0.94
 
-echo "2. Running Pegasus Filtering for supervised validation justifications!"
+echo "2. Running Pegasus Filtering for supervised test justifications!"
 
 python run_pegasus.py --sentences_path /home/jolly/projects/COPE/FilteredData/sup_sccores_liar/results_serialized_test_filtered.jsonl --dataset_path /home/jolly/projects/COPE/liar_data/ruling_oracles_test.tsv --outfile liar_sup_test.txt --outdir liar_sup --gold_path L_testgold_sup.txt --outfile_filtered liar_sup_test_filter.txt --device_type gpu --dataset_name liar
 
