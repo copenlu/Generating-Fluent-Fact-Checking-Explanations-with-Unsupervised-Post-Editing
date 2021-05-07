@@ -1,6 +1,5 @@
 import torch
 import json
-import language_tool_python
 import time
 import numpy as np
 import os
@@ -17,7 +16,6 @@ from baselines import aggregate_print_rouges
 from transformers import PegasusForConditionalGeneration, PegasusTokenizer
 from sentence_transformers import SentenceTransformer, util
 
-tool = language_tool_python.LanguageTool('en-US')
 
 class PegasusTool():
 
@@ -39,10 +37,6 @@ class PegasusTool():
         tgt_text = self.tokenizer.batch_decode(translated, skip_special_tokens=True)
         return tgt_text
 
-    def gramatical_tool(self, sent):
-        matches = tool.check(sent)
-        return language_tool_python.utils.correct(sent, matches)
-
     def sentence_level_semantic_scorer_sbert(self, org, rep):
         org_embeds = self.model_sbert.encode(org)
         rep_embeds = self.model_sbert.encode(rep)
@@ -57,7 +51,6 @@ class PegasusTool():
                 temp.append(i)
                 continue
             else:
-                i = self.gramatical_tool(i)
                 all_responses = self.get_response(i, self.num_return_sequences, self.num_beams)
                 temp_str = ''
                 sim = self.sentence_level_semantic_scorer_sbert(all_responses, [i] * 10)
@@ -71,7 +64,7 @@ if __name__== "__main__":
 
     '''
     Arguments: 
-    device, sa_args.outfile, sa_args.outdir, sa_args.gold_path, sa_agrs.outfile_filtered, sa_agrs.dataset_name, sa_agrs.dataset_path, sa_agrs.sentence_path
+    sa_agrs.sentence_path, sa_agrs.dataset_path, sa_agrs.outfile_filtered, sa_args.outdir, device, sa_agrs.dataset_name, sa_agrs.outfile_pegasus
     
     '''
 
@@ -79,63 +72,52 @@ if __name__== "__main__":
     score_names = ['rouge1', 'rouge2', 'rougeLsum']
     scorer = rouge_scorer.RougeScorer(score_names, use_stemmer=True)
 
-    post_process = PegasusTool(sa_args.pegasus_modelname, sa_args.sbertname_pegasus, 'cuda')
+    pegasus_mod = PegasusTool(sa_args.pegasus_modelname, sa_args.sbertname_pegasus, 'cuda')
 
-    file_path1 = os.path.join(sa_args.outdir, sa_args.outfile)
-    file_path2 = os.path.join(sa_args.outdir, sa_args.outfile_filtered)
-    file_path3 = os.path.join(sa_args.outdir, sa_args.gold_path)
+    file_path1 = os.path.join(sa_args.outdir, sa_args.outfile_filtered)
+    file_path2 = os.path.join(sa_args.outdir, sa_args.outfile_pegasus)
 
     if os.path.exists(file_path2):
-        print("Removing already present output file: ",file_path2)
+        print("Removing already present output file: ", file_path2)
         os.remove(file_path2)
 
-    if os.path.exists(file_path3):
-        print("Removing already present output file: ", file_path3)
-        os.remove(file_path3)
+    saouts_pp = [line for line in open(file_path1, 'r')]
+    saouts_pegasus = open(file_path2, 'a+')
 
-    sainps_saouts = [line for line in open(file_path1, 'r')]
-    filter_saouts = open(file_path2, 'a+')
-    golds = open(file_path3, 'a+')
-
-    scores_sa_filteredjusts = []
+    scores_justs_pegasus = []
     sa_inp_tokens = []
     sa_out_tokens = []
-    sa_out_filtered_tokens = []
+    sa_out_pegasus_tokens = []
     gold_tokens = []
 
     dataset = get_dataset(sa_args)
     processed_samples = 0
 
     time1 = time.time()
-    for sainp_saout, org_data in tqdm(zip(sainps_saouts, dataset)):
+    for saout, org_data in tqdm(zip(saouts_pp, dataset)):
 
         processed_samples+=1
 
-        saout = sainp_saout.split("\t")[1]
-        filter_saout = post_process.filter_justs(saout)
-
-        filter_saouts.write(filter_saout + "\n")
-        golds.write(org_data["justification"]+ "\n")
+        filter_saout_pegasus = pegasus_mod.filter_justs(saout)
+        saouts_pegasus.write(filter_saout_pegasus + "\n")
 
         sa_inp_tokens.append(len(org_data['scored_sentences'].split(" ")))
         sa_out_tokens.append(len(saout.split(" ")))
         gold_tokens.append(len(org_data['justification'].split(" ")))
-        sa_out_filtered_tokens.append(len(filter_saout.split(" ")))
+        sa_out_pegasus_tokens.append(len(filter_saout_pegasus.split(" ")))
 
-        score1 = scorer.score(prediction='\n'.join(sent_tokenize(filter_saout)),
+        score1 = scorer.score(prediction='\n'.join(sent_tokenize(filter_saout_pegasus)),
                               target='\n'.join(org_data['justification_sentences']))
-        scores_sa_filteredjusts.append(score1)
+        scores_justs_pegasus.append(score1)
 
-    print("Time taken: ", time.time()-time1)
-    golds.close()
-    filter_saouts.close()
+    saouts_pegasus.close()
 
     print("Scores for filtered justifications (SA+Pegasus)")
-    aggregate_print_rouges(score_names, scores_sa_filteredjusts)
+    aggregate_print_rouges(score_names, scores_justs_pegasus)
 
     print("Average tokens in SA inputs: ", np.mean(sa_inp_tokens))
     print("Average tokens in SA outputs: ", np.mean(sa_out_tokens))
-    print("Average tokens in SA outputs + Pegasus: ", np.mean(sa_out_filtered_tokens))
+    print("Average tokens in SA outputs + Pegasus: ", np.mean(sa_out_pegasus_tokens))
     print("Average tokens in gold justifications: ", np.mean(gold_tokens))
 
     print("Processed: ", processed_samples)

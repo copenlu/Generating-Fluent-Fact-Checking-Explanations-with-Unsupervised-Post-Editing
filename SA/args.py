@@ -80,8 +80,8 @@ def get_model_args():
     parser.add_argument("--outdir",
                         help="Name of the directory for one set of files.", type=str, default="")
 
-    parser.add_argument("--gold_path",
-                        help="Name of the file in which gold justifications are stored.", type=str, default="")
+    parser.add_argument("--outfile_pegasus",
+                        help="Name of the file in which pegasus outputs are stored.", type=str, default="")
 
     parser.add_argument("--outfile_filtered",
                         help="Name of the file in which output is stored.", type=str, default="")
