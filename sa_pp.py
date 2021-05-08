@@ -20,7 +20,7 @@ tool = language_tool_python.LanguageTool('en-US')
 nlp = spacy.load("en_core_web_sm")
 
 
-def gramatical_tool(self, sent):
+def gramatical_tool(sent):
     matches = tool.check(sent)
     return language_tool_python.utils.correct(sent, matches)
 
