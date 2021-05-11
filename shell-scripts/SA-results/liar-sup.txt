@@ -1,0 +1,594 @@
+LiarPlus Dataset
+1. Running SA code for supervised validation justifications!
+Namespace(C=300, algo_type='noSA', batch_size=10, dataset_name='liar', dataset_path='/home/jolly/projects/COPE/liar_data/ruling_oracles_val.tsv', delete_th=0.97, device_type='gpu', editor_model_id='roberta-base', fluency_weight=1.5, fluencyscorer_model_id='gpt2', gold_path='', insert_th=1.1, length_weight=1.4, max_steps=220, min_length_of_edited_sent=40, named_entity_score_weight=0.95, outdir='liar_sup', outfile='liar_sup_val.txt', outfile_filtered='', pegasus_modelname='tuner007/pegasus_paraphrase', reorder_th=0.94, sample=None, sbertname_pegasus='paraphrase-distilroberta-base-v1', seed=33, semantic_weight_keywords=1.0, semantic_weight_sentences=1.2, sentences_path='/home/jolly/projects/COPE/FilteredData/sup_sccores_liar/results_serialized_val_filtered.jsonl', split='test', t_init=60000, top_n=6)
+Size of dataset: 1272
+Sample:  {'claim_id': '12134.json', 'statement': 'We have less Americans working now than in the 70s.', 'justification': 'Hartzler said, "We have less Americans working now than in the ‘70s." The statistics Hartzler’s staff said she cited show the employment-population ratio and labor force participation rate was indeed higher in 1979 than in 2015. However, Hartzler was talking about the entire decade of the ‘70s. The first eight years of the decade, 1970 through 1977, have a lower employment-population ratio and a lower labor force participation rate than 2015.', 'ruling_without_summary': 'Following the State of the Union and President Barack Obama’s claims of job creation, one member of Missouri’s congressional delegation said things aren’t so promising. U.S. Rep. Vicky Hartzler, R-Columbia, said, "We have less Americans working now than back in the ‘70s, so we do need to still address that and get our economy going." We reached out to Hartzler’s office to get a better idea of what she meant. Communications Director Kyle Buckles said the congresswoman was referring to the employment-population ratio from 1978 and 1979. We looked into these numbers, as well as some other measures to gauge the portion of the population that is working. Employment-Population Ratio The Bureau of Labor Statistics defines the employment-population ratio as the proportion of civilian noninstitutionalized population aged 16 years and over that is employed. This chart shows the ratio throughout the 1970s. The data show that in only one year, 1979, the employment-population ratio was higher than it was in 2015. In one year, 1978, it was the same as in 2015. In every other year, the ratio was lower. Labor Force Participation Another frequently cited indicator used to compare employment numbers is the labor force participation rate. This is a little different from the employment-population ratio because it compares how many people are in the labor market — whether they have a job or not — to the total number of people who could be working. One tricky issue with these numbers is how the aging population has affected the labor force between the 1970s and 2015. During testimony before a Congressional committee, Elisabeth Jacobs, a senior director at the Washington Center for Equitable Growth, said the clearest cause for a declining labor force participation rate is the aging population. "The Baby Boom generation, born between 1946 and 1964, is a large cohort of workers whose retirement age coincides with decline in labor force participation that began in 2000. As these workers retired, they left the labor force and in turn pushed down the total labor force participation rate." If we use the two years Hartzler’s staff said she was referencing, 1978 and 1979, we find the labor force participation rates were 63.2 percent and 63.7 percent respectively. Both of those numbers are greater than 2015’s rate of 62.88 percent. However, we again had to wonder about the first eight years of the decade. The rate in 1970 was 60.4 percent and it grew steadily to 62.3 percent in 1977, but it didn’t rise above 2015’s rate in that time. Number of Workers According to the U.S. Census Bureau, the U.S. population grew from 202 million in 1970 to 308 million in 2010. While the population grew, did the number of Americans working fall to 1970 levels? Bureau of Labor Statistics reports show that by the end of the 1970s, there were nearly 105 million people in the workforce. In 2015, that number had reached more than 155 million. These data show a nearly 50 percent increase in the absolute number of Americans working in 2015 compared to the late 1970s.', 'label': 'barely-true', 'scored_sentences': "U.S. Rep. Vicky Hartzler, R-Columbia, said, ''We have less Americans working now than back in the `70s, so we do need to still address that and get our economy going.'' This chart shows the ratio throughout the 1970s. In 2015, that number had reached more than 155 million. The data show that in only one year, 1979, the employment-population ratio was higher than it was in 2015. The rate in 1970 was 60.4 percent and it grew steadily to 62.3 percent in 1977, but it didn't rise above 2015's rate in that time. These data show a nearly 50 percent increase in the absolute number of Americans working in 2015 compared to the late 1970s.", 'justification_sentences': ['Hartzler said, "We have less Americans working now than in the ‘70s."', 'The statistics Hartzler’s staff said she cited show the employment-population ratio and labor force participation rate was indeed higher in 1979 than in 2015.', 'However, Hartzler was talking about the entire decade of the ‘70s.', 'The first eight years of the decade, 1970 through 1977, have a lower employment-population ratio and a lower labor force participation rate than 2015.']}
+Loaded weights from:  gpt2
+Editor built
+Processing:  10
+------------
+Processing:  20
+------------
+Processing:  30
+------------
+Processing:  40
+------------
+Processing:  50
+------------
+Processing:  60
+------------
+Processing:  70
+------------
+Processing:  80
+------------
+Processing:  90
+------------
+Processing:  100
+------------
+Processing:  110
+------------
+Processing:  120
+------------
+Processing:  130
+------------
+Processing:  140
+------------
+Processing:  150
+------------
+Processing:  160
+------------
+Processing:  170
+------------
+Processing:  180
+------------
+Processing:  190
+------------
+Processing:  200
+------------
+Processing:  210
+------------
+Processing:  220
+------------
+Processing:  230
+------------
+Processing:  240
+------------
+Processing:  250
+------------
+Processing:  260
+------------
+Processing:  270
+------------
+Processing:  280
+------------
+Processing:  290
+------------
+Processing:  300
+------------
+Processing:  310
+------------
+Processing:  320
+------------
+Processing:  330
+------------
+Processing:  340
+------------
+Processing:  350
+------------
+Processing:  360
+------------
+Processing:  370
+------------
+Processing:  380
+------------
+Processing:  390
+------------
+Processing:  400
+------------
+Processing:  410
+------------
+Processing:  420
+------------
+Processing:  430
+------------
+Processing:  440
+------------
+Processing:  450
+------------
+Processing:  460
+------------
+Processing:  470
+------------
+Processing:  480
+------------
+Processing:  490
+------------
+Processing:  500
+------------
+Processing:  510
+------------
+Processing:  520
+------------
+Processing:  530
+------------
+Processing:  540
+------------
+Processing:  550
+------------
+Processing:  560
+------------
+Processing:  570
+------------
+Processing:  580
+------------
+Processing:  590
+------------
+Processing:  600
+------------
+Processing:  610
+------------
+Processing:  620
+------------
+Processing:  630
+------------
+Processing:  640
+------------
+Processing:  650
+------------
+Processing:  660
+------------
+Processing:  670
+------------
+Processing:  680
+------------
+Processing:  690
+------------
+Processing:  700
+------------
+Processing:  710
+------------
+Processing:  720
+------------
+Processing:  730
+------------
+Processing:  740
+------------
+Processing:  750
+------------
+Processing:  760
+------------
+Processing:  770
+------------
+Processing:  780
+------------
+Processing:  790
+------------
+Processing:  800
+------------
+Processing:  810
+------------
+Processing:  820
+------------
+Processing:  830
+------------
+Processing:  840
+------------
+Processing:  850
+------------
+Processing:  860
+------------
+Processing:  870
+------------
+Processing:  880
+------------
+Processing:  890
+------------
+Processing:  900
+------------
+Processing:  910
+------------
+Processing:  920
+------------
+Processing:  930
+------------
+Processing:  940
+------------
+Processing:  950
+------------
+Processing:  960
+------------
+Processing:  970
+------------
+Processing:  980
+------------
+Processing:  990
+------------
+Processing:  1000
+------------
+Processing:  1010
+------------
+Processing:  1020
+------------
+Processing:  1030
+------------
+Processing:  1040
+------------
+Processing:  1050
+------------
+Processing:  1060
+------------
+Processing:  1070
+------------
+Processing:  1080
+------------
+Processing:  1090
+------------
+Processing:  1100
+------------
+Processing:  1110
+------------
+Processing:  1120
+------------
+Processing:  1130
+------------
+Processing:  1140
+------------
+Processing:  1150
+------------
+Processing:  1160
+------------
+Processing:  1170
+------------
+Processing:  1180
+------------
+Processing:  1190
+------------
+Processing:  1200
+------------
+Processing:  1210
+------------
+Processing:  1220
+------------
+Processing:  1230
+------------
+Processing:  1240
+------------
+Processing:  1250
+------------
+Processing:  1260
+------------
+Processing:  1270
+------------
+Processing:  1272
+------------
+Scores for originally selected 6 sentences
+{'rouge1': AggregateScore(low=Score(precision=0.28706922171380583, recall=0.47097752284901667, fmeasure=0.3368272239837955), mid=Score(precision=0.2939271542685151, recall=0.4774870298503383, fmeasure=0.34300089328573063), high=Score(precision=0.30041861255341823, recall=0.4843686967875377, fmeasure=0.34874421304908276)),
+ 'rouge2': AggregateScore(low=Score(precision=0.10068595754230827, recall=0.16073599134919375, fmeasure=0.11681250937842015), mid=Score(precision=0.1052083216999041, recall=0.16763736798167006, fmeasure=0.12195705413449084), high=Score(precision=0.10992378484993857, recall=0.1740813793790269, fmeasure=0.12664688472156305)),
+ 'rougeLsum': AggregateScore(low=Score(precision=0.25511222970441005, recall=0.41706370242241936, fmeasure=0.2991573422527884), mid=Score(precision=0.26201625314183324, recall=0.4237527363218972, fmeasure=0.30505491588039846), high=Score(precision=0.26844438151903394, recall=0.4304326339655837, fmeasure=0.31088425651734797))}
+rouge1 P: 29.39 	 CI(28.71-30.04) 	  R: 47.75 	 CI(47.10-48.44) 	  F1: 34.30 	 CI(33.68-34.87)
+rouge2 P: 10.52 	 CI(10.07-10.99) 	  R: 16.76 	 CI(16.07-17.41) 	  F1: 12.20 	 CI(11.68-12.66)
+rougeLsum P: 26.20 	 CI(25.51-26.84) 	  R: 42.38 	 CI(41.71-43.04) 	  F1: 30.51 	 CI(29.92-31.09)
+Scores for justifications given by SA
+{'rouge1': AggregateScore(low=Score(precision=0.304567334356131, recall=0.4373894841600493, fmeasure=0.3384970252428757), mid=Score(precision=0.31209052531960807, recall=0.44375272406006805, fmeasure=0.3443629404686066), high=Score(precision=0.3201602623122252, recall=0.45134425884416934, fmeasure=0.3508351189993763)),
+ 'rouge2': AggregateScore(low=Score(precision=0.10272379353583912, recall=0.14365969708432955, fmeasure=0.11312967060858986), mid=Score(precision=0.10735425515146432, recall=0.14984173950297885, fmeasure=0.11755111438290257), high=Score(precision=0.11223698547597881, recall=0.1562430336113329, fmeasure=0.12239689357828934)),
+ 'rougeLsum': AggregateScore(low=Score(precision=0.27011370667209156, recall=0.38517022492588493, fmeasure=0.29906040689754093), mid=Score(precision=0.2777002289793078, recall=0.39225252886676126, fmeasure=0.30528790703560216), high=Score(precision=0.28445411302280293, recall=0.3983334034786008, fmeasure=0.31056122963649296))}
+rouge1 P: 31.21 	 CI(30.46-32.02) 	  R: 44.38 	 CI(43.74-45.13) 	  F1: 34.44 	 CI(33.85-35.08)
+rouge2 P: 10.74 	 CI(10.27-11.22) 	  R: 14.98 	 CI(14.37-15.62) 	  F1: 11.76 	 CI(11.31-12.24)
+rougeLsum P: 27.77 	 CI(27.01-28.45) 	  R: 39.23 	 CI(38.52-39.83) 	  F1: 30.53 	 CI(29.91-31.06)
+Average tokens in SA inputs:  118.75
+Average tokens in SA outputs:  105.64701257861635
+Average tokens in gold justifications:  74.13915094339623
+Processed:  1272
+1. Running Pegasus Filtering for supervised validation justifications!
+Namespace(C=300, algo_type='noSA', batch_size=1, dataset_name='liar', dataset_path='/home/jolly/projects/COPE/liar_data/ruling_oracles_val.tsv', delete_th=0.97, device_type='gpu', editor_model_id='roberta-base', fluency_weight=1.4, fluencyscorer_model_id='gpt2', gold_path='L_valgold_sup.txt', insert_th=1.1, length_weight=1.25, max_steps=200, min_length_of_edited_sent=40, named_entity_score_weight=0.95, outdir='liar_sup', outfile='liar_sup_val.txt', outfile_filtered='liar_sup_val_filter.txt', pegasus_modelname='tuner007/pegasus_paraphrase', reorder_th=0.95, sample=None, sbertname_pegasus='paraphrase-distilroberta-base-v1', seed=33, semantic_weight_keywords=1.0, semantic_weight_sentences=1.1, sentences_path='/home/jolly/projects/COPE/FilteredData/sup_sccores_liar/results_serialized_val_filtered.jsonl', split='test', t_init=60000, top_n=6)
+cuda
+Size of dataset: 1272
+Sample:  {'claim_id': '12134.json', 'statement': 'We have less Americans working now than in the 70s.', 'justification': 'Hartzler said, "We have less Americans working now than in the ‘70s." The statistics Hartzler’s staff said she cited show the employment-population ratio and labor force participation rate was indeed higher in 1979 than in 2015. However, Hartzler was talking about the entire decade of the ‘70s. The first eight years of the decade, 1970 through 1977, have a lower employment-population ratio and a lower labor force participation rate than 2015.', 'ruling_without_summary': 'Following the State of the Union and President Barack Obama’s claims of job creation, one member of Missouri’s congressional delegation said things aren’t so promising. U.S. Rep. Vicky Hartzler, R-Columbia, said, "We have less Americans working now than back in the ‘70s, so we do need to still address that and get our economy going." We reached out to Hartzler’s office to get a better idea of what she meant. Communications Director Kyle Buckles said the congresswoman was referring to the employment-population ratio from 1978 and 1979. We looked into these numbers, as well as some other measures to gauge the portion of the population that is working. Employment-Population Ratio The Bureau of Labor Statistics defines the employment-population ratio as the proportion of civilian noninstitutionalized population aged 16 years and over that is employed. This chart shows the ratio throughout the 1970s. The data show that in only one year, 1979, the employment-population ratio was higher than it was in 2015. In one year, 1978, it was the same as in 2015. In every other year, the ratio was lower. Labor Force Participation Another frequently cited indicator used to compare employment numbers is the labor force participation rate. This is a little different from the employment-population ratio because it compares how many people are in the labor market — whether they have a job or not — to the total number of people who could be working. One tricky issue with these numbers is how the aging population has affected the labor force between the 1970s and 2015. During testimony before a Congressional committee, Elisabeth Jacobs, a senior director at the Washington Center for Equitable Growth, said the clearest cause for a declining labor force participation rate is the aging population. "The Baby Boom generation, born between 1946 and 1964, is a large cohort of workers whose retirement age coincides with decline in labor force participation that began in 2000. As these workers retired, they left the labor force and in turn pushed down the total labor force participation rate." If we use the two years Hartzler’s staff said she was referencing, 1978 and 1979, we find the labor force participation rates were 63.2 percent and 63.7 percent respectively. Both of those numbers are greater than 2015’s rate of 62.88 percent. However, we again had to wonder about the first eight years of the decade. The rate in 1970 was 60.4 percent and it grew steadily to 62.3 percent in 1977, but it didn’t rise above 2015’s rate in that time. Number of Workers According to the U.S. Census Bureau, the U.S. population grew from 202 million in 1970 to 308 million in 2010. While the population grew, did the number of Americans working fall to 1970 levels? Bureau of Labor Statistics reports show that by the end of the 1970s, there were nearly 105 million people in the workforce. In 2015, that number had reached more than 155 million. These data show a nearly 50 percent increase in the absolute number of Americans working in 2015 compared to the late 1970s.', 'label': 'barely-true', 'scored_sentences': "U.S. Rep. Vicky Hartzler, R-Columbia, said, ''We have less Americans working now than back in the `70s, so we do need to still address that and get our economy going.'' This chart shows the ratio throughout the 1970s. In 2015, that number had reached more than 155 million. The data show that in only one year, 1979, the employment-population ratio was higher than it was in 2015. The rate in 1970 was 60.4 percent and it grew steadily to 62.3 percent in 1977, but it didn't rise above 2015's rate in that time. These data show a nearly 50 percent increase in the absolute number of Americans working in 2015 compared to the late 1970s.", 'justification_sentences': ['Hartzler said, "We have less Americans working now than in the ‘70s."', 'The statistics Hartzler’s staff said she cited show the employment-population ratio and labor force participation rate was indeed higher in 1979 than in 2015.', 'However, Hartzler was talking about the entire decade of the ‘70s.', 'The first eight years of the decade, 1970 through 1977, have a lower employment-population ratio and a lower labor force participation rate than 2015.']}
+Time taken:  9608.343006134033
+Scores for filtered justifications (SA+Pegasus)
+{'rouge1': AggregateScore(low=Score(precision=0.32115124894598573, recall=0.40082946663779156, fmeasure=0.3360159374070001), mid=Score(precision=0.3289326354527329, recall=0.4077477924150863, fmeasure=0.3417326920172946), high=Score(precision=0.3367856857940116, recall=0.41388163317887633, fmeasure=0.34723876304350176)),
+ 'rouge2': AggregateScore(low=Score(precision=0.10285047277518287, recall=0.12492556295914935, fmeasure=0.10617981336854698), mid=Score(precision=0.1073960774804937, recall=0.1301104759478503, fmeasure=0.11042303648506713), high=Score(precision=0.11196673466775989, recall=0.1357403581771211, fmeasure=0.11482515317789381)),
+ 'rougeLsum': AggregateScore(low=Score(precision=0.28532111421667217, recall=0.3546112579298243, fmeasure=0.29768746150968234), mid=Score(precision=0.2926969713743275, recall=0.36044389503256924, fmeasure=0.3031593464623429), high=Score(precision=0.29953339412106733, recall=0.36665968325856885, fmeasure=0.30848791581545776))}
+rouge1 P: 32.89 	 CI(32.12-33.68) 	  R: 40.77 	 CI(40.08-41.39) 	  F1: 34.17 	 CI(33.60-34.72)
+rouge2 P: 10.74 	 CI(10.29-11.20) 	  R: 13.01 	 CI(12.49-13.57) 	  F1: 11.04 	 CI(10.62-11.48)
+rougeLsum P: 29.27 	 CI(28.53-29.95) 	  R: 36.04 	 CI(35.46-36.67) 	  F1: 30.32 	 CI(29.77-30.85)
+Average tokens in SA inputs:  118.75
+Average tokens in SA outputs:  105.64701257861635
+Average tokens in SA outputs + Pegasus:  89.07389937106919
+Average tokens in gold justifications:  74.13915094339623
+Processed:  1272
+1. SA+Pegasus Filtering completed for supervised validation justifications!
+2. Running SA code for supervised test justifications!
+Namespace(C=300, algo_type='noSA', batch_size=10, dataset_name='liar', dataset_path='/home/jolly/projects/COPE/liar_data/ruling_oracles_test.tsv', delete_th=0.97, device_type='gpu', editor_model_id='roberta-base', fluency_weight=1.5, fluencyscorer_model_id='gpt2', gold_path='', insert_th=1.1, length_weight=1.4, max_steps=220, min_length_of_edited_sent=40, named_entity_score_weight=0.95, outdir='liar_sup', outfile='liar_sup_test.txt', outfile_filtered='', pegasus_modelname='tuner007/pegasus_paraphrase', reorder_th=0.94, sample=None, sbertname_pegasus='paraphrase-distilroberta-base-v1', seed=33, semantic_weight_keywords=1.0, semantic_weight_sentences=1.2, sentences_path='/home/jolly/projects/COPE/FilteredData/sup_sccores_liar/results_serialized_test_filtered.jsonl', split='test', t_init=60000, top_n=6)
+Size of dataset: 1248
+Sample:  {'claim_id': '11972.json', 'statement': 'Building a wall on the U.S.-Mexico border will take literally years.', 'justification': 'Perry said: "Building a wall" on the U.S.-Mexico border "will take literally years." If Trump has a fast-track plan to plan the wall, purchase required land, complete needed studies and erect the wall in a year or less, it’s not public. Meantime, engineering experts agree the wall would most likely take years to complete. Keep in mind, too, it took more than six years to build roughly 700 miles of fence and barriers along the roughly 2,000-mile U.S.-Mexico border. Click here formore on the six PolitiFact ratings and how we select facts to check.', 'ruling_without_summary': 'Donald Trump says part of the answer to the complicated question of immigration has a seemingly simple solution: Build a "great, great" wall along the southern border and make neighboring Mexico pay for it. The logistics of that idea leave many people, including former Texas Gov. Rick Perry, agog. "Building a wall" on the border "will take literally years. I don’t care how good of a builder you are," Perry said about 40 minutes into an interview on the Jan. 15, 2016, edition of the Simon Conway Show on WHO in Des Moines. "And plus the private property rights," Perry said. "This is an issue that really gets complex in a hurry. I know because I’ve had to deal with it." Perry’s assertion got us thinking, what would go into building a wall from southernmost California to the southern tip of Texas? And would Trump’s wall indeedtake years to build? We didn’t take Perry’s claim as an uncheckable predictionin that when he spoke, there already existed exhaustive studies and reports onbuilding a border fence as ordered by Congress in 2006, particularly those conducted by the General Accounting Office, the nonpartisan investigative arm of Congress. We failed to connect with Trump’s camp about this statement while a Perry spokesman, Stan Gerdes, said by phone that while the former governor didn’t send a crew to the border to estimate how long a wall would take to build, it’s Perry’s experience-rich opinion it would definitely take more than a year. Some assumptions Before assessing Perry’s claim, we have to make assumptionsin part because Trump’s plan for the wall is pretty vague. We’re also going to share declarations by Trump and others that occurred after Perry spoke. Typically, we wouldn’t do so out of fairness to the person making a claim. But not doing so here might leave us short of being up to date. What we know of late is that Trumptold MSNBC on Feb. 9, 2016 the wall would be a "real wall," likely 35 to 40 feet tall and 1,000 miles long. The U.S.-Mexico border is actually just less than 2,000 miles long, but Trump said there are natural barriers over a portion of the border, meaning the U.S. would only need a wall along 1,000 miles of it. Some perspective: A 1,000-mile wall would be about one-13th the length of the Great Wall of China, butmore than twice the proposed length of the concrete and fence barrier that separates Israel from the West Bank, according to a Nov. 11, 2014 Washington Post news article. Trump has also conceded the wall will cost billions. He’s been quoted saying costs will total up to about $8 billion, all out of Mexico’s pocketbook. At the Feb. 25, 2016, GOP debate, he upped that speculated price tag to $10 billion to $12 billion. Former Mexican President Felipe Calderón opposes Trump’s idea, according to a Feb. 8, 2016 CNN news article, where Calderon called Trump’s wall "stupid," as does former Mexican President Vicente Fox, who said in a Univision interview posted online Feb. 25, 2016 that Mexico is "not going to pay for that f****** wall." Trump’s response to Fox’s declaration? "The wall just got 10 feet taller," he said at the Republican presidential debate in Houston the same day. In August 2015, Trump told New Hampshire residents the wall would be made using "beautiful nice precast plank" (see the video above this story). So we know it’s going to be a solid wall. And if Trump becomes president, is it feasible to have a wall up in a year or less? The existing fence There’s currently about 670 miles of fencing along the 1,954-mile U.S.-Mexico border. That is, the fence is not a fluid structure from point A to point B. Rather, it’s a fragmented barrier of metal posts and fencing standing about 18-feet tall, according to a Jan. 1, 2016, Associated Press news article. When he was governor and running for president the first time, Perry voiced opposition to the fence, expressing a sentiment perhaps echoed in his skepticism about Trump’s promised wall. "No, I don’t support a fence on the border," Perry said in New Hampshire, according to a Sept. 3, 2011 news story in the Dallas Morning News. "The fact is, it’s 1,200 miles from Brownsville to El Paso. Two things: How long you think it would take to build that? And then if you build a 30-foot wall from El Paso to Brownsville, the 35-foot ladder business gets real good." Earlier, the fence was started as a result of the 2006 Secure Fence Act, which approved the construction of an about 700-mile fence stretching from parts of Tecate, California to Brownsville. Five years later, President Barack Obama said the fence is "now basically complete" – a claim PolitiFact deemed Mostly False on May 16, 2011. Around that time, the vast majority of the mandated fencing had been answered with vehicle barriers and single-layer pedestrian fence even while the act called for double-layer fencing, of which there was about 36 miles in place. As of 2012, the fence and fence-related costs totaled about $6 billion. A 2009 Government Accountability Office report said that on average, the cost had run between $1 million and $3.9 million per mile of fence, depending on things like "type of fencing, topography, materials used, land acquisition costs, and labor costs." Raul Meza, a structural engineer and El Paso’s state director for the Structural Engineer’s Association of Texas, who lives about four miles from a portion of the border fence, told us by phone he thinks a wall would be even more expensive to build because it requires more time and labor. In January 2016, PolitiFact Florida found estimates for the wall’s cost ranging from $5.1 billion to $25 billion, with additional costs for maintenance. There’s been little announced in terms of a timeline for the wall’s construction. Trump told Meet the Press on Aug. 15, 2016 construction would be "under budget and ahead of schedule." Constructing Trump’s wall By telephone, Sharon Wood, dean of the University of Texas’ Cockrell School of Engineering and a former chair of UT’s civil engineering department, told us a wall,like the one Trump is suggesting,would likely be made using steel-reinforced concrete. "You can buy small reinforcement bars if you just go to Home Depot… Obviously for a larger structure, you’re going to use larger sizes," Wood said. "You don\'t buy it from Home Depot, but it’s the same type of process." A Feb. 17, 2016, CNN news article backs up this idea. Engineers asked to speculate about the envisioned project suggested precast concrete panels reinforced with steel would likely be used.They also came to the conclusion that building the wall would take around 339 million cubic feet of concrete and 5 billion pounds of steel. Meza told us two ways to build a reinforced concrete wall would entail either building it along the border on site, or building concrete panels at different construction firms -- which Trump seemed to endorse in his August 2015 remarks -- and having the panels transported and installed.Meza said precast panels would save time but add to the bill due to transport costs. Yet there’s more to building a large project than outright construction. James Jirsa, a UT-Austin civil engineering professor who specializes in concrete structures, told us there’s usually a planning period, lasting at least a year, to survey terrain and settle design issues. That period, he said, is followed by a bidding period for land that can also be time-consuming. The federal government has the right to build on private property when it deems projects a public necessity, though it is required to offer compensation – a process, celebrated by Trump, called eminent domain. This part of pre-construction can take years, depending on whether or not landowners dispute it. "Every piece of land is different," said Paul Barkhurst, an eminent domain litigation lawyer based in San Antonio. "You’re talking about a massive project across many, many states. It just depends on how much resources they want to put on it. One case could drag on for years because the land owner can challenge the right to take and the landowner can challenge the amount of compensation." Wood said an environmental impact and hydrological study may also be necessary, to see how the wall would affect nearby water and the flow in the Rio Grande. Then comes the raw building of the wall. Wood said there aren’t many structural loads to consider, but the builders would have to find a way to make sure the foundation is solid, even if the Rio Grande floods. This involves digging out the foundation and putting in casts of the concrete foundation and then building. "To be honest, that’s pretty straightforward," Wood said,saying the excavation of the foundation would probably take the most time. So how long would it take? Wood said that when just looking at the building the wall, pre-construction steps aside, it’s possible though highly unlikely that the wall could be completed in a year, say, if it were a"national priority and all of the resources were put in one place." If "you were to mobilize every single construction worker in the country," Wood said, "and take them down to the Texas border, I bet they could get it done very quickly." Separately, Jirsa opined that he and most engineers would probably agree that such a wall could not be built in under a year while Meza said the time it takes to build the avowed wall hinges largely on how much money goes toward construction. If money were no object, he said, the best-case scenario from the initial design phase to the wall’s completion would be five to 10 years. "I think that would be reasonable," he speculated.', 'label': 'true', 'scored_sentences': "''Building a wall'' on the border ''will take literally years. Rick Perry, agog. The logistics of that idea leave many people, including former Texas Gov. The U.S.-Mexico border is actually just less than 2,000 miles long, but Trump said there are natural barriers over a portion of the border, meaning the U.S. would only need a wall along 1,000 miles of it. Trump has also conceded the wall will cost billions. He's been quoted saying costs will total up to about $8 billion, all out of Mexico's pocketbook.", 'justification_sentences': ['Perry said: "Building a wall" on the U.S.-Mexico border "will take literally years."', 'If Trump has a fast-track plan to plan the wall, purchase required land, complete needed studies and erect the wall in a year or less, it’s not public.', 'Meantime, engineering experts agree the wall would most likely take years to complete.', 'Keep in mind, too, it took more than six years to build roughly 700 miles of fence and barriers along the roughly 2,000-mile U.S.-Mexico border.', 'Click here formore on the six PolitiFact ratings and how we select facts to check.']}
+Loaded weights from:  gpt2
+Editor built
+Processing:  10
+------------
+Processing:  20
+------------
+Processing:  30
+------------
+Processing:  40
+------------
+Processing:  50
+------------
+Processing:  60
+------------
+Processing:  70
+------------
+Processing:  80
+------------
+Processing:  90
+------------
+Processing:  100
+------------
+Processing:  110
+------------
+Processing:  120
+------------
+Processing:  130
+------------
+Processing:  140
+------------
+Processing:  150
+------------
+Processing:  160
+------------
+Processing:  170
+------------
+Processing:  180
+------------
+Processing:  190
+------------
+Processing:  200
+------------
+Processing:  210
+------------
+Processing:  220
+------------
+Processing:  230
+------------
+Processing:  240
+------------
+Processing:  250
+------------
+Processing:  260
+------------
+Processing:  270
+------------
+Processing:  280
+------------
+Processing:  290
+------------
+Processing:  300
+------------
+Processing:  310
+------------
+Processing:  320
+------------
+Processing:  330
+------------
+Processing:  340
+------------
+Processing:  350
+------------
+Processing:  360
+------------
+Processing:  370
+------------
+Processing:  380
+------------
+Processing:  390
+------------
+Processing:  400
+------------
+Processing:  410
+------------
+Processing:  420
+------------
+Processing:  430
+------------
+Processing:  440
+------------
+Processing:  450
+------------
+Processing:  460
+------------
+Processing:  470
+------------
+Processing:  480
+------------
+Processing:  490
+------------
+Processing:  500
+------------
+Processing:  510
+------------
+Processing:  520
+------------
+Processing:  530
+------------
+Processing:  540
+------------
+Processing:  550
+------------
+Processing:  560
+------------
+Processing:  570
+------------
+Processing:  580
+------------
+Processing:  590
+------------
+Processing:  600
+------------
+Processing:  610
+------------
+Processing:  620
+------------
+Processing:  630
+------------
+Processing:  640
+------------
+Processing:  650
+------------
+Processing:  660
+------------
+Processing:  670
+------------
+Processing:  680
+------------
+Processing:  690
+------------
+Processing:  700
+------------
+Processing:  710
+------------
+Processing:  720
+------------
+Processing:  730
+------------
+Processing:  740
+------------
+Processing:  750
+------------
+Processing:  760
+------------
+Processing:  770
+------------
+Processing:  780
+------------
+Processing:  790
+------------
+Processing:  800
+------------
+Processing:  810
+------------
+Processing:  820
+------------
+Processing:  830
+------------
+Processing:  840
+------------
+Processing:  850
+------------
+Processing:  860
+------------
+Processing:  870
+------------
+Processing:  880
+------------
+Processing:  890
+------------
+Processing:  900
+------------
+Processing:  910
+------------
+Processing:  920
+------------
+Processing:  930
+------------
+Processing:  940
+------------
+Processing:  950
+------------
+Processing:  960
+------------
+Processing:  970
+------------
+Processing:  980
+------------
+Processing:  990
+------------
+Processing:  1000
+------------
+Processing:  1010
+------------
+Processing:  1020
+------------
+Processing:  1030
+------------
+Processing:  1040
+------------
+Processing:  1050
+------------
+Processing:  1060
+------------
+Processing:  1070
+------------
+Processing:  1080
+------------
+Processing:  1090
+------------
+Processing:  1100
+------------
+Processing:  1110
+------------
+Processing:  1120
+------------
+Processing:  1130
+------------
+Processing:  1140
+------------
+Processing:  1150
+------------
+Processing:  1160
+------------
+Processing:  1170
+------------
+Processing:  1180
+------------
+Processing:  1190
+------------
+Processing:  1200
+------------
+Processing:  1210
+------------
+Processing:  1220
+------------
+Processing:  1230
+------------
+Processing:  1240
+------------
+Processing:  1248
+------------
+Scores for originally selected 6 sentences
+{'rouge1': AggregateScore(low=Score(precision=0.29376644784586237, recall=0.4666342061959363, fmeasure=0.33864869068171105), mid=Score(precision=0.30086782392333633, recall=0.4739083329861726, fmeasure=0.34422070820608014), high=Score(precision=0.30843242898131007, recall=0.4813506782930747, fmeasure=0.35033606337254636)),
+ 'rouge2': AggregateScore(low=Score(precision=0.10390831923915558, recall=0.16344420333776752, fmeasure=0.11878511901353075), mid=Score(precision=0.10850594893721464, recall=0.1700310800754085, fmeasure=0.12355832335490283), high=Score(precision=0.1138371223198652, recall=0.17733330217229062, fmeasure=0.129072503985571)),
+ 'rougeLsum': AggregateScore(low=Score(precision=0.2607788848279781, recall=0.41305516312891444, fmeasure=0.299680576755019), mid=Score(precision=0.267906464263902, recall=0.42006313311642146, fmeasure=0.30576873428245654), high=Score(precision=0.2746451223401136, recall=0.4270376722750819, fmeasure=0.31150629145432973))}
+rouge1 P: 30.09 	 CI(29.38-30.84) 	  R: 47.39 	 CI(46.66-48.14) 	  F1: 34.42 	 CI(33.86-35.03)
+rouge2 P: 10.85 	 CI(10.39-11.38) 	  R: 17.00 	 CI(16.34-17.73) 	  F1: 12.36 	 CI(11.88-12.91)
+rougeLsum P: 26.79 	 CI(26.08-27.46) 	  R: 42.01 	 CI(41.31-42.70) 	  F1: 30.58 	 CI(29.97-31.15)
+Scores for justifications given by SA
+{'rouge1': AggregateScore(low=Score(precision=0.3110167410110619, recall=0.4299869432481259, fmeasure=0.33775748625813623), mid=Score(precision=0.3190142102701352, recall=0.43794153290431703, fmeasure=0.3436764394795594), high=Score(precision=0.32651201435969845, recall=0.44536160309739203, fmeasure=0.3495665696860123)),
+ 'rouge2': AggregateScore(low=Score(precision=0.1069262254330112, recall=0.14612135106475949, fmeasure=0.11492781381129138), mid=Score(precision=0.11179699376714425, recall=0.15234807966927438, fmeasure=0.1197984743400262), high=Score(precision=0.11660393708813793, recall=0.15911608433470562, fmeasure=0.12456789597307108)),
+ 'rougeLsum': AggregateScore(low=Score(precision=0.2762061396886421, recall=0.3803435241319037, fmeasure=0.2990656299576609), mid=Score(precision=0.2832838815469654, recall=0.3871144709256569, fmeasure=0.30425572392109557), high=Score(precision=0.29061897389019614, recall=0.39409566663899054, fmeasure=0.3099908170817383))}
+rouge1 P: 31.90 	 CI(31.10-32.65) 	  R: 43.79 	 CI(43.00-44.54) 	  F1: 34.37 	 CI(33.78-34.96)
+rouge2 P: 11.18 	 CI(10.69-11.66) 	  R: 15.23 	 CI(14.61-15.91) 	  F1: 11.98 	 CI(11.49-12.46)
+rougeLsum P: 28.33 	 CI(27.62-29.06) 	  R: 38.71 	 CI(38.03-39.41) 	  F1: 30.43 	 CI(29.91-31.00)
+Average tokens in SA inputs:  116.93990384615384
+Average tokens in SA outputs:  103.98157051282051
+Average tokens in gold justifications:  76.04807692307692
+Processed:  1248
+2. Running Pegasus Filtering for supervised validation justifications!
+Namespace(C=300, algo_type='noSA', batch_size=1, dataset_name='liar', dataset_path='/home/jolly/projects/COPE/liar_data/ruling_oracles_test.tsv', delete_th=0.97, device_type='gpu', editor_model_id='roberta-base', fluency_weight=1.4, fluencyscorer_model_id='gpt2', gold_path='L_testgold_sup.txt', insert_th=1.1, length_weight=1.25, max_steps=200, min_length_of_edited_sent=40, named_entity_score_weight=0.95, outdir='liar_sup', outfile='liar_sup_test.txt', outfile_filtered='liar_sup_test_filter.txt', pegasus_modelname='tuner007/pegasus_paraphrase', reorder_th=0.95, sample=None, sbertname_pegasus='paraphrase-distilroberta-base-v1', seed=33, semantic_weight_keywords=1.0, semantic_weight_sentences=1.1, sentences_path='/home/jolly/projects/COPE/FilteredData/sup_sccores_liar/results_serialized_test_filtered.jsonl', split='test', t_init=60000, top_n=6)
+cuda
+Size of dataset: 1248
+Sample:  {'claim_id': '11972.json', 'statement': 'Building a wall on the U.S.-Mexico border will take literally years.', 'justification': 'Perry said: "Building a wall" on the U.S.-Mexico border "will take literally years." If Trump has a fast-track plan to plan the wall, purchase required land, complete needed studies and erect the wall in a year or less, it’s not public. Meantime, engineering experts agree the wall would most likely take years to complete. Keep in mind, too, it took more than six years to build roughly 700 miles of fence and barriers along the roughly 2,000-mile U.S.-Mexico border. Click here formore on the six PolitiFact ratings and how we select facts to check.', 'ruling_without_summary': 'Donald Trump says part of the answer to the complicated question of immigration has a seemingly simple solution: Build a "great, great" wall along the southern border and make neighboring Mexico pay for it. The logistics of that idea leave many people, including former Texas Gov. Rick Perry, agog. "Building a wall" on the border "will take literally years. I don’t care how good of a builder you are," Perry said about 40 minutes into an interview on the Jan. 15, 2016, edition of the Simon Conway Show on WHO in Des Moines. "And plus the private property rights," Perry said. "This is an issue that really gets complex in a hurry. I know because I’ve had to deal with it." Perry’s assertion got us thinking, what would go into building a wall from southernmost California to the southern tip of Texas? And would Trump’s wall indeedtake years to build? We didn’t take Perry’s claim as an uncheckable predictionin that when he spoke, there already existed exhaustive studies and reports onbuilding a border fence as ordered by Congress in 2006, particularly those conducted by the General Accounting Office, the nonpartisan investigative arm of Congress. We failed to connect with Trump’s camp about this statement while a Perry spokesman, Stan Gerdes, said by phone that while the former governor didn’t send a crew to the border to estimate how long a wall would take to build, it’s Perry’s experience-rich opinion it would definitely take more than a year. Some assumptions Before assessing Perry’s claim, we have to make assumptionsin part because Trump’s plan for the wall is pretty vague. We’re also going to share declarations by Trump and others that occurred after Perry spoke. Typically, we wouldn’t do so out of fairness to the person making a claim. But not doing so here might leave us short of being up to date. What we know of late is that Trumptold MSNBC on Feb. 9, 2016 the wall would be a "real wall," likely 35 to 40 feet tall and 1,000 miles long. The U.S.-Mexico border is actually just less than 2,000 miles long, but Trump said there are natural barriers over a portion of the border, meaning the U.S. would only need a wall along 1,000 miles of it. Some perspective: A 1,000-mile wall would be about one-13th the length of the Great Wall of China, butmore than twice the proposed length of the concrete and fence barrier that separates Israel from the West Bank, according to a Nov. 11, 2014 Washington Post news article. Trump has also conceded the wall will cost billions. He’s been quoted saying costs will total up to about $8 billion, all out of Mexico’s pocketbook. At the Feb. 25, 2016, GOP debate, he upped that speculated price tag to $10 billion to $12 billion. Former Mexican President Felipe Calderón opposes Trump’s idea, according to a Feb. 8, 2016 CNN news article, where Calderon called Trump’s wall "stupid," as does former Mexican President Vicente Fox, who said in a Univision interview posted online Feb. 25, 2016 that Mexico is "not going to pay for that f****** wall." Trump’s response to Fox’s declaration? "The wall just got 10 feet taller," he said at the Republican presidential debate in Houston the same day. In August 2015, Trump told New Hampshire residents the wall would be made using "beautiful nice precast plank" (see the video above this story). So we know it’s going to be a solid wall. And if Trump becomes president, is it feasible to have a wall up in a year or less? The existing fence There’s currently about 670 miles of fencing along the 1,954-mile U.S.-Mexico border. That is, the fence is not a fluid structure from point A to point B. Rather, it’s a fragmented barrier of metal posts and fencing standing about 18-feet tall, according to a Jan. 1, 2016, Associated Press news article. When he was governor and running for president the first time, Perry voiced opposition to the fence, expressing a sentiment perhaps echoed in his skepticism about Trump’s promised wall. "No, I don’t support a fence on the border," Perry said in New Hampshire, according to a Sept. 3, 2011 news story in the Dallas Morning News. "The fact is, it’s 1,200 miles from Brownsville to El Paso. Two things: How long you think it would take to build that? And then if you build a 30-foot wall from El Paso to Brownsville, the 35-foot ladder business gets real good." Earlier, the fence was started as a result of the 2006 Secure Fence Act, which approved the construction of an about 700-mile fence stretching from parts of Tecate, California to Brownsville. Five years later, President Barack Obama said the fence is "now basically complete" – a claim PolitiFact deemed Mostly False on May 16, 2011. Around that time, the vast majority of the mandated fencing had been answered with vehicle barriers and single-layer pedestrian fence even while the act called for double-layer fencing, of which there was about 36 miles in place. As of 2012, the fence and fence-related costs totaled about $6 billion. A 2009 Government Accountability Office report said that on average, the cost had run between $1 million and $3.9 million per mile of fence, depending on things like "type of fencing, topography, materials used, land acquisition costs, and labor costs." Raul Meza, a structural engineer and El Paso’s state director for the Structural Engineer’s Association of Texas, who lives about four miles from a portion of the border fence, told us by phone he thinks a wall would be even more expensive to build because it requires more time and labor. In January 2016, PolitiFact Florida found estimates for the wall’s cost ranging from $5.1 billion to $25 billion, with additional costs for maintenance. There’s been little announced in terms of a timeline for the wall’s construction. Trump told Meet the Press on Aug. 15, 2016 construction would be "under budget and ahead of schedule." Constructing Trump’s wall By telephone, Sharon Wood, dean of the University of Texas’ Cockrell School of Engineering and a former chair of UT’s civil engineering department, told us a wall,like the one Trump is suggesting,would likely be made using steel-reinforced concrete. "You can buy small reinforcement bars if you just go to Home Depot… Obviously for a larger structure, you’re going to use larger sizes," Wood said. "You don\'t buy it from Home Depot, but it’s the same type of process." A Feb. 17, 2016, CNN news article backs up this idea. Engineers asked to speculate about the envisioned project suggested precast concrete panels reinforced with steel would likely be used.They also came to the conclusion that building the wall would take around 339 million cubic feet of concrete and 5 billion pounds of steel. Meza told us two ways to build a reinforced concrete wall would entail either building it along the border on site, or building concrete panels at different construction firms -- which Trump seemed to endorse in his August 2015 remarks -- and having the panels transported and installed.Meza said precast panels would save time but add to the bill due to transport costs. Yet there’s more to building a large project than outright construction. James Jirsa, a UT-Austin civil engineering professor who specializes in concrete structures, told us there’s usually a planning period, lasting at least a year, to survey terrain and settle design issues. That period, he said, is followed by a bidding period for land that can also be time-consuming. The federal government has the right to build on private property when it deems projects a public necessity, though it is required to offer compensation – a process, celebrated by Trump, called eminent domain. This part of pre-construction can take years, depending on whether or not landowners dispute it. "Every piece of land is different," said Paul Barkhurst, an eminent domain litigation lawyer based in San Antonio. "You’re talking about a massive project across many, many states. It just depends on how much resources they want to put on it. One case could drag on for years because the land owner can challenge the right to take and the landowner can challenge the amount of compensation." Wood said an environmental impact and hydrological study may also be necessary, to see how the wall would affect nearby water and the flow in the Rio Grande. Then comes the raw building of the wall. Wood said there aren’t many structural loads to consider, but the builders would have to find a way to make sure the foundation is solid, even if the Rio Grande floods. This involves digging out the foundation and putting in casts of the concrete foundation and then building. "To be honest, that’s pretty straightforward," Wood said,saying the excavation of the foundation would probably take the most time. So how long would it take? Wood said that when just looking at the building the wall, pre-construction steps aside, it’s possible though highly unlikely that the wall could be completed in a year, say, if it were a"national priority and all of the resources were put in one place." If "you were to mobilize every single construction worker in the country," Wood said, "and take them down to the Texas border, I bet they could get it done very quickly." Separately, Jirsa opined that he and most engineers would probably agree that such a wall could not be built in under a year while Meza said the time it takes to build the avowed wall hinges largely on how much money goes toward construction. If money were no object, he said, the best-case scenario from the initial design phase to the wall’s completion would be five to 10 years. "I think that would be reasonable," he speculated.', 'label': 'true', 'scored_sentences': "''Building a wall'' on the border ''will take literally years. Rick Perry, agog. The logistics of that idea leave many people, including former Texas Gov. The U.S.-Mexico border is actually just less than 2,000 miles long, but Trump said there are natural barriers over a portion of the border, meaning the U.S. would only need a wall along 1,000 miles of it. Trump has also conceded the wall will cost billions. He's been quoted saying costs will total up to about $8 billion, all out of Mexico's pocketbook.", 'justification_sentences': ['Perry said: "Building a wall" on the U.S.-Mexico border "will take literally years."', 'If Trump has a fast-track plan to plan the wall, purchase required land, complete needed studies and erect the wall in a year or less, it’s not public.', 'Meantime, engineering experts agree the wall would most likely take years to complete.', 'Keep in mind, too, it took more than six years to build roughly 700 miles of fence and barriers along the roughly 2,000-mile U.S.-Mexico border.', 'Click here formore on the six PolitiFact ratings and how we select facts to check.']}
+Time taken:  9351.4005651474
+Scores for filtered justifications (SA+Pegasus)
+{'rouge1': AggregateScore(low=Score(precision=0.3261032308502424, recall=0.39617891978345293, fmeasure=0.33467783364432085), mid=Score(precision=0.33364105177220255, recall=0.40288136249553097, fmeasure=0.34025332318707424), high=Score(precision=0.34173461617201106, recall=0.4098117229256049, fmeasure=0.34567223211891285)),
+ 'rouge2': AggregateScore(low=Score(precision=0.10640851934684714, recall=0.12793867166034653, fmeasure=0.10830966322405028), mid=Score(precision=0.11091216948986767, recall=0.13352553899915914, fmeasure=0.11251904123689929), high=Score(precision=0.1156173427101438, recall=0.13954907802054958, fmeasure=0.11698509225504385)),
+ 'rougeLsum': AggregateScore(low=Score(precision=0.288881229389861, recall=0.35037982519927635, fmeasure=0.29612832739138645), mid=Score(precision=0.296353601851414, recall=0.3565836474653865, fmeasure=0.3012461297808567), high=Score(precision=0.30374408498034067, recall=0.3633409106515174, fmeasure=0.3068068718774649))}
+rouge1 P: 33.36 	 CI(32.61-34.17) 	  R: 40.29 	 CI(39.62-40.98) 	  F1: 34.03 	 CI(33.47-34.57)
+rouge2 P: 11.09 	 CI(10.64-11.56) 	  R: 13.35 	 CI(12.79-13.95) 	  F1: 11.25 	 CI(10.83-11.70)
+rougeLsum P: 29.64 	 CI(28.89-30.37) 	  R: 35.66 	 CI(35.04-36.33) 	  F1: 30.12 	 CI(29.61-30.68)
+Average tokens in SA inputs:  116.93990384615384
+Average tokens in SA outputs:  103.98157051282051
+Average tokens in SA outputs + Pegasus:  87.75961538461539
+Average tokens in gold justifications:  76.04807692307692
+Processed:  1248
+2. SA+Pegasus Filtering completed for supervised test justifications!
+Completed for Validation/Test of Liar Plus for Supervised

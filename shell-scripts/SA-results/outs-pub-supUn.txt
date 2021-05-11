@@ -1,0 +1,1144 @@
+Pubhealth Dataset
+1. Running SA code for supervised validation justifications!
+Namespace(C=300, algo_type='noSA', batch_size=10, dataset_name='pubhealth', dataset_path='/home/jolly/projects/COPE/FilteredData/PUBHEALTH/dev.tsv', delete_th=0.97, device_type='gpu', editor_model_id='roberta-base', fluency_weight=1.5, fluencyscorer_model_id='gpt2', gold_path='', insert_th=1.1, length_weight=1.4, max_steps=220, min_length_of_edited_sent=40, named_entity_score_weight=0.95, outdir='pub_sup', outfile='pub_sup_val.txt', outfile_filtered='', pegasus_modelname='tuner007/pegasus_paraphrase', reorder_th=0.94, sample=None, sbertname_pegasus='paraphrase-distilroberta-base-v1', seed=33, semantic_weight_keywords=1.0, semantic_weight_sentences=1.2, sentences_path='/home/jolly/projects/COPE/FilteredData/sup_sccores_pubhealth/results_serialized_val_filtered.jsonl', split='test', t_init=60000, top_n=5)
+Size of dataset: 1212
+Sample:  {'claim_id': '34656', 'statement': '\xa0A baby died at an unnamed medical facility because its parents refused to allow a black nurse to care for the child.', 'justification': 'Fellow Twitter users suggested @FierceFemtivist indicated she was from Louisville, Kentucky, prior to deleting her account. We were unable to locate any news reports of unusual infant deaths on 8 November 2015 in that area, nor were we able to confirm that the purported incident took place in Louisville (or at all):', 'ruling_without_summary': 'On 8 November 2015, former Twitter user @FierceFemtivist published an alarming series of tweets about purportedly racist parents who allowed their child to die rather than be treated by “n***** nurses.” The tweets in question, besides appearing on Twitter (cached partially here), were circulated via Facebook and Tumblr and are embedded in full below. According to @FierceFemtivist, she “just had an infant die” that she personally “could’ve saved” because the child’s epithet-slinging, Confederate flag-bedecked father purportedly physically blocked the nurse from entering the baby’s room despite the fact that the infant\xa0was “crashing fast.” @FierceFemtivist claimed to be the most qualified caregiver in the facility but did not provide a date, facility name, medical condition, nor even a gender for the baby who purportedly died solely because\xa0it had racist parents. The child appeared merely as a footnote to\xa0the narrative\xa0of neatly-packaged racism, replete with a Confederate-flag wearing, stock redneck character. Even after the baby’s preventable death, @FierceFemtivist described its parents as unmoved by grief and simply concerned with whether a black staff member might handle the infant’s corpse. No response on the part of the hospital or other medical staffers during the critical event was described in the story; as presented, the narrative reads like the facility passively\xa0allowed a baby to die during an unspecified cardiac event for the sole reason that the parents objected to a nurse’s race (despite the fact that hospitals and Child Protective Services maintain broad protocols for such emergency interventions). The form of sure life-saving care which could only have been be rendered by that one nurse (and apparently no other on-duty caregivers) wasn’t specified\xa0in the account. Readers were left with a number of questions when @FierceFemtivist deleted her account (and along with it, the controversial tweets). Did the incident occur on 8 November 2015, the date the tweets were posted, or earlier? Where was the facility located? Why did no other nurses or doctors intervene and attempt to administer life-saving care, even if they weren’t as capable of doing so? Were police summoned to investigate the baby’s death? What was the condition\xa0and ultimate\xa0cause of death? Was the baby male or female? Were any adults (parents or medical staff) considered potentially liable for the purported death?', 'label': 'unproven', 'scored_sentences': "Even after the baby's preventable death, @FierceFemtivist described its parents as unmoved by grief and simply concerned with whether a black staff member might handle the infant's corpse. No response on the part of the hospital or other medical staffers during the critical event was described in the story; as presented, the narrative reads like the facility passively\xa0allowed a baby to die during an unspecified cardiac event for the sole reason that the parents objected to a nurse's race (despite the fact that hospitals and Child Protective Services maintain broad protocols for such emergency interventions). On 8 November 2015, former Twitter user @FierceFemtivist published an alarming series of tweets about purportedly racist parents who allowed their child to die rather than be treated by “n***** nurses.” The tweets in question, besides appearing on Twitter (cached partially here), were circulated via Facebook and Tumblr and are embedded in full below. The child appeared merely as a footnote to\xa0the narrative\xa0of neatly-packaged racism, replete with a Confederate-flag wearing, stock redneck character. The form of sure life-saving care which could only have been be rendered by that one nurse (and apparently no other on-duty caregivers) wasn't specified\xa0in the account.", 'justification_sentences': ['Fellow Twitter users suggested @FierceFemtivist indicated she was from Louisville, Kentucky, prior to deleting her account.', 'We were unable to locate any news reports of unusual infant deaths on 8 November 2015 in that area, nor were we able to confirm that the purported incident took place in Louisville (or at all):']}
+Loaded weights from:  gpt2
+Editor built
+Processing:  10
+------------
+Processing:  20
+------------
+Processing:  30
+------------
+Processing:  40
+------------
+Processing:  50
+------------
+Processing:  60
+------------
+Processing:  70
+------------
+Processing:  80
+------------
+Processing:  90
+------------
+Processing:  100
+------------
+Processing:  110
+------------
+Processing:  120
+------------
+Processing:  130
+------------
+Processing:  140
+------------
+Processing:  150
+------------
+Processing:  160
+------------
+Processing:  170
+------------
+Processing:  180
+------------
+Processing:  190
+------------
+Processing:  200
+------------
+Processing:  210
+------------
+Processing:  220
+------------
+Processing:  230
+------------
+Processing:  240
+------------
+Processing:  250
+------------
+Processing:  260
+------------
+Processing:  270
+------------
+Processing:  280
+------------
+Processing:  290
+------------
+Processing:  300
+------------
+Processing:  310
+------------
+Processing:  320
+------------
+Processing:  330
+------------
+Processing:  340
+------------
+Processing:  350
+------------
+Processing:  360
+------------
+Processing:  370
+------------
+Processing:  380
+------------
+Processing:  390
+------------
+Processing:  400
+------------
+Processing:  410
+------------
+Processing:  420
+------------
+Processing:  430
+------------
+Processing:  440
+------------
+Processing:  450
+------------
+Processing:  460
+------------
+Processing:  470
+------------
+Processing:  480
+------------
+Processing:  490
+------------
+Processing:  500
+------------
+Processing:  510
+------------
+Processing:  520
+------------
+Processing:  530
+------------
+Processing:  540
+------------
+Processing:  550
+------------
+Processing:  560
+------------
+Processing:  570
+------------
+Processing:  580
+------------
+Processing:  590
+------------
+Processing:  600
+------------
+Processing:  610
+------------
+Processing:  620
+------------
+Processing:  630
+------------
+Processing:  640
+------------
+Processing:  650
+------------
+Processing:  660
+------------
+Processing:  670
+------------
+Processing:  680
+------------
+Processing:  690
+------------
+Processing:  700
+------------
+Processing:  710
+------------
+Processing:  720
+------------
+Processing:  730
+------------
+Processing:  740
+------------
+Processing:  750
+------------
+Processing:  760
+------------
+Processing:  770
+------------
+Processing:  780
+------------
+Processing:  790
+------------
+Processing:  800
+------------
+Processing:  810
+------------
+Processing:  820
+------------
+Processing:  830
+------------
+Processing:  840
+------------
+Processing:  850
+------------
+Processing:  860
+------------
+Processing:  870
+------------
+Processing:  880
+------------
+Processing:  890
+------------
+Processing:  900
+------------
+Processing:  910
+------------
+Processing:  920
+------------
+Processing:  930
+------------
+Processing:  940
+------------
+Processing:  950
+------------
+Processing:  960
+------------
+Processing:  970
+------------
+Processing:  980
+------------
+Processing:  990
+------------
+Processing:  1000
+------------
+Processing:  1010
+------------
+Processing:  1020
+------------
+Processing:  1030
+------------
+Processing:  1040
+------------
+Processing:  1050
+------------
+Processing:  1060
+------------
+Processing:  1070
+------------
+Processing:  1080
+------------
+Processing:  1090
+------------
+Processing:  1100
+------------
+Processing:  1110
+------------
+Processing:  1120
+------------
+Processing:  1130
+------------
+Processing:  1140
+------------
+Processing:  1150
+------------
+Processing:  1160
+------------
+Processing:  1170
+------------
+Processing:  1180
+------------
+Processing:  1190
+------------
+Processing:  1200
+------------
+Processing:  1210
+------------
+Processing:  1212
+------------
+Scores for originally selected 5 sentences
+{'rouge1': AggregateScore(low=Score(precision=0.2525988803274566, recall=0.5046748043678305, fmeasure=0.2939208463580453), mid=Score(precision=0.2644797378502297, recall=0.5154175816554916, fmeasure=0.3035249760665345), high=Score(precision=0.2774427998529205, recall=0.5261974913035445, fmeasure=0.3143627509781054)),
+ 'rouge2': AggregateScore(low=Score(precision=0.10436444844265354, recall=0.1851433857660307, fmeasure=0.11519082235907466), mid=Score(precision=0.11552439560593697, recall=0.19874888288791964, fmeasure=0.12627801487383514), high=Score(precision=0.12738846709632873, recall=0.21261051584691615, fmeasure=0.13781166896718983)),
+ 'rougeLsum': AggregateScore(low=Score(precision=0.2215381467902813, recall=0.4312215700388595, fmeasure=0.25368146458175217), mid=Score(precision=0.2336781140741654, recall=0.4428897113022022, fmeasure=0.26430355004907036), high=Score(precision=0.24589791704140646, recall=0.4543722549597481, fmeasure=0.27559555527390434))}
+rouge1 P: 26.45 	 CI(25.26-27.74) 	  R: 51.54 	 CI(50.47-52.62) 	  F1: 30.35 	 CI(29.39-31.44)
+rouge2 P: 11.55 	 CI(10.44-12.74) 	  R: 19.87 	 CI(18.51-21.26) 	  F1: 12.63 	 CI(11.52-13.78)
+rougeLsum P: 23.37 	 CI(22.15-24.59) 	  R: 44.29 	 CI(43.12-45.44) 	  F1: 26.43 	 CI(25.37-27.56)
+Scores for justifications given by SA
+{'rouge1': AggregateScore(low=Score(precision=0.2697980534894699, recall=0.4502534846969379, fmeasure=0.2896019841594381), mid=Score(precision=0.281640385812152, recall=0.4609698643020514, fmeasure=0.2983685534491325), high=Score(precision=0.2946881216615497, recall=0.47144990087963634, fmeasure=0.30848200359764194)),
+ 'rouge2': AggregateScore(low=Score(precision=0.10257381276091222, recall=0.15313016796830875, fmeasure=0.10422728767909073), mid=Score(precision=0.11297772437289699, recall=0.1654442175751547, fmeasure=0.11357901675663554), high=Score(precision=0.12319551826136765, recall=0.1767326452610474, fmeasure=0.12318981933819119)),
+ 'rougeLsum': AggregateScore(low=Score(precision=0.23484822060312235, recall=0.38231140962310844, fmeasure=0.24867519237248253), mid=Score(precision=0.248126426917187, recall=0.3932373504784483, fmeasure=0.25799342414657256), high=Score(precision=0.2599326635220548, recall=0.40407023623843863, fmeasure=0.2671038491480216))}
+rouge1 P: 28.16 	 CI(26.98-29.47) 	  R: 46.10 	 CI(45.03-47.14) 	  F1: 29.84 	 CI(28.96-30.85)
+rouge2 P: 11.30 	 CI(10.26-12.32) 	  R: 16.54 	 CI(15.31-17.67) 	  F1: 11.36 	 CI(10.42-12.32)
+rougeLsum P: 24.81 	 CI(23.48-25.99) 	  R: 39.32 	 CI(38.23-40.41) 	  F1: 25.80 	 CI(24.87-26.71)
+Average tokens in SA inputs:  123.36798679867987
+Average tokens in SA outputs:  104.10396039603961
+Average tokens in gold justifications:  76.12128712871286
+Processed:  1212
+1. Running Pegasus Filtering for supervised validation justifications!
+Namespace(C=300, algo_type='noSA', batch_size=1, dataset_name='pubhealth', dataset_path='/home/jolly/projects/COPE/FilteredData/PUBHEALTH/dev.tsv', delete_th=0.97, device_type='gpu', editor_model_id='roberta-base', fluency_weight=1.4, fluencyscorer_model_id='gpt2', gold_path='P_valgold_sup.txt', insert_th=1.1, length_weight=1.25, max_steps=200, min_length_of_edited_sent=40, named_entity_score_weight=0.95, outdir='pub_sup', outfile='pub_sup_val.txt', outfile_filtered='pub_sup_val_filter.txt', pegasus_modelname='tuner007/pegasus_paraphrase', reorder_th=0.95, sample=None, sbertname_pegasus='paraphrase-distilroberta-base-v1', seed=33, semantic_weight_keywords=1.0, semantic_weight_sentences=1.1, sentences_path='/home/jolly/projects/COPE/FilteredData/sup_sccores_pubhealth/results_serialized_val_filtered.jsonl', split='test', t_init=60000, top_n=5)
+cuda
+Size of dataset: 1212
+Sample:  {'claim_id': '34656', 'statement': '\xa0A baby died at an unnamed medical facility because its parents refused to allow a black nurse to care for the child.', 'justification': 'Fellow Twitter users suggested @FierceFemtivist indicated she was from Louisville, Kentucky, prior to deleting her account. We were unable to locate any news reports of unusual infant deaths on 8 November 2015 in that area, nor were we able to confirm that the purported incident took place in Louisville (or at all):', 'ruling_without_summary': 'On 8 November 2015, former Twitter user @FierceFemtivist published an alarming series of tweets about purportedly racist parents who allowed their child to die rather than be treated by “n***** nurses.” The tweets in question, besides appearing on Twitter (cached partially here), were circulated via Facebook and Tumblr and are embedded in full below. According to @FierceFemtivist, she “just had an infant die” that she personally “could’ve saved” because the child’s epithet-slinging, Confederate flag-bedecked father purportedly physically blocked the nurse from entering the baby’s room despite the fact that the infant\xa0was “crashing fast.” @FierceFemtivist claimed to be the most qualified caregiver in the facility but did not provide a date, facility name, medical condition, nor even a gender for the baby who purportedly died solely because\xa0it had racist parents. The child appeared merely as a footnote to\xa0the narrative\xa0of neatly-packaged racism, replete with a Confederate-flag wearing, stock redneck character. Even after the baby’s preventable death, @FierceFemtivist described its parents as unmoved by grief and simply concerned with whether a black staff member might handle the infant’s corpse. No response on the part of the hospital or other medical staffers during the critical event was described in the story; as presented, the narrative reads like the facility passively\xa0allowed a baby to die during an unspecified cardiac event for the sole reason that the parents objected to a nurse’s race (despite the fact that hospitals and Child Protective Services maintain broad protocols for such emergency interventions). The form of sure life-saving care which could only have been be rendered by that one nurse (and apparently no other on-duty caregivers) wasn’t specified\xa0in the account. Readers were left with a number of questions when @FierceFemtivist deleted her account (and along with it, the controversial tweets). Did the incident occur on 8 November 2015, the date the tweets were posted, or earlier? Where was the facility located? Why did no other nurses or doctors intervene and attempt to administer life-saving care, even if they weren’t as capable of doing so? Were police summoned to investigate the baby’s death? What was the condition\xa0and ultimate\xa0cause of death? Was the baby male or female? Were any adults (parents or medical staff) considered potentially liable for the purported death?', 'label': 'unproven', 'scored_sentences': "Even after the baby's preventable death, @FierceFemtivist described its parents as unmoved by grief and simply concerned with whether a black staff member might handle the infant's corpse. No response on the part of the hospital or other medical staffers during the critical event was described in the story; as presented, the narrative reads like the facility passively\xa0allowed a baby to die during an unspecified cardiac event for the sole reason that the parents objected to a nurse's race (despite the fact that hospitals and Child Protective Services maintain broad protocols for such emergency interventions). On 8 November 2015, former Twitter user @FierceFemtivist published an alarming series of tweets about purportedly racist parents who allowed their child to die rather than be treated by “n***** nurses.” The tweets in question, besides appearing on Twitter (cached partially here), were circulated via Facebook and Tumblr and are embedded in full below. The child appeared merely as a footnote to\xa0the narrative\xa0of neatly-packaged racism, replete with a Confederate-flag wearing, stock redneck character. The form of sure life-saving care which could only have been be rendered by that one nurse (and apparently no other on-duty caregivers) wasn't specified\xa0in the account.", 'justification_sentences': ['Fellow Twitter users suggested @FierceFemtivist indicated she was from Louisville, Kentucky, prior to deleting her account.', 'We were unable to locate any news reports of unusual infant deaths on 8 November 2015 in that area, nor were we able to confirm that the purported incident took place in Louisville (or at all):']}
+Time taken:  8184.982296228409
+Scores for filtered justifications (SA+Pegasus)
+{'rouge1': AggregateScore(low=Score(precision=0.2774214769852972, recall=0.40467458254853894, fmeasure=0.2801624490787537), mid=Score(precision=0.2889948161587927, recall=0.4145178407587684, fmeasure=0.28864930576094866), high=Score(precision=0.3020977135451314, recall=0.4236731540788254, fmeasure=0.29673465942590255)),
+ 'rouge2': AggregateScore(low=Score(precision=0.09276222103056972, recall=0.12565739779474816, fmeasure=0.08953764238516346), mid=Score(precision=0.10124168925358962, recall=0.13389292167816247, fmeasure=0.09659363040875345), high=Score(precision=0.10961053690933112, recall=0.14254974650536373, fmeasure=0.10391880925466151)),
+ 'rougeLsum': AggregateScore(low=Score(precision=0.23927748714316277, recall=0.3419616369301523, fmeasure=0.23845557508298734), mid=Score(precision=0.2511084892432946, recall=0.3503062738643651, fmeasure=0.24610231399944985), high=Score(precision=0.26200655356014385, recall=0.359817668524379, fmeasure=0.25353300758560793))}
+rouge1 P: 28.90 	 CI(27.74-30.21) 	  R: 41.45 	 CI(40.47-42.37) 	  F1: 28.86 	 CI(28.02-29.67)
+rouge2 P: 10.12 	 CI(9.28-10.96) 	  R: 13.39 	 CI(12.57-14.25) 	  F1: 9.66 	 CI(8.95-10.39)
+rougeLsum P: 25.11 	 CI(23.93-26.20) 	  R: 35.03 	 CI(34.20-35.98) 	  F1: 24.61 	 CI(23.85-25.35)
+Average tokens in SA inputs:  123.36798679867987
+Average tokens in SA outputs:  104.10396039603961
+Average tokens in SA outputs + Pegasus:  84.6542904290429
+Average tokens in gold justifications:  76.12128712871286
+Processed:  1212
+1. SA+Pegasus Filtering completed for supervised validation justifications!
+2. Running SA code for supervised test justifications!
+Namespace(C=300, algo_type='noSA', batch_size=10, dataset_name='pubhealth', dataset_path='/home/jolly/projects/COPE/FilteredData/PUBHEALTH/test.tsv', delete_th=0.97, device_type='gpu', editor_model_id='roberta-base', fluency_weight=1.5, fluencyscorer_model_id='gpt2', gold_path='', insert_th=1.1, length_weight=1.4, max_steps=220, min_length_of_edited_sent=40, named_entity_score_weight=0.95, outdir='pub_sup', outfile='pub_sup_test.txt', outfile_filtered='', pegasus_modelname='tuner007/pegasus_paraphrase', reorder_th=0.94, sample=None, sbertname_pegasus='paraphrase-distilroberta-base-v1', seed=33, semantic_weight_keywords=1.0, semantic_weight_sentences=1.2, sentences_path='/home/jolly/projects/COPE/FilteredData/sup_sccores_pubhealth/results_serialized_test_filtered.jsonl', split='test', t_init=60000, top_n=5)
+Size of dataset: 1232
+Sample:  {'claim_id': '33456', 'statement': 'A mother revealed to her child in a letter after her death that she had just one eye because she had donated the other to him.', 'justification': 'The one-eyed mother story expounds upon two moral messages: the unconditional, all-encompassing love we expect mothers to always feel for their children, and the admonition to not put off cherishing loved ones and appreciating their sacrifices while they’re still around.', 'ruling_without_summary': "In April 2005, we spotted a tearjerker on the Internet about a mother who gave up one of her eyes to a son who had lost one of his at an early age. By February 2007 the item was circulating in e-mail in the following shortened version:  My mom only had one eye. I hated her… She was such an embarrassment. She cooked for students and teachers to support the family. There was this one day during elementary school where my mom came to say hello to me. I was so embarrassed. How could she do this to me? I ignored her, threw her a hateful look and ran out. The next day at school one of my classmates said, “EEEE, your mom only has one eye!” I wanted to bury myself. I also wanted my mom to just disappear. I confronted her that day and said, “If you’re only gonna make me a laughing stock, why don’t you just die?” My mom did not respond… I didn’t even stop to think for a second about what I had said, because I was full of anger. I was oblivious to her feelings. I wanted out of that house, and have nothing to do with her. So I studied real hard, got a chance to go abroad to study. Then, I got married. I bought a house of my own. I had kids of my own. I was happy with my life, my kids and the comforts. Then one day, my Mother came to visit me. She hadn’t seen me in years and she didn’t even meet her grandchildren. When she stood by the door, my children laughed at her, and I yelled at her for coming over uninvited. I screamed at her, “How dare you come to my house and scare my children! GET OUT OF HERE! NOW!! !” And to this, my mother quietly answered, “Oh, I’m so sorry. I may have gotten the wrong address,” and she disappeared out of sight. One day, a letter regarding a school reunion came to my house. So I lied to my wife that I was going on a business trip. After the reunion, I went to the old shack just out of curiosity. My neighbors said that she died. I did not shed a single tear. They handed me a letter that she had wanted me to have. My dearest son, I think of you all the time. I’m sorry that I came to your house and scared your children. I was so glad when I heard you were coming for the reunion. But I may not be able to even get out of bed to see you. I’m sorry that I was a constant embarrassment to you when you were growing up. You see……..when you were very little, you got into an accident, and lost your eye. As a mother, I couldn’t stand watching you having to grow up with one eye. So I gave you mine. I was so proud of my son who was seeing a whole new world for me, in my place, with that eye. With all my love to you, Your mother. In its earlier incarnation, the story identified by implication its location as Korea through statements made by both the mother and the son (the son’s “I left my mother and came to Seoul” and the mother’s “I won’t visit Seoul anymore”). It also supplied a reason for the son’s behavior when his mother arrived unexpectedly to visit him (“My little girl ran away, scared of my mom’s eye” and “I screamed at her, ‘How dare you come to my house and scare my daughter!'”). A further twist was provided in the original: rather than gaining the news of his mother’s death from neighbors (who hand him her letter), the son instead discovered the woman who bore him lying dead on the floor of what used to be his childhood home, her missive to him clutched in her lifeless hand: Give your parents roses while they are alive, not deadMY mom only had one eye. I hated her … she was such an embarrassment. My mom ran a small shop at a flea market. She collected little weeds and such to sell … anything for the money we needed she was such an embarrassment. There was this one day during elementary school … It was field day, and my mom came. I was so embarrassed. How could she do this to me? I threw her a hateful look and ran out. The next day at school … “your mom only has one eye?!? !” … And they taunted me. I wished that my mom would just disappear from this world so I said to my mom, “mom … Why don’t you have the other eye?! If you’re only going to make me a laughingstock, why don’t you just die?!! !” my mom did not respond … I guess I felt a little bad, but at the same time, it felt good to think that I had said what I’d wanted to say all this time… maybe it was because my mom hadn’t punished me, but I didn’t think that I had hurt her feelings very badly. That night… I woke up, and went to the kitchen to get a glass of water. My mom was crying there, so quietly, as if she was afraid that she might wake me. I took a look at her, and then turned away. Because of the thing I had said to her earlier, there was something pinching at me in the corner of my heart. Even so, I hated my mother who was crying out of her one eye. So I told myself that I would grow up and become successful. Because I hated my one-eyed mom and our desperate poverty… then I studied real hard. I left my mother and came to Seoul and studied, and got accepted in the Seoul University with all the confidence I had. Then, I got married. I bought a house of my own. Then I had kids, too… now I’m living happily as a successful man. I like it here because it’s a place that doesn’t remind me of my mom. This happiness was getting bigger and bigger, when… what?! Who’s this…it was my mother… still with her one eye. It felt as if the whole sky was falling apart on me. My little girl ran away, scared of my mom’s eye. And I asked her, “who are you? !” “I don’t know you!! !” as if trying to make that real. I screamed at her, “How dare you come to my house and scare my daughter!” “GET OUT OF HERE! NOW!! !” and to this, my mother quietly answered, “oh, I’m so sorry. I may have gotten the wrong address,” and she disappeared out of sight. Thank goodness… she doesn’t recognize me… I was quite relieved. I told myself that I wasn’t going to care, or think about this for the rest of my life. Then a wave of relief came upon me… One day, a letter regarding a school reunion came to my house. So, lying to my wife that I was going on a business trip, I went. After the reunion, I went down to the old shack, that I used to call a house… just out of curiosity there, I found my mother fallen on the cold ground. But I did not shed a single tear. She had a piece of paper in her hand…. it was a letter to me. My son… I think my life has been long enough now… And… I won’t visit Seoul anymore… but would it be too much to ask if I wanted you to come visit me once in a while? I miss you so much… and I was so glad when I heard you were coming for the reunion. But I decided not to go to the school. …for you… and I’m sorry that I only have one eye, and I was an embarrassment for you. You see, when you were very little, you got into an accident, and lost your eye. as a mom, I couldn’t stand watching you having to grow up with only one eye… so I gave you mine… I was so proud of my son that was seeing a whole new world for me, in my place, with that eye. I was never upset at you for anything you did… the couple times that you were angry with me, I thought to myself, ‘it’s because he loves me…’ my son. Oh, my son… I don’t want you to cry for me, because of my death. My son, I love you my son, I love you so much. With all modern medical technology, transplantation of the eyeball is still impossible. The optic nerve isn’t an ordinary nerve, but instead an inset running from the brain. Modern medicine isn’t able to “connect” an eyeball back to brain after an optic nerve has been severed, let alone transplant the eye from a different person. (The only exception is the cornea, the transparent part in front of the eye: corneas are transplanted to replace injured and opaque ones.) We won’t try to comment on whether any surgeon would accept an eye from a living donor for transplant into another — we’ll leave that to others who are far more knowledgeable about medical ethics and transplant procedures. But we will note that the plot device of a mother’s dramatic sacrifice for the sake of her child’s being revealed in a written communication delivered after her demise appears in another legend about maternal love: the 2008 tale about a woman who left a touching message on her cell phone even as life ebbed from her as she used her body to shield the tot during an earthquake. Giving up one’s own life for a loved one is central to a 2005 urban legend about a boy on a motorcycle who has his girlfriend hug him one last time and put on his helmet just before the crash that kills him and spares her. Returning to the “notes from the dead” theme is the 1995 story about a son who discovers only through a posthumous letter from his mother what their occasional dinner “dates” had meant to her. Another legend we’re familiar with features a meme used in the one-eyed mother story (the coming to light of the enduring love of the person who died for the completely unworthy person she’d lavished it on), but that one involves a terminally ill woman and her cheating husband. In it, an about-to-be-spurned wife begs the adulterous hoon she’d married to stick around for another 30 days and to carry her over the threshold of their home once every day of that month as her way of keeping him around long enough for her to kick the bucket and thus spare their son the knowledge that his parents were on the verge of divorce.", 'label': 'false', 'scored_sentences': "In April 2005, we spotted a tearjerker on the Internet about a mother who gave up one of her eyes to a son who had lost one of his at an early age. One day, a letter regarding a school reunion came to my house. I hated her... She was such an embarrassment. She cooked for students and teachers to support the family. A further twist was provided in the original: rather than gaining the news of his mother's death from neighbors (who hand him her letter), the son instead discovered the woman who bore him lying dead on the floor of what used to be his childhood home, her missive to him clutched in her lifeless hand: Give your parents roses while they are alive, not deadMY mom only had one eye.", 'justification_sentences': ['The one-eyed mother story expounds upon two moral messages: the unconditional, all-encompassing love we expect mothers to always feel for their children, and the admonition to not put off cherishing loved ones and appreciating their sacrifices while they’re still around.']}
+Loaded weights from:  gpt2
+Editor built
+Processing:  10
+------------
+Processing:  20
+------------
+Processing:  30
+------------
+Processing:  40
+------------
+Processing:  50
+------------
+Processing:  60
+------------
+Processing:  70
+------------
+Processing:  80
+------------
+Processing:  90
+------------
+Processing:  100
+------------
+Processing:  110
+------------
+Processing:  120
+------------
+Processing:  130
+------------
+Processing:  140
+------------
+Processing:  150
+------------
+Processing:  160
+------------
+Processing:  170
+------------
+Processing:  180
+------------
+Processing:  190
+------------
+Processing:  200
+------------
+Processing:  210
+------------
+Processing:  220
+------------
+Processing:  230
+------------
+Processing:  240
+------------
+Processing:  250
+------------
+Processing:  260
+------------
+Processing:  270
+------------
+Processing:  280
+------------
+Processing:  290
+------------
+Processing:  300
+------------
+Processing:  310
+------------
+Processing:  320
+------------
+Processing:  330
+------------
+Processing:  340
+------------
+Processing:  350
+------------
+Processing:  360
+------------
+Processing:  370
+------------
+Processing:  380
+------------
+Processing:  390
+------------
+Processing:  400
+------------
+Processing:  410
+------------
+Processing:  420
+------------
+Processing:  430
+------------
+Processing:  440
+------------
+Processing:  450
+------------
+Processing:  460
+------------
+Processing:  470
+------------
+Processing:  480
+------------
+Processing:  490
+------------
+Processing:  500
+------------
+Processing:  510
+------------
+Processing:  520
+------------
+Processing:  530
+------------
+Processing:  540
+------------
+Processing:  550
+------------
+Processing:  560
+------------
+Processing:  570
+------------
+Processing:  580
+------------
+Processing:  590
+------------
+Processing:  600
+------------
+Processing:  610
+------------
+Processing:  620
+------------
+Processing:  630
+------------
+Processing:  640
+------------
+Processing:  650
+------------
+Processing:  660
+------------
+Processing:  670
+------------
+Processing:  680
+------------
+Processing:  690
+------------
+Processing:  700
+------------
+Processing:  710
+------------
+Processing:  720
+------------
+Processing:  730
+------------
+Processing:  740
+------------
+Processing:  750
+------------
+Processing:  760
+------------
+Processing:  770
+------------
+Processing:  780
+------------
+Processing:  790
+------------
+Processing:  800
+------------
+Processing:  810
+------------
+Processing:  820
+------------
+Processing:  830
+------------
+Processing:  840
+------------
+Processing:  850
+------------
+Processing:  860
+------------
+Processing:  870
+------------
+Processing:  880
+------------
+Processing:  890
+------------
+Processing:  900
+------------
+Processing:  910
+------------
+Processing:  920
+------------
+Processing:  930
+------------
+Processing:  940
+------------
+Processing:  950
+------------
+Processing:  960
+------------
+Processing:  970
+------------
+Processing:  980
+------------
+Processing:  990
+------------
+Processing:  1000
+------------
+Processing:  1010
+------------
+Processing:  1020
+------------
+Processing:  1030
+------------
+Processing:  1040
+------------
+Processing:  1050
+------------
+Processing:  1060
+------------
+Processing:  1070
+------------
+Processing:  1080
+------------
+Processing:  1090
+------------
+Processing:  1100
+------------
+Processing:  1110
+------------
+Processing:  1120
+------------
+Processing:  1130
+------------
+Processing:  1140
+------------
+Processing:  1150
+------------
+Processing:  1160
+------------
+Processing:  1170
+------------
+Processing:  1180
+------------
+Processing:  1190
+------------
+Processing:  1200
+------------
+Processing:  1210
+------------
+Processing:  1220
+------------
+Processing:  1230
+------------
+Processing:  1232
+------------
+Scores for originally selected 5 sentences
+{'rouge1': AggregateScore(low=Score(precision=0.2502571368719475, recall=0.5164367404533092, fmeasure=0.2894864700147639), mid=Score(precision=0.2621791057397901, recall=0.5279055200219884, fmeasure=0.29929778105520666), high=Score(precision=0.2741565224497606, recall=0.5386578543636517, fmeasure=0.30996205320920106)),
+ 'rouge2': AggregateScore(low=Score(precision=0.1027778918420597, recall=0.19267674164416265, fmeasure=0.11443998614813479), mid=Score(precision=0.11293372559483986, recall=0.20640565920101583, fmeasure=0.1242351542442579), high=Score(precision=0.12556513365235739, recall=0.22094832760799143, fmeasure=0.13633272741971084)),
+ 'rougeLsum': AggregateScore(low=Score(precision=0.22021586037877985, recall=0.44831629319788946, fmeasure=0.2524121485374241), mid=Score(precision=0.23258480283211297, recall=0.4596614962609836, fmeasure=0.2623954141407042), high=Score(precision=0.24635321826683637, recall=0.4708678545486073, fmeasure=0.27387674467793605))}
+rouge1 P: 26.22 	 CI(25.03-27.42) 	  R: 52.79 	 CI(51.64-53.87) 	  F1: 29.93 	 CI(28.95-31.00)
+rouge2 P: 11.29 	 CI(10.28-12.56) 	  R: 20.64 	 CI(19.27-22.09) 	  F1: 12.42 	 CI(11.44-13.63)
+rougeLsum P: 23.26 	 CI(22.02-24.64) 	  R: 45.97 	 CI(44.83-47.09) 	  F1: 26.24 	 CI(25.24-27.39)
+Scores for justifications given by SA
+{'rouge1': AggregateScore(low=Score(precision=0.2662925644827824, recall=0.4651526939668405, fmeasure=0.2863429069421658), mid=Score(precision=0.2784955592178848, recall=0.4753551740387105, fmeasure=0.2957534441838866), high=Score(precision=0.2908363042196938, recall=0.4874807113765639, fmeasure=0.30559368459149305)),
+ 'rouge2': AggregateScore(low=Score(precision=0.1004805600960748, recall=0.16375671313310558, fmeasure=0.10403741481950306), mid=Score(precision=0.11108438284414679, recall=0.17481450542341953, fmeasure=0.11372834069253948), high=Score(precision=0.12135904468444908, recall=0.18666553687174262, fmeasure=0.1235624858506498)),
+ 'rougeLsum': AggregateScore(low=Score(precision=0.23379325904327258, recall=0.39801931370655236, fmeasure=0.24771603265949924), mid=Score(precision=0.24463069450323877, recall=0.4092582156070926, fmeasure=0.2567187856293485), high=Score(precision=0.2575471994826425, recall=0.42005845386801394, fmeasure=0.2666243613147088))}
+rouge1 P: 27.85 	 CI(26.63-29.08) 	  R: 47.54 	 CI(46.52-48.75) 	  F1: 29.58 	 CI(28.63-30.56)
+rouge2 P: 11.11 	 CI(10.05-12.14) 	  R: 17.48 	 CI(16.38-18.67) 	  F1: 11.37 	 CI(10.40-12.36)
+rougeLsum P: 24.46 	 CI(23.38-25.75) 	  R: 40.93 	 CI(39.80-42.01) 	  F1: 25.67 	 CI(24.77-26.66)
+Average tokens in SA inputs:  125.92613636363636
+Average tokens in SA outputs:  106.7159090909091
+Average tokens in gold justifications:  76.2913961038961
+Processed:  1232
+2. Running Pegasus Filtering for supervised test justifications!
+Namespace(C=300, algo_type='noSA', batch_size=1, dataset_name='pubhealth', dataset_path='/home/jolly/projects/COPE/FilteredData/PUBHEALTH/test.tsv', delete_th=0.97, device_type='gpu', editor_model_id='roberta-base', fluency_weight=1.4, fluencyscorer_model_id='gpt2', gold_path='P_testgold_sup.txt', insert_th=1.1, length_weight=1.25, max_steps=200, min_length_of_edited_sent=40, named_entity_score_weight=0.95, outdir='pub_sup', outfile='pub_sup_test.txt', outfile_filtered='pub_sup_test_filter.txt', pegasus_modelname='tuner007/pegasus_paraphrase', reorder_th=0.95, sample=None, sbertname_pegasus='paraphrase-distilroberta-base-v1', seed=33, semantic_weight_keywords=1.0, semantic_weight_sentences=1.1, sentences_path='/home/jolly/projects/COPE/FilteredData/sup_sccores_pubhealth/results_serialized_test_filtered.jsonl', split='test', t_init=60000, top_n=5)
+cuda
+Size of dataset: 1232
+Sample:  {'claim_id': '33456', 'statement': 'A mother revealed to her child in a letter after her death that she had just one eye because she had donated the other to him.', 'justification': 'The one-eyed mother story expounds upon two moral messages: the unconditional, all-encompassing love we expect mothers to always feel for their children, and the admonition to not put off cherishing loved ones and appreciating their sacrifices while they’re still around.', 'ruling_without_summary': "In April 2005, we spotted a tearjerker on the Internet about a mother who gave up one of her eyes to a son who had lost one of his at an early age. By February 2007 the item was circulating in e-mail in the following shortened version:  My mom only had one eye. I hated her… She was such an embarrassment. She cooked for students and teachers to support the family. There was this one day during elementary school where my mom came to say hello to me. I was so embarrassed. How could she do this to me? I ignored her, threw her a hateful look and ran out. The next day at school one of my classmates said, “EEEE, your mom only has one eye!” I wanted to bury myself. I also wanted my mom to just disappear. I confronted her that day and said, “If you’re only gonna make me a laughing stock, why don’t you just die?” My mom did not respond… I didn’t even stop to think for a second about what I had said, because I was full of anger. I was oblivious to her feelings. I wanted out of that house, and have nothing to do with her. So I studied real hard, got a chance to go abroad to study. Then, I got married. I bought a house of my own. I had kids of my own. I was happy with my life, my kids and the comforts. Then one day, my Mother came to visit me. She hadn’t seen me in years and she didn’t even meet her grandchildren. When she stood by the door, my children laughed at her, and I yelled at her for coming over uninvited. I screamed at her, “How dare you come to my house and scare my children! GET OUT OF HERE! NOW!! !” And to this, my mother quietly answered, “Oh, I’m so sorry. I may have gotten the wrong address,” and she disappeared out of sight. One day, a letter regarding a school reunion came to my house. So I lied to my wife that I was going on a business trip. After the reunion, I went to the old shack just out of curiosity. My neighbors said that she died. I did not shed a single tear. They handed me a letter that she had wanted me to have. My dearest son, I think of you all the time. I’m sorry that I came to your house and scared your children. I was so glad when I heard you were coming for the reunion. But I may not be able to even get out of bed to see you. I’m sorry that I was a constant embarrassment to you when you were growing up. You see……..when you were very little, you got into an accident, and lost your eye. As a mother, I couldn’t stand watching you having to grow up with one eye. So I gave you mine. I was so proud of my son who was seeing a whole new world for me, in my place, with that eye. With all my love to you, Your mother. In its earlier incarnation, the story identified by implication its location as Korea through statements made by both the mother and the son (the son’s “I left my mother and came to Seoul” and the mother’s “I won’t visit Seoul anymore”). It also supplied a reason for the son’s behavior when his mother arrived unexpectedly to visit him (“My little girl ran away, scared of my mom’s eye” and “I screamed at her, ‘How dare you come to my house and scare my daughter!'”). A further twist was provided in the original: rather than gaining the news of his mother’s death from neighbors (who hand him her letter), the son instead discovered the woman who bore him lying dead on the floor of what used to be his childhood home, her missive to him clutched in her lifeless hand: Give your parents roses while they are alive, not deadMY mom only had one eye. I hated her … she was such an embarrassment. My mom ran a small shop at a flea market. She collected little weeds and such to sell … anything for the money we needed she was such an embarrassment. There was this one day during elementary school … It was field day, and my mom came. I was so embarrassed. How could she do this to me? I threw her a hateful look and ran out. The next day at school … “your mom only has one eye?!? !” … And they taunted me. I wished that my mom would just disappear from this world so I said to my mom, “mom … Why don’t you have the other eye?! If you’re only going to make me a laughingstock, why don’t you just die?!! !” my mom did not respond … I guess I felt a little bad, but at the same time, it felt good to think that I had said what I’d wanted to say all this time… maybe it was because my mom hadn’t punished me, but I didn’t think that I had hurt her feelings very badly. That night… I woke up, and went to the kitchen to get a glass of water. My mom was crying there, so quietly, as if she was afraid that she might wake me. I took a look at her, and then turned away. Because of the thing I had said to her earlier, there was something pinching at me in the corner of my heart. Even so, I hated my mother who was crying out of her one eye. So I told myself that I would grow up and become successful. Because I hated my one-eyed mom and our desperate poverty… then I studied real hard. I left my mother and came to Seoul and studied, and got accepted in the Seoul University with all the confidence I had. Then, I got married. I bought a house of my own. Then I had kids, too… now I’m living happily as a successful man. I like it here because it’s a place that doesn’t remind me of my mom. This happiness was getting bigger and bigger, when… what?! Who’s this…it was my mother… still with her one eye. It felt as if the whole sky was falling apart on me. My little girl ran away, scared of my mom’s eye. And I asked her, “who are you? !” “I don’t know you!! !” as if trying to make that real. I screamed at her, “How dare you come to my house and scare my daughter!” “GET OUT OF HERE! NOW!! !” and to this, my mother quietly answered, “oh, I’m so sorry. I may have gotten the wrong address,” and she disappeared out of sight. Thank goodness… she doesn’t recognize me… I was quite relieved. I told myself that I wasn’t going to care, or think about this for the rest of my life. Then a wave of relief came upon me… One day, a letter regarding a school reunion came to my house. So, lying to my wife that I was going on a business trip, I went. After the reunion, I went down to the old shack, that I used to call a house… just out of curiosity there, I found my mother fallen on the cold ground. But I did not shed a single tear. She had a piece of paper in her hand…. it was a letter to me. My son… I think my life has been long enough now… And… I won’t visit Seoul anymore… but would it be too much to ask if I wanted you to come visit me once in a while? I miss you so much… and I was so glad when I heard you were coming for the reunion. But I decided not to go to the school. …for you… and I’m sorry that I only have one eye, and I was an embarrassment for you. You see, when you were very little, you got into an accident, and lost your eye. as a mom, I couldn’t stand watching you having to grow up with only one eye… so I gave you mine… I was so proud of my son that was seeing a whole new world for me, in my place, with that eye. I was never upset at you for anything you did… the couple times that you were angry with me, I thought to myself, ‘it’s because he loves me…’ my son. Oh, my son… I don’t want you to cry for me, because of my death. My son, I love you my son, I love you so much. With all modern medical technology, transplantation of the eyeball is still impossible. The optic nerve isn’t an ordinary nerve, but instead an inset running from the brain. Modern medicine isn’t able to “connect” an eyeball back to brain after an optic nerve has been severed, let alone transplant the eye from a different person. (The only exception is the cornea, the transparent part in front of the eye: corneas are transplanted to replace injured and opaque ones.) We won’t try to comment on whether any surgeon would accept an eye from a living donor for transplant into another — we’ll leave that to others who are far more knowledgeable about medical ethics and transplant procedures. But we will note that the plot device of a mother’s dramatic sacrifice for the sake of her child’s being revealed in a written communication delivered after her demise appears in another legend about maternal love: the 2008 tale about a woman who left a touching message on her cell phone even as life ebbed from her as she used her body to shield the tot during an earthquake. Giving up one’s own life for a loved one is central to a 2005 urban legend about a boy on a motorcycle who has his girlfriend hug him one last time and put on his helmet just before the crash that kills him and spares her. Returning to the “notes from the dead” theme is the 1995 story about a son who discovers only through a posthumous letter from his mother what their occasional dinner “dates” had meant to her. Another legend we’re familiar with features a meme used in the one-eyed mother story (the coming to light of the enduring love of the person who died for the completely unworthy person she’d lavished it on), but that one involves a terminally ill woman and her cheating husband. In it, an about-to-be-spurned wife begs the adulterous hoon she’d married to stick around for another 30 days and to carry her over the threshold of their home once every day of that month as her way of keeping him around long enough for her to kick the bucket and thus spare their son the knowledge that his parents were on the verge of divorce.", 'label': 'false', 'scored_sentences': "In April 2005, we spotted a tearjerker on the Internet about a mother who gave up one of her eyes to a son who had lost one of his at an early age. One day, a letter regarding a school reunion came to my house. I hated her... She was such an embarrassment. She cooked for students and teachers to support the family. A further twist was provided in the original: rather than gaining the news of his mother's death from neighbors (who hand him her letter), the son instead discovered the woman who bore him lying dead on the floor of what used to be his childhood home, her missive to him clutched in her lifeless hand: Give your parents roses while they are alive, not deadMY mom only had one eye.", 'justification_sentences': ['The one-eyed mother story expounds upon two moral messages: the unconditional, all-encompassing love we expect mothers to always feel for their children, and the admonition to not put off cherishing loved ones and appreciating their sacrifices while they’re still around.']}
+Time taken:  8020.681867599487
+Scores for filtered justifications (SA+Pegasus)
+{'rouge1': AggregateScore(low=Score(precision=0.27483339986460426, recall=0.41138446149695523, fmeasure=0.27658468578766), mid=Score(precision=0.28671486403033397, recall=0.4215789756942978, fmeasure=0.2846168579471545), high=Score(precision=0.299123658914177, recall=0.4313663683105591, fmeasure=0.2935697302982622)),
+ 'rouge2': AggregateScore(low=Score(precision=0.09238803058633693, recall=0.12871456362846215, fmeasure=0.0893118029312271), mid=Score(precision=0.10051105762601775, recall=0.13701707076675432, fmeasure=0.09605066771625656), high=Score(precision=0.10938865835246724, recall=0.14572570381061106, fmeasure=0.10333773209568456)),
+ 'rougeLsum': AggregateScore(low=Score(precision=0.2392558528513796, recall=0.3513803838443061, fmeasure=0.23737211344670053), mid=Score(precision=0.2504933069826705, recall=0.36091935651057294, fmeasure=0.2451089692363615), high=Score(precision=0.2626669980500523, recall=0.3698061848668868, fmeasure=0.2524508560974801))}
+rouge1 P: 28.67 	 CI(27.48-29.91) 	  R: 42.16 	 CI(41.14-43.14) 	  F1: 28.46 	 CI(27.66-29.36)
+rouge2 P: 10.05 	 CI(9.24-10.94) 	  R: 13.70 	 CI(12.87-14.57) 	  F1: 9.61 	 CI(8.93-10.33)
+rougeLsum P: 25.05 	 CI(23.93-26.27) 	  R: 36.09 	 CI(35.14-36.98) 	  F1: 24.51 	 CI(23.74-25.25)
+Average tokens in SA inputs:  125.92613636363636
+Average tokens in SA outputs:  106.38717532467533
+Average tokens in SA outputs + Pegasus:  85.20535714285714
+Average tokens in gold justifications:  76.2913961038961
+Processed:  1232
+2. SA+Pegasus Filtering completed for supervised test justifications!
+Completed for Validation/Test of Pubhealth for Supervised
+3. Running SA code for Un-supervised validation justifications!
+Namespace(C=300, algo_type='noSA', batch_size=10, dataset_name='pubhealth', dataset_path='/home/jolly/projects/COPE/FilteredData/PUBHEALTH/dev.tsv', delete_th=0.97, device_type='gpu', editor_model_id='roberta-base', fluency_weight=1.5, fluencyscorer_model_id='gpt2', gold_path='', insert_th=1.1, length_weight=1.4, max_steps=220, min_length_of_edited_sent=40, named_entity_score_weight=0.95, outdir='pub_unsup', outfile='pub_unsup_val.txt', outfile_filtered='', pegasus_modelname='tuner007/pegasus_paraphrase', reorder_th=0.94, sample=None, sbertname_pegasus='paraphrase-distilroberta-base-v1', seed=33, semantic_weight_keywords=1.0, semantic_weight_sentences=1.2, sentences_path='/home/jolly/projects/COPE/FilteredData/unsup_scores_pubhealth/results_serialized_val_filtered.jsonl', split='test', t_init=60000, top_n=5)
+Size of dataset: 1214
+Sample:  {'claim_id': '34656', 'statement': '\xa0A baby died at an unnamed medical facility because its parents refused to allow a black nurse to care for the child.', 'justification': 'Fellow Twitter users suggested @FierceFemtivist indicated she was from Louisville, Kentucky, prior to deleting her account. We were unable to locate any news reports of unusual infant deaths on 8 November 2015 in that area, nor were we able to confirm that the purported incident took place in Louisville (or at all):', 'ruling_without_summary': 'On 8 November 2015, former Twitter user @FierceFemtivist published an alarming series of tweets about purportedly racist parents who allowed their child to die rather than be treated by “n***** nurses.” The tweets in question, besides appearing on Twitter (cached partially here), were circulated via Facebook and Tumblr and are embedded in full below. According to @FierceFemtivist, she “just had an infant die” that she personally “could’ve saved” because the child’s epithet-slinging, Confederate flag-bedecked father purportedly physically blocked the nurse from entering the baby’s room despite the fact that the infant\xa0was “crashing fast.” @FierceFemtivist claimed to be the most qualified caregiver in the facility but did not provide a date, facility name, medical condition, nor even a gender for the baby who purportedly died solely because\xa0it had racist parents. The child appeared merely as a footnote to\xa0the narrative\xa0of neatly-packaged racism, replete with a Confederate-flag wearing, stock redneck character. Even after the baby’s preventable death, @FierceFemtivist described its parents as unmoved by grief and simply concerned with whether a black staff member might handle the infant’s corpse. No response on the part of the hospital or other medical staffers during the critical event was described in the story; as presented, the narrative reads like the facility passively\xa0allowed a baby to die during an unspecified cardiac event for the sole reason that the parents objected to a nurse’s race (despite the fact that hospitals and Child Protective Services maintain broad protocols for such emergency interventions). The form of sure life-saving care which could only have been be rendered by that one nurse (and apparently no other on-duty caregivers) wasn’t specified\xa0in the account. Readers were left with a number of questions when @FierceFemtivist deleted her account (and along with it, the controversial tweets). Did the incident occur on 8 November 2015, the date the tweets were posted, or earlier? Where was the facility located? Why did no other nurses or doctors intervene and attempt to administer life-saving care, even if they weren’t as capable of doing so? Were police summoned to investigate the baby’s death? What was the condition\xa0and ultimate\xa0cause of death? Was the baby male or female? Were any adults (parents or medical staff) considered potentially liable for the purported death?', 'label': 'unproven', 'scored_sentences': "On 8 November 2015, former Twitter user @FierceFemtivist published an alarming series of tweets about purportedly racist parents who allowed their child to die rather than be treated by “n***** nurses.” The tweets in question, besides appearing on Twitter (cached partially here), were circulated via Facebook and Tumblr and are embedded in full below. No response on the part of the hospital or other medical staffers during the critical event was described in the story; as presented, the narrative reads like the facility passively\xa0allowed a baby to die during an unspecified cardiac event for the sole reason that the parents objected to a nurse's race (despite the fact that hospitals and Child Protective Services maintain broad protocols for such emergency interventions). The child appeared merely as a footnote to\xa0the narrative\xa0of neatly-packaged racism, replete with a Confederate-flag wearing, stock redneck character. Even after the baby's preventable death, @FierceFemtivist described its parents as unmoved by grief and simply concerned with whether a black staff member might handle the infant's corpse. The form of sure life-saving care which could only have been be rendered by that one nurse (and apparently no other on-duty caregivers) wasn't specified\xa0in the account.", 'justification_sentences': ['Fellow Twitter users suggested @FierceFemtivist indicated she was from Louisville, Kentucky, prior to deleting her account.', 'We were unable to locate any news reports of unusual infant deaths on 8 November 2015 in that area, nor were we able to confirm that the purported incident took place in Louisville (or at all):']}
+Loaded weights from:  gpt2
+Editor built
+Processing:  10
+------------
+Processing:  20
+------------
+Processing:  30
+------------
+Processing:  40
+------------
+Processing:  50
+------------
+Processing:  60
+------------
+Processing:  70
+------------
+Processing:  80
+------------
+Processing:  90
+------------
+Processing:  100
+------------
+Processing:  110
+------------
+Processing:  120
+------------
+Processing:  130
+------------
+Processing:  140
+------------
+Processing:  150
+------------
+Processing:  160
+------------
+Processing:  170
+------------
+Processing:  180
+------------
+Processing:  190
+------------
+Processing:  200
+------------
+Processing:  210
+------------
+Processing:  220
+------------
+Processing:  230
+------------
+Processing:  240
+------------
+Processing:  250
+------------
+Processing:  260
+------------
+Processing:  270
+------------
+Processing:  280
+------------
+Processing:  290
+------------
+Processing:  300
+------------
+Processing:  310
+------------
+Processing:  320
+------------
+Processing:  330
+------------
+Processing:  340
+------------
+Processing:  350
+------------
+Processing:  360
+------------
+Processing:  370
+------------
+Processing:  380
+------------
+Processing:  390
+------------
+Processing:  400
+------------
+Processing:  410
+------------
+Processing:  420
+------------
+Processing:  430
+------------
+Processing:  440
+------------
+Processing:  450
+------------
+Processing:  460
+------------
+Processing:  470
+------------
+Processing:  480
+------------
+Processing:  490
+------------
+Processing:  500
+------------
+Processing:  510
+------------
+Processing:  520
+------------
+Processing:  530
+------------
+Processing:  540
+------------
+Processing:  550
+------------
+Processing:  560
+------------
+Processing:  570
+------------
+Processing:  580
+------------
+Processing:  590
+------------
+Processing:  600
+------------
+Processing:  610
+------------
+Processing:  620
+------------
+Processing:  630
+------------
+Processing:  640
+------------
+Processing:  650
+------------
+Processing:  660
+------------
+Processing:  670
+------------
+Processing:  680
+------------
+Processing:  690
+------------
+Processing:  700
+------------
+Processing:  710
+------------
+Processing:  720
+------------
+Processing:  730
+------------
+Processing:  740
+------------
+Processing:  750
+------------
+Processing:  760
+------------
+Processing:  770
+------------
+Processing:  780
+------------
+Processing:  790
+------------
+Processing:  800
+------------
+Processing:  810
+------------
+Processing:  820
+------------
+Processing:  830
+------------
+Processing:  840
+------------
+Processing:  850
+------------
+Processing:  860
+------------
+Processing:  870
+------------
+Processing:  880
+------------
+Processing:  890
+------------
+Processing:  900
+------------
+Processing:  910
+------------
+Processing:  920
+------------
+Processing:  930
+------------
+Processing:  940
+------------
+Processing:  950
+------------
+Processing:  960
+------------
+Processing:  970
+------------
+Processing:  980
+------------
+Processing:  990
+------------
+Processing:  1000
+------------
+Processing:  1010
+------------
+Processing:  1020
+------------
+Processing:  1030
+------------
+Processing:  1040
+------------
+Processing:  1050
+------------
+Processing:  1060
+------------
+Processing:  1070
+------------
+Processing:  1080
+------------
+Processing:  1090
+------------
+Processing:  1100
+------------
+Processing:  1110
+------------
+Processing:  1120
+------------
+Processing:  1130
+------------
+Processing:  1140
+------------
+Processing:  1150
+------------
+Processing:  1160
+------------
+Processing:  1170
+------------
+Processing:  1180
+------------
+Processing:  1190
+------------
+Processing:  1200
+------------
+Processing:  1210
+------------
+Processing:  1214
+------------
+Scores for originally selected 5 sentences
+{'rouge1': AggregateScore(low=Score(precision=0.20549564174802923, recall=0.4631104444364562, fmeasure=0.23366187685955728), mid=Score(precision=0.21545014576386434, recall=0.47258778839947246, fmeasure=0.23942371694305453), high=Score(precision=0.2245185256409102, recall=0.48241783289191187, fmeasure=0.24509514268453833)),
+ 'rouge2': AggregateScore(low=Score(precision=0.05374092130605018, recall=0.11909694542713829, fmeasure=0.058066505342927816), mid=Score(precision=0.057901029694818335, recall=0.12753704558144124, fmeasure=0.06127989657375682), high=Score(precision=0.06255157237134257, recall=0.1355903986097224, fmeasure=0.0648076343017709)),
+ 'rougeLsum': AggregateScore(low=Score(precision=0.17576648027770234, recall=0.3816969072465771, fmeasure=0.1950295599620757), mid=Score(precision=0.18429336621608922, recall=0.3904951475427043, fmeasure=0.2003649776288556), high=Score(precision=0.1939336430848579, recall=0.4002578649950839, fmeasure=0.2061086868099019))}
+rouge1 P: 21.55 	 CI(20.55-22.45) 	  R: 47.26 	 CI(46.31-48.24) 	  F1: 23.94 	 CI(23.37-24.51)
+rouge2 P: 5.79 	 CI(5.37-6.26) 	  R: 12.75 	 CI(11.91-13.56) 	  F1: 6.13 	 CI(5.81-6.48)
+rougeLsum P: 18.43 	 CI(17.58-19.39) 	  R: 39.05 	 CI(38.17-40.03) 	  F1: 20.04 	 CI(19.50-20.61)
+Scores for justifications given by SA
+{'rouge1': AggregateScore(low=Score(precision=0.22066484220926147, recall=0.4157790995988315, fmeasure=0.23432723655102147), mid=Score(precision=0.23053027254069725, recall=0.4251628724950668, fmeasure=0.2392308235596115), high=Score(precision=0.24036059895714915, recall=0.43453724745340466, fmeasure=0.2449294747416369)),
+ 'rouge2': AggregateScore(low=Score(precision=0.05428549762383002, recall=0.10243177162789606, fmeasure=0.05483007769802648), mid=Score(precision=0.058983251132713604, recall=0.11003242070291833, fmeasure=0.05794316282236801), high=Score(precision=0.06403120854158935, recall=0.11754472067712464, fmeasure=0.0614153368973094)),
+ 'rougeLsum': AggregateScore(low=Score(precision=0.18792589036077795, recall=0.3424031523177428, fmeasure=0.19449309214713292), mid=Score(precision=0.19726107400110765, recall=0.3509071184927447, fmeasure=0.19970904478510226), high=Score(precision=0.20709441425920339, recall=0.35952715611710456, fmeasure=0.2048854743185623))}
+rouge1 P: 23.05 	 CI(22.07-24.04) 	  R: 42.52 	 CI(41.58-43.45) 	  F1: 23.92 	 CI(23.43-24.49)
+rouge2 P: 5.90 	 CI(5.43-6.40) 	  R: 11.00 	 CI(10.24-11.75) 	  F1: 5.79 	 CI(5.48-6.14)
+rougeLsum P: 19.73 	 CI(18.79-20.71) 	  R: 35.09 	 CI(34.24-35.95) 	  F1: 19.97 	 CI(19.45-20.49)
+Average tokens in SA inputs:  133.6194398682043
+Average tokens in SA outputs:  112.91433278418451
+Average tokens in gold justifications:  76.13673805601319
+Processed:  1214
+3. Running Pegasus Filtering for Un-supervised validation justifications!
+Namespace(C=300, algo_type='noSA', batch_size=1, dataset_name='pubhealth', dataset_path='/home/jolly/projects/COPE/FilteredData/PUBHEALTH/dev.tsv', delete_th=0.97, device_type='gpu', editor_model_id='roberta-base', fluency_weight=1.4, fluencyscorer_model_id='gpt2', gold_path='P_valgold_unsup.txt', insert_th=1.1, length_weight=1.25, max_steps=200, min_length_of_edited_sent=40, named_entity_score_weight=0.95, outdir='pub_unsup', outfile='pub_unsup_val.txt', outfile_filtered='pub_unsup_val_filter.txt', pegasus_modelname='tuner007/pegasus_paraphrase', reorder_th=0.95, sample=None, sbertname_pegasus='paraphrase-distilroberta-base-v1', seed=33, semantic_weight_keywords=1.0, semantic_weight_sentences=1.1, sentences_path='/home/jolly/projects/COPE/FilteredData/unsup_sccores_pubhealth/results_serialized_val_filtered.jsonl', split='test', t_init=60000, top_n=5)
+cuda
+3. SA+Pegasus Filtering completed for Un-supervised validation justifications!
+4. Running SA code for Un-supervised test justifications!
+Namespace(C=300, algo_type='noSA', batch_size=10, dataset_name='pubhealth', dataset_path='/home/jolly/projects/COPE/FilteredData/PUBHEALTH/test.tsv', delete_th=0.97, device_type='gpu', editor_model_id='roberta-base', fluency_weight=1.5, fluencyscorer_model_id='gpt2', gold_path='', insert_th=1.1, length_weight=1.4, max_steps=220, min_length_of_edited_sent=40, named_entity_score_weight=0.95, outdir='pub_unsup', outfile='pub_unsup_test.txt', outfile_filtered='', pegasus_modelname='tuner007/pegasus_paraphrase', reorder_th=0.94, sample=None, sbertname_pegasus='paraphrase-distilroberta-base-v1', seed=33, semantic_weight_keywords=1.0, semantic_weight_sentences=1.2, sentences_path='/home/jolly/projects/COPE/FilteredData/unsup_scores_pubhealth/results_serialized_test_filtered.jsonl', split='test', t_init=60000, top_n=5)
+Size of dataset: 1233
+Sample:  {'claim_id': '33456', 'statement': 'A mother revealed to her child in a letter after her death that she had just one eye because she had donated the other to him.', 'justification': 'The one-eyed mother story expounds upon two moral messages: the unconditional, all-encompassing love we expect mothers to always feel for their children, and the admonition to not put off cherishing loved ones and appreciating their sacrifices while they’re still around.', 'ruling_without_summary': "In April 2005, we spotted a tearjerker on the Internet about a mother who gave up one of her eyes to a son who had lost one of his at an early age. By February 2007 the item was circulating in e-mail in the following shortened version:  My mom only had one eye. I hated her… She was such an embarrassment. She cooked for students and teachers to support the family. There was this one day during elementary school where my mom came to say hello to me. I was so embarrassed. How could she do this to me? I ignored her, threw her a hateful look and ran out. The next day at school one of my classmates said, “EEEE, your mom only has one eye!” I wanted to bury myself. I also wanted my mom to just disappear. I confronted her that day and said, “If you’re only gonna make me a laughing stock, why don’t you just die?” My mom did not respond… I didn’t even stop to think for a second about what I had said, because I was full of anger. I was oblivious to her feelings. I wanted out of that house, and have nothing to do with her. So I studied real hard, got a chance to go abroad to study. Then, I got married. I bought a house of my own. I had kids of my own. I was happy with my life, my kids and the comforts. Then one day, my Mother came to visit me. She hadn’t seen me in years and she didn’t even meet her grandchildren. When she stood by the door, my children laughed at her, and I yelled at her for coming over uninvited. I screamed at her, “How dare you come to my house and scare my children! GET OUT OF HERE! NOW!! !” And to this, my mother quietly answered, “Oh, I’m so sorry. I may have gotten the wrong address,” and she disappeared out of sight. One day, a letter regarding a school reunion came to my house. So I lied to my wife that I was going on a business trip. After the reunion, I went to the old shack just out of curiosity. My neighbors said that she died. I did not shed a single tear. They handed me a letter that she had wanted me to have. My dearest son, I think of you all the time. I’m sorry that I came to your house and scared your children. I was so glad when I heard you were coming for the reunion. But I may not be able to even get out of bed to see you. I’m sorry that I was a constant embarrassment to you when you were growing up. You see……..when you were very little, you got into an accident, and lost your eye. As a mother, I couldn’t stand watching you having to grow up with one eye. So I gave you mine. I was so proud of my son who was seeing a whole new world for me, in my place, with that eye. With all my love to you, Your mother. In its earlier incarnation, the story identified by implication its location as Korea through statements made by both the mother and the son (the son’s “I left my mother and came to Seoul” and the mother’s “I won’t visit Seoul anymore”). It also supplied a reason for the son’s behavior when his mother arrived unexpectedly to visit him (“My little girl ran away, scared of my mom’s eye” and “I screamed at her, ‘How dare you come to my house and scare my daughter!'”). A further twist was provided in the original: rather than gaining the news of his mother’s death from neighbors (who hand him her letter), the son instead discovered the woman who bore him lying dead on the floor of what used to be his childhood home, her missive to him clutched in her lifeless hand: Give your parents roses while they are alive, not deadMY mom only had one eye. I hated her … she was such an embarrassment. My mom ran a small shop at a flea market. She collected little weeds and such to sell … anything for the money we needed she was such an embarrassment. There was this one day during elementary school … It was field day, and my mom came. I was so embarrassed. How could she do this to me? I threw her a hateful look and ran out. The next day at school … “your mom only has one eye?!? !” … And they taunted me. I wished that my mom would just disappear from this world so I said to my mom, “mom … Why don’t you have the other eye?! If you’re only going to make me a laughingstock, why don’t you just die?!! !” my mom did not respond … I guess I felt a little bad, but at the same time, it felt good to think that I had said what I’d wanted to say all this time… maybe it was because my mom hadn’t punished me, but I didn’t think that I had hurt her feelings very badly. That night… I woke up, and went to the kitchen to get a glass of water. My mom was crying there, so quietly, as if she was afraid that she might wake me. I took a look at her, and then turned away. Because of the thing I had said to her earlier, there was something pinching at me in the corner of my heart. Even so, I hated my mother who was crying out of her one eye. So I told myself that I would grow up and become successful. Because I hated my one-eyed mom and our desperate poverty… then I studied real hard. I left my mother and came to Seoul and studied, and got accepted in the Seoul University with all the confidence I had. Then, I got married. I bought a house of my own. Then I had kids, too… now I’m living happily as a successful man. I like it here because it’s a place that doesn’t remind me of my mom. This happiness was getting bigger and bigger, when… what?! Who’s this…it was my mother… still with her one eye. It felt as if the whole sky was falling apart on me. My little girl ran away, scared of my mom’s eye. And I asked her, “who are you? !” “I don’t know you!! !” as if trying to make that real. I screamed at her, “How dare you come to my house and scare my daughter!” “GET OUT OF HERE! NOW!! !” and to this, my mother quietly answered, “oh, I’m so sorry. I may have gotten the wrong address,” and she disappeared out of sight. Thank goodness… she doesn’t recognize me… I was quite relieved. I told myself that I wasn’t going to care, or think about this for the rest of my life. Then a wave of relief came upon me… One day, a letter regarding a school reunion came to my house. So, lying to my wife that I was going on a business trip, I went. After the reunion, I went down to the old shack, that I used to call a house… just out of curiosity there, I found my mother fallen on the cold ground. But I did not shed a single tear. She had a piece of paper in her hand…. it was a letter to me. My son… I think my life has been long enough now… And… I won’t visit Seoul anymore… but would it be too much to ask if I wanted you to come visit me once in a while? I miss you so much… and I was so glad when I heard you were coming for the reunion. But I decided not to go to the school. …for you… and I’m sorry that I only have one eye, and I was an embarrassment for you. You see, when you were very little, you got into an accident, and lost your eye. as a mom, I couldn’t stand watching you having to grow up with only one eye… so I gave you mine… I was so proud of my son that was seeing a whole new world for me, in my place, with that eye. I was never upset at you for anything you did… the couple times that you were angry with me, I thought to myself, ‘it’s because he loves me…’ my son. Oh, my son… I don’t want you to cry for me, because of my death. My son, I love you my son, I love you so much. With all modern medical technology, transplantation of the eyeball is still impossible. The optic nerve isn’t an ordinary nerve, but instead an inset running from the brain. Modern medicine isn’t able to “connect” an eyeball back to brain after an optic nerve has been severed, let alone transplant the eye from a different person. (The only exception is the cornea, the transparent part in front of the eye: corneas are transplanted to replace injured and opaque ones.) We won’t try to comment on whether any surgeon would accept an eye from a living donor for transplant into another — we’ll leave that to others who are far more knowledgeable about medical ethics and transplant procedures. But we will note that the plot device of a mother’s dramatic sacrifice for the sake of her child’s being revealed in a written communication delivered after her demise appears in another legend about maternal love: the 2008 tale about a woman who left a touching message on her cell phone even as life ebbed from her as she used her body to shield the tot during an earthquake. Giving up one’s own life for a loved one is central to a 2005 urban legend about a boy on a motorcycle who has his girlfriend hug him one last time and put on his helmet just before the crash that kills him and spares her. Returning to the “notes from the dead” theme is the 1995 story about a son who discovers only through a posthumous letter from his mother what their occasional dinner “dates” had meant to her. Another legend we’re familiar with features a meme used in the one-eyed mother story (the coming to light of the enduring love of the person who died for the completely unworthy person she’d lavished it on), but that one involves a terminally ill woman and her cheating husband. In it, an about-to-be-spurned wife begs the adulterous hoon she’d married to stick around for another 30 days and to carry her over the threshold of their home once every day of that month as her way of keeping him around long enough for her to kick the bucket and thus spare their son the knowledge that his parents were on the verge of divorce.", 'label': 'false', 'scored_sentences': "By February 2007 the item was circulating in e-mail in the following shortened version:  My mom only had one eye. In April 2005, we spotted a tearjerker on the Internet about a mother who gave up one of her eyes to a son who had lost one of his at an early age. I confronted her that day and said, “If you're only gonna make me a laughing stock, why don't you just die?” My mom did not respond... I didn't even stop to think for a second about what I had said, because I was full of anger. The next day at school one of my classmates said, “EEEE, your mom only has one eye!” I wanted to bury myself. I hated her... She was such an embarrassment.", 'justification_sentences': ['The one-eyed mother story expounds upon two moral messages: the unconditional, all-encompassing love we expect mothers to always feel for their children, and the admonition to not put off cherishing loved ones and appreciating their sacrifices while they’re still around.']}
+Loaded weights from:  gpt2
+Editor built
+Processing:  10
+------------
+Processing:  20
+------------
+Processing:  30
+------------
+Processing:  40
+------------
+Processing:  50
+------------
+Processing:  60
+------------
+Processing:  70
+------------
+Processing:  80
+------------
+Processing:  90
+------------
+Processing:  100
+------------
+Processing:  110
+------------
+Processing:  120
+------------
+Processing:  130
+------------
+Processing:  140
+------------
+Processing:  150
+------------
+Processing:  160
+------------
+Processing:  170
+------------
+Processing:  180
+------------
+Processing:  190
+------------
+Processing:  200
+------------
+Processing:  210
+------------
+Processing:  220
+------------
+Processing:  230
+------------
+Processing:  240
+------------
+Processing:  250
+------------
+Processing:  260
+------------
+Processing:  270
+------------
+Processing:  280
+------------
+Processing:  290
+------------
+Processing:  300
+------------
+Processing:  310
+------------
+Processing:  320
+------------
+Processing:  330
+------------
+Processing:  340
+------------
+Processing:  350
+------------
+Processing:  360
+------------
+Processing:  370
+------------
+Processing:  380
+------------
+Processing:  390
+------------
+Processing:  400
+------------
+Processing:  410
+------------
+Processing:  420
+------------
+Processing:  430
+------------
+Processing:  440
+------------
+Processing:  450
+------------
+Processing:  460
+------------
+Processing:  470
+------------
+Processing:  480
+------------
+Processing:  490
+------------
+Processing:  500
+------------
+Processing:  510
+------------
+Processing:  520
+------------
+Processing:  530
+------------
+Processing:  540
+------------
+Processing:  550
+------------
+Processing:  560
+------------
+Processing:  570
+------------
+Processing:  580
+------------
+Processing:  590
+------------
+Processing:  600
+------------
+Processing:  610
+------------
+Processing:  620
+------------
+Processing:  630
+------------
+Processing:  640
+------------
+Processing:  650
+------------
+Processing:  660
+------------
+Processing:  670
+------------
+Processing:  680
+------------
+Processing:  690
+------------
+Processing:  700
+------------
+Processing:  710
+------------
+Processing:  720
+------------
+Processing:  730
+------------
+Processing:  740
+------------
+Processing:  750
+------------
+Processing:  760
+------------
+Processing:  770
+------------
+Processing:  780
+------------
+Processing:  790
+------------
+Processing:  800
+------------
+Processing:  810
+------------
+Processing:  820
+------------
+Processing:  830
+------------
+Processing:  840
+------------
+Processing:  850
+------------
+Processing:  860
+------------
+Processing:  870
+------------
+Processing:  880
+------------
+Processing:  890
+------------
+Processing:  900
+------------
+Processing:  910
+------------
+Processing:  920
+------------
+Processing:  930
+------------
+Processing:  940
+------------
+Processing:  950
+------------
+Processing:  960
+------------
+Processing:  970
+------------
+Processing:  980
+------------
+Processing:  990
+------------
+Processing:  1000
+------------
+Processing:  1010
+------------
+Processing:  1020
+------------
+Processing:  1030
+------------
+Processing:  1040
+------------
+Processing:  1050
+------------
+Processing:  1060
+------------
+Processing:  1070
+------------
+Processing:  1080
+------------
+Processing:  1090
+------------
+Processing:  1100
+------------
+Processing:  1110
+------------
+Processing:  1120
+------------
+Processing:  1130
+------------
+Processing:  1140
+------------
+Processing:  1150
+------------
+Processing:  1160
+------------
+Processing:  1170
+------------
+Processing:  1180
+------------
+Processing:  1190
+------------
+Processing:  1200
+------------
+Processing:  1210
+------------
+Processing:  1220
+------------
+Processing:  1230
+------------
+Processing:  1233
+------------
+Scores for originally selected 5 sentences
+{'rouge1': AggregateScore(low=Score(precision=0.20503480100905164, recall=0.4692417519289569, fmeasure=0.2286941972039381), mid=Score(precision=0.2147016239396125, recall=0.4795834758320545, fmeasure=0.23523255374501031), high=Score(precision=0.2242019992199364, recall=0.48997439663551734, fmeasure=0.24133427643620445)),
+ 'rouge2': AggregateScore(low=Score(precision=0.05230541983602484, recall=0.12989914037723244, fmeasure=0.057580229134465914), mid=Score(precision=0.05679527071663643, recall=0.13824429495155782, fmeasure=0.06118942344673124), high=Score(precision=0.06139826010821782, recall=0.1474759396427091, fmeasure=0.06484048689121899)),
+ 'rougeLsum': AggregateScore(low=Score(precision=0.1758279374769915, recall=0.3955105375793149, fmeasure=0.19373638200606189), mid=Score(precision=0.18516517074306293, recall=0.4050115906331711, fmeasure=0.19925800708566171), high=Score(precision=0.19449057370618772, recall=0.4144550129799175, fmeasure=0.20489117229854326))}
+rouge1 P: 21.47 	 CI(20.50-22.42) 	  R: 47.96 	 CI(46.92-49.00) 	  F1: 23.52 	 CI(22.87-24.13)
+rouge2 P: 5.68 	 CI(5.23-6.14) 	  R: 13.82 	 CI(12.99-14.75) 	  F1: 6.12 	 CI(5.76-6.48)
+rougeLsum P: 18.52 	 CI(17.58-19.45) 	  R: 40.50 	 CI(39.55-41.45) 	  F1: 19.93 	 CI(19.37-20.49)
+Scores for justifications given by SA
+{'rouge1': AggregateScore(low=Score(precision=0.21853602786867582, recall=0.418661566028752, fmeasure=0.2275299666129338), mid=Score(precision=0.22837535131698733, recall=0.42928610928488375, fmeasure=0.2333841146180594), high=Score(precision=0.23848627794433727, recall=0.4398988389947497, fmeasure=0.23888451525181775)),
+ 'rouge2': AggregateScore(low=Score(precision=0.05269702296337954, recall=0.10796119749126097, fmeasure=0.05375060650929047), mid=Score(precision=0.057150778843314445, recall=0.11566253826351244, fmeasure=0.05705073998919034), high=Score(precision=0.061444446819990624, recall=0.12350764043262374, fmeasure=0.060545996144283624)),
+ 'rougeLsum': AggregateScore(low=Score(precision=0.18772473642883386, recall=0.3511080632657007, fmeasure=0.19170356980367975), mid=Score(precision=0.19665986537157537, recall=0.3604894202873622, fmeasure=0.1966266826157394), high=Score(precision=0.20566536935766486, recall=0.3699341189057613, fmeasure=0.20228906192066562))}
+rouge1 P: 22.84 	 CI(21.85-23.85) 	  R: 42.93 	 CI(41.87-43.99) 	  F1: 23.34 	 CI(22.75-23.89)
+rouge2 P: 5.72 	 CI(5.27-6.14) 	  R: 11.57 	 CI(10.80-12.35) 	  F1: 5.71 	 CI(5.38-6.05)
+rougeLsum P: 19.67 	 CI(18.77-20.57) 	  R: 36.05 	 CI(35.11-36.99) 	  F1: 19.66 	 CI(19.17-20.23)
+Average tokens in SA inputs:  133.74614760746147
+Average tokens in SA outputs:  112.76155717761557
+Average tokens in gold justifications:  76.25709651257097
+Processed:  1233
+4. Running Pegasus Filtering for Un-supervised test justifications!
+Namespace(C=300, algo_type='noSA', batch_size=1, dataset_name='pubhealth', dataset_path='/home/jolly/projects/COPE/FilteredData/PUBHEALTH/test.tsv', delete_th=0.97, device_type='gpu', editor_model_id='roberta-base', fluency_weight=1.4, fluencyscorer_model_id='gpt2', gold_path='P_testgold_unsup.txt', insert_th=1.1, length_weight=1.25, max_steps=200, min_length_of_edited_sent=40, named_entity_score_weight=0.95, outdir='pub_unsup', outfile='pub_unsup_test.txt', outfile_filtered='pub_unsup_test_filter.txt', pegasus_modelname='tuner007/pegasus_paraphrase', reorder_th=0.95, sample=None, sbertname_pegasus='paraphrase-distilroberta-base-v1', seed=33, semantic_weight_keywords=1.0, semantic_weight_sentences=1.1, sentences_path='/home/jolly/projects/COPE/FilteredData/unsup_scores_pubhealth/results_serialized_test_filtered.jsonl', split='test', t_init=60000, top_n=5)
+cuda
+Size of dataset: 1233
+Sample:  {'claim_id': '33456', 'statement': 'A mother revealed to her child in a letter after her death that she had just one eye because she had donated the other to him.', 'justification': 'The one-eyed mother story expounds upon two moral messages: the unconditional, all-encompassing love we expect mothers to always feel for their children, and the admonition to not put off cherishing loved ones and appreciating their sacrifices while they’re still around.', 'ruling_without_summary': "In April 2005, we spotted a tearjerker on the Internet about a mother who gave up one of her eyes to a son who had lost one of his at an early age. By February 2007 the item was circulating in e-mail in the following shortened version:  My mom only had one eye. I hated her… She was such an embarrassment. She cooked for students and teachers to support the family. There was this one day during elementary school where my mom came to say hello to me. I was so embarrassed. How could she do this to me? I ignored her, threw her a hateful look and ran out. The next day at school one of my classmates said, “EEEE, your mom only has one eye!” I wanted to bury myself. I also wanted my mom to just disappear. I confronted her that day and said, “If you’re only gonna make me a laughing stock, why don’t you just die?” My mom did not respond… I didn’t even stop to think for a second about what I had said, because I was full of anger. I was oblivious to her feelings. I wanted out of that house, and have nothing to do with her. So I studied real hard, got a chance to go abroad to study. Then, I got married. I bought a house of my own. I had kids of my own. I was happy with my life, my kids and the comforts. Then one day, my Mother came to visit me. She hadn’t seen me in years and she didn’t even meet her grandchildren. When she stood by the door, my children laughed at her, and I yelled at her for coming over uninvited. I screamed at her, “How dare you come to my house and scare my children! GET OUT OF HERE! NOW!! !” And to this, my mother quietly answered, “Oh, I’m so sorry. I may have gotten the wrong address,” and she disappeared out of sight. One day, a letter regarding a school reunion came to my house. So I lied to my wife that I was going on a business trip. After the reunion, I went to the old shack just out of curiosity. My neighbors said that she died. I did not shed a single tear. They handed me a letter that she had wanted me to have. My dearest son, I think of you all the time. I’m sorry that I came to your house and scared your children. I was so glad when I heard you were coming for the reunion. But I may not be able to even get out of bed to see you. I’m sorry that I was a constant embarrassment to you when you were growing up. You see……..when you were very little, you got into an accident, and lost your eye. As a mother, I couldn’t stand watching you having to grow up with one eye. So I gave you mine. I was so proud of my son who was seeing a whole new world for me, in my place, with that eye. With all my love to you, Your mother. In its earlier incarnation, the story identified by implication its location as Korea through statements made by both the mother and the son (the son’s “I left my mother and came to Seoul” and the mother’s “I won’t visit Seoul anymore”). It also supplied a reason for the son’s behavior when his mother arrived unexpectedly to visit him (“My little girl ran away, scared of my mom’s eye” and “I screamed at her, ‘How dare you come to my house and scare my daughter!'”). A further twist was provided in the original: rather than gaining the news of his mother’s death from neighbors (who hand him her letter), the son instead discovered the woman who bore him lying dead on the floor of what used to be his childhood home, her missive to him clutched in her lifeless hand: Give your parents roses while they are alive, not deadMY mom only had one eye. I hated her … she was such an embarrassment. My mom ran a small shop at a flea market. She collected little weeds and such to sell … anything for the money we needed she was such an embarrassment. There was this one day during elementary school … It was field day, and my mom came. I was so embarrassed. How could she do this to me? I threw her a hateful look and ran out. The next day at school … “your mom only has one eye?!? !” … And they taunted me. I wished that my mom would just disappear from this world so I said to my mom, “mom … Why don’t you have the other eye?! If you’re only going to make me a laughingstock, why don’t you just die?!! !” my mom did not respond … I guess I felt a little bad, but at the same time, it felt good to think that I had said what I’d wanted to say all this time… maybe it was because my mom hadn’t punished me, but I didn’t think that I had hurt her feelings very badly. That night… I woke up, and went to the kitchen to get a glass of water. My mom was crying there, so quietly, as if she was afraid that she might wake me. I took a look at her, and then turned away. Because of the thing I had said to her earlier, there was something pinching at me in the corner of my heart. Even so, I hated my mother who was crying out of her one eye. So I told myself that I would grow up and become successful. Because I hated my one-eyed mom and our desperate poverty… then I studied real hard. I left my mother and came to Seoul and studied, and got accepted in the Seoul University with all the confidence I had. Then, I got married. I bought a house of my own. Then I had kids, too… now I’m living happily as a successful man. I like it here because it’s a place that doesn’t remind me of my mom. This happiness was getting bigger and bigger, when… what?! Who’s this…it was my mother… still with her one eye. It felt as if the whole sky was falling apart on me. My little girl ran away, scared of my mom’s eye. And I asked her, “who are you? !” “I don’t know you!! !” as if trying to make that real. I screamed at her, “How dare you come to my house and scare my daughter!” “GET OUT OF HERE! NOW!! !” and to this, my mother quietly answered, “oh, I’m so sorry. I may have gotten the wrong address,” and she disappeared out of sight. Thank goodness… she doesn’t recognize me… I was quite relieved. I told myself that I wasn’t going to care, or think about this for the rest of my life. Then a wave of relief came upon me… One day, a letter regarding a school reunion came to my house. So, lying to my wife that I was going on a business trip, I went. After the reunion, I went down to the old shack, that I used to call a house… just out of curiosity there, I found my mother fallen on the cold ground. But I did not shed a single tear. She had a piece of paper in her hand…. it was a letter to me. My son… I think my life has been long enough now… And… I won’t visit Seoul anymore… but would it be too much to ask if I wanted you to come visit me once in a while? I miss you so much… and I was so glad when I heard you were coming for the reunion. But I decided not to go to the school. …for you… and I’m sorry that I only have one eye, and I was an embarrassment for you. You see, when you were very little, you got into an accident, and lost your eye. as a mom, I couldn’t stand watching you having to grow up with only one eye… so I gave you mine… I was so proud of my son that was seeing a whole new world for me, in my place, with that eye. I was never upset at you for anything you did… the couple times that you were angry with me, I thought to myself, ‘it’s because he loves me…’ my son. Oh, my son… I don’t want you to cry for me, because of my death. My son, I love you my son, I love you so much. With all modern medical technology, transplantation of the eyeball is still impossible. The optic nerve isn’t an ordinary nerve, but instead an inset running from the brain. Modern medicine isn’t able to “connect” an eyeball back to brain after an optic nerve has been severed, let alone transplant the eye from a different person. (The only exception is the cornea, the transparent part in front of the eye: corneas are transplanted to replace injured and opaque ones.) We won’t try to comment on whether any surgeon would accept an eye from a living donor for transplant into another — we’ll leave that to others who are far more knowledgeable about medical ethics and transplant procedures. But we will note that the plot device of a mother’s dramatic sacrifice for the sake of her child’s being revealed in a written communication delivered after her demise appears in another legend about maternal love: the 2008 tale about a woman who left a touching message on her cell phone even as life ebbed from her as she used her body to shield the tot during an earthquake. Giving up one’s own life for a loved one is central to a 2005 urban legend about a boy on a motorcycle who has his girlfriend hug him one last time and put on his helmet just before the crash that kills him and spares her. Returning to the “notes from the dead” theme is the 1995 story about a son who discovers only through a posthumous letter from his mother what their occasional dinner “dates” had meant to her. Another legend we’re familiar with features a meme used in the one-eyed mother story (the coming to light of the enduring love of the person who died for the completely unworthy person she’d lavished it on), but that one involves a terminally ill woman and her cheating husband. In it, an about-to-be-spurned wife begs the adulterous hoon she’d married to stick around for another 30 days and to carry her over the threshold of their home once every day of that month as her way of keeping him around long enough for her to kick the bucket and thus spare their son the knowledge that his parents were on the verge of divorce.", 'label': 'false', 'scored_sentences': "By February 2007 the item was circulating in e-mail in the following shortened version:  My mom only had one eye. In April 2005, we spotted a tearjerker on the Internet about a mother who gave up one of her eyes to a son who had lost one of his at an early age. I confronted her that day and said, “If you're only gonna make me a laughing stock, why don't you just die?” My mom did not respond... I didn't even stop to think for a second about what I had said, because I was full of anger. The next day at school one of my classmates said, “EEEE, your mom only has one eye!” I wanted to bury myself. I hated her... She was such an embarrassment.", 'justification_sentences': ['The one-eyed mother story expounds upon two moral messages: the unconditional, all-encompassing love we expect mothers to always feel for their children, and the admonition to not put off cherishing loved ones and appreciating their sacrifices while they’re still around.']}
+Time taken:  8293.617149114609
+Scores for filtered justifications (SA+Pegasus)
+{'rouge1': AggregateScore(low=Score(precision=0.23191915011354128, recall=0.37473740124609645, fmeasure=0.22827540859629458), mid=Score(precision=0.24254773663938078, recall=0.3841477186782099, fmeasure=0.23395234717742752), high=Score(precision=0.25306864687254466, recall=0.3935436231501358, fmeasure=0.2391264271988724)),
+ 'rouge2': AggregateScore(low=Score(precision=0.053901993436426196, recall=0.08863945330831334, fmeasure=0.05126676344178943), mid=Score(precision=0.05753102934055211, recall=0.09476919009811946, fmeasure=0.05400913234801477), high=Score(precision=0.06171476351691114, recall=0.10178592945874801, fmeasure=0.056935021534600866)),
+ 'rougeLsum': AggregateScore(low=Score(precision=0.2002948962249178, recall=0.3122722831099606, fmeasure=0.19258141560841138), mid=Score(precision=0.20911371050545008, recall=0.32087362589044144, fmeasure=0.19692434813918938), high=Score(precision=0.2188892319010807, recall=0.3292500026128326, fmeasure=0.20148104765798994))}
+rouge1 P: 24.25 	 CI(23.19-25.31) 	  R: 38.41 	 CI(37.47-39.35) 	  F1: 23.40 	 CI(22.83-23.91)
+rouge2 P: 5.75 	 CI(5.39-6.17) 	  R: 9.48 	 CI(8.86-10.18) 	  F1: 5.40 	 CI(5.13-5.69)
+rougeLsum P: 20.91 	 CI(20.03-21.89) 	  R: 32.09 	 CI(31.23-32.93) 	  F1: 19.69 	 CI(19.26-20.15)
+Average tokens in SA inputs:  133.74614760746147
+Average tokens in SA outputs:  112.51743714517437
+Average tokens in SA outputs + Pegasus:  88.49959448499594
+Average tokens in gold justifications:  76.25709651257097
+Processed:  1233
+4. SA+Pegasus Filtering completed for Un-supervised test justifications!
+Completed for Validation/Test of Pubhealth for Un-Supervised
