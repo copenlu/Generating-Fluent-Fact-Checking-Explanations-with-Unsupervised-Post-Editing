@@ -3,14 +3,17 @@ import os
 import random
 import re
 
+
 def cls():
     os.system('cls' if os.name=='nt' else 'clear')
 
+
 def create_just_seq(entry):
-    just_keys = ["gold", "sa", "sa_pm"]
+    just_keys = ["pipe_inp", "pipe_out"]
     entry["just_seq"] = random.sample(just_keys, len(just_keys))
 
     return entry
+
 
 def print_data(idx, entry):
     cls()
@@ -24,8 +27,7 @@ def print_data(idx, entry):
     print("\n")
     print("Justification 2:", entry[entry["just_seq"][1]])
     print("\n")
-    print("Justification 3:", entry[entry["just_seq"][2]])
-    print("\n")
+
 
 def write_output(filepath, data):
     with open(filepath, "a") as outfile:
@@ -34,22 +36,21 @@ def write_output(filepath, data):
 
 def get_ranks(entry, op):
 
-    just_rank_seq = []
-    for i in range(len(entry["just_seq"])):
-        flag = 1
-        while flag:
-            just_rank = input(f"Rank of Justification {i+1}: ").strip()
-            just_rank = float(just_rank)
-            if just_rank not in [1.0, 2.0, 3.0]:
-                print(f"FATAL: Rank should be a value among 1, 2 or 3.\n")
-            else:
-                flag = 0
-                just_rank_seq.append(just_rank)
+    flag = 1
+    best_just = 0
+    while flag:
+        best_just = input(f"Which justification is better?: ").strip()
+        if best_just not in ['1', '2', '3']:
+            print(f"FATAL: Valid value is either 1, 2 or 3.\n")
+        else:
+            best_just = int(best_just)
+            flag = 0
 
-    assert len(just_rank_seq) == len(entry["just_seq"])
-    entry[op] = just_rank_seq
+    assert best_just > 0
+    entry[op] = best_just
 
     return entry
+
 
 def main(input_data, output_datapath, output_data_len):
 
@@ -61,35 +62,38 @@ def main(input_data, output_datapath, output_data_len):
 
         # Coverage
         print_data(idx, entry)
-        print("Evaluation 1: Coverage\n")
+        print("Evaluation 1: Coverage - Contains important and salient information. Doesn't miss any important points that contribute to the fact-check. \n")
         get_ranks(entry, "coverage")
 
         # Non-redundancy
         print_data(idx, entry)
-        print("Evaluation 2: Non-redundancy\n")
+        print("Evaluation 2: Non-redundancy - Doesn't contain any information that is redundant/repeated/not relevant to the claim and the fact-check. \n")
         get_ranks(entry, "non-redundancy")
 
         # Non-contradictory
         print_data(idx, entry)
-        print("Evaluation 3: Non-contradictory\n")
+        print("Evaluation 3: Non-contradictory - Doesn't contain any information that is contradictory to the claim and the fact-check. \n")
         get_ranks(entry, "non-contradictory")
-
-        # Overall
-        print_data(idx, entry)
-        print("Evaluation 4: Overall\n")
-        get_ranks(entry, "overall")
 
         # Fluency
         print_data(idx, entry)
-        print("Evaluation 5: Fluency\n")
+        print("Evaluation 4: Fluency - The justification is more fluent, readable and create a coherent story.\n")
         get_ranks(entry, "fluency")
+
+        # Overall
+        print_data(idx, entry)
+        print("Evaluation 5: Overall - A better overall justification based on above metrics. \n")
+        get_ranks(entry, "overall")
 
         write_output(output_datapath, entry)
 
+    return
+
+
 if __name__=="__main__":
 
-    input_datapath = "data/he_data_liar_task1.json"
-    output_datapath = "evaluation_results_task1.json"
+    input_datapath = "data/he_pub_task1.json"
+    output_datapath = "eval_res_pub_task1.json"
 
     output_data_len = 0
     if os.path.exists(output_datapath):
@@ -99,7 +103,6 @@ if __name__=="__main__":
             print(f"Found {output_data_len} entries.\n")
         else:
             os.remove(output_datapath)
-
 
     input_data = json.load(open(input_datapath))
 
