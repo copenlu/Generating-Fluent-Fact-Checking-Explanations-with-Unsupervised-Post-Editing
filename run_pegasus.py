@@ -77,11 +77,12 @@ if __name__== "__main__":
     file_path1 = os.path.join(sa_args.outdir, sa_args.outfile_filtered)
     file_path2 = os.path.join(sa_args.outdir, sa_args.outfile_pegasus)
 
+
     if os.path.exists(file_path2):
         print("Removing already present output file: ", file_path2)
         os.remove(file_path2)
 
-    saouts_pp = [line for line in open(file_path1, 'r')]
+    saouts_pp = [line for line in open(file_path1, 'r')] #sainps_saouts, when we want to run Pegasus on SA inputs
     saouts_pegasus = open(file_path2, 'a+')
 
     scores_justs_pegasus = []
@@ -97,6 +98,8 @@ if __name__== "__main__":
     for saout, org_data in tqdm(zip(saouts_pp, dataset)):
 
         processed_samples+=1
+
+        saout = saout.split("\t")[0]#Uncomment when running Pegasus on SA input
 
         filter_saout_pegasus = pegasus_mod.filter_justs(saout)
         saouts_pegasus.write(filter_saout_pegasus + "\n")
