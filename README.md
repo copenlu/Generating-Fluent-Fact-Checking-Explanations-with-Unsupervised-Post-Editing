@@ -21,6 +21,21 @@ nohup java -Djava.io.tmpdir=<local_tmp_dir_here> -mx4g -cp "*" edu.stanford.nlp.
 python -m spacy download en_core_web_lg
 ```
 
+# Training of unsupervised sentence extraction
+## Fine-tuning a Longformer model for length 1536
+```
+python saliency/pretrain_lonformer.py --max_len 1536 --model_name bert-base-uncased --master_gpu 0 --gpus 0 1
+```
+## Fine-tuning a Longformer model on the fact-checking task
+```
+python saliency/train_classifier.py --dataset pubhealth --dataset_dir data/PUBHEALTH/ --labels 4 --model_path ph_c_3l_4e5 --lr 4e-5 --gpu --pretrained_path <longformer model path> --max_len 1536 --batch_size 3 --accum_steps 3 --model_type classify
+```
+## Extracting sentences in an unsupervised way
+```
+python3.8 saliency/sentence_saliency_scores.py --labels 4 --model_path ph_c_3l_4e5 --dataset pubhealth --dataset_dir data/PUBHEALTH/ --gpu --pretrained_path <longformer model path> --max_len 1536 --batch_size 3 --n_sentences 5 --token_aggregation l2 --cls_aggregation sum --sentence_aggregation max --mode val
+python3.8 saliency/sentence_saliency_scores.py --labels 4 --model_path ph_c_3l_4e5 --dataset pubhealth --dataset_dir data/PUBHEALTH/ --gpu --pretrained_path <longformer model path> --max_len 1536 --batch_size 3 --n_sentences 5 --token_aggregation l2 --cls_aggregation sum --sentence_aggregation max --mode test
+```
+
 # Running SA
 python run_sa.py --sentences_path /image/image-copenlu/unsupervised_fc/sup_sccores/results_serialized_val_filtered.jsonl --dataset_path ../just_summ/oracles/ruling_oracles_val.tsv --length_weight 20 --sample 4 --batch_size 4
 

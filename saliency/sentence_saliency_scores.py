@@ -43,7 +43,7 @@ def summarize_attributions(attributions, type='mean', model=None, tokens=None):
         attributions = attributions.mean(dim=-1).squeeze(0)
         attributions = attributions / torch.norm(attributions)
     elif type == 'l2':
-        attributions = attributions.norm(p=1, dim=-1)
+        attributions = attributions.norm(p=2, dim=-1)
         if len(attributions.size()) > 2:
             attributions = attributions.squeeze(0)
 
@@ -241,7 +241,21 @@ if __name__ == "__main__":
                              "sentence",
                         choices=['CLS', 'sum', 'max'],
                         default='CLS')
-
+    parser.add_argument("--test_mode", help="Mode for testing", type=str,
+                        default=None, choices=['justification',
+                                                               'original_sentences',
+                                                               'lead_6',
+                                                               'lead_5',
+                                                               'lead_4',
+                                                               'lead_3',
+                                                               'top_5', 'top_6',
+                                                               'top_3', 'top_4',
+                                                               'selected_sentences',
+                                                               'sentences_from_file'])
+    parser.add_argument("--sentences_path", help="Path to original split",
+                        type=str, default=None)
+    parser.add_argument("--file_path", help="Path to final explanations",
+                        type=str, default=None)
 
     args = parser.parse_args()
     random.seed(args.seed)
@@ -252,10 +266,9 @@ if __name__ == "__main__":
 
     device = torch.device("cuda") if args.gpu else torch.device("cpu")
 
-    train, val, test = get_datasets(args.dataset_dir,
+    train, val, test = get_datasets(args, args.dataset_dir,
                                     args.dataset,
-                                    args.labels,
-                                    add_logits=False)
+                                    args.labels)
 
     print(f'Train size {len(train)}', flush=True)
     print(f'Dev size {len(val)}', flush=True)

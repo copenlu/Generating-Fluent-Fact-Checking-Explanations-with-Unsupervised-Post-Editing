@@ -40,22 +40,6 @@ def train_model(args: Namespace,
             loss = loss_fct(logits.view(-1, args.labels),
                             batch['target_labels_tensor'].long().view(-1)) / args.accum_steps
 
-            if args.sup_sentences:
-                pred_label = batch['target_labels_tensor'].unsqueeze(1)
-                pred_label = pred_label.repeat(1, batch[
-                    'sentences_target_tensor'].size(1))  #
-                logits_sentences = logits_sentences.view(-1, args.labels)[torch.arange(
-                    logits_sentences.size(0) * logits_sentences.size(1)),
-                                                                pred_label.view(
-                                                                    -1)].view(
-                    batch['sentences_target_tensor'].size()[0],
-                    batch['sentences_target_tensor'].size()[1])
-
-                loss_sent = loss_binary_sentences(logits_sentences.view(-1),
-                                                  pred_label.view(-1).float())
-
-                loss += loss_sent
-
             loss.backward()
 
             if (batch_i + 1) % args.accum_steps == 0:
@@ -74,7 +58,7 @@ def train_model(args: Namespace,
                 flush=True, end='\r')
 
             if  ((
-                    batch_i % 200 == 0 and batch_i > 0) or batch_i == \
+                    batch_i % 400 == 0 and batch_i > 0) or batch_i == \
                     step_per_epoch):
                 print('\n', flush=True)
                 current_val = eval_model(args, model, dev_dl, val)
@@ -92,10 +76,31 @@ def train_model(args: Namespace,
                         'step': current_step,
                         'model': best_model_weights,
                     }
-                    print(f"Saving checkpoint to {args.model_path[0]}",
+                    print(f"Saving checkpoint to {args.model_path}",
                           flush=True)
-                    torch.save(checkpoint, args.model_path[0])
+                    torch.save(checkpoint, args.model_path)
                 model.train()
+
+
+        current_val = eval_model(args, model, dev_dl, val)
+        current_val.update(current_train)
+
+        print(current_val, flush=True)
+
+        if current_val['dev_target_f1'] > best_score['dev_target_f1']:
+            best_score = current_val
+            best_model_weights = model.state_dict()
+
+            checkpoint = {
+                'performance': best_score,
+                'args': vars(args),
+                'step': current_step,
+                'model': best_model_weights,
+            }
+            print(f"Saving checkpoint to {args.model_path}",
+                  flush=True)
+            torch.save(checkpoint, args.model_path)
+        model.train()
 
     return best_model_weights, best_score
 
@@ -194,7 +199,7 @@ if __name__ == "__main__":
                         action='store_true', default=False)
     parser.add_argument("--seed", help="Random seed", type=int, default=73)
     parser.add_argument("--labels", help="num of lables", type=int, default=6)
-    parser.add_argument("--dataset", help="Flag for training on gpu",
+    parser.add_argument("--dataset", help="Name of the dataset",
                         choices=['liar', 'pubhealth'],
                         default='liar')
     parser.add_argument("--dataset_dir", help="Path to the train datasets",
@@ -203,21 +208,13 @@ if __name__ == "__main__":
                         help="Path where the model will be serialized",
                         type=str)
     parser.add_argument("--pretrained_path",
-                        help="Path where the model will be serialized",
+                        help="Name of the pretrained LM",
                         type=str)
     parser.add_argument("--model_type", help="Type of classification model",
                         choices=['classify',
                                  'extract_classify',
                                  'classify_extract'],
                         default='classify')
-    parser.add_argument("--sup_sentences", help="Whether to use labels of the "
-                                                "claims as labels for the "
-                                                "sentences",
-                        action='store_true', default=False)
-
-    parser.add_argument("--config_path",
-                        help="Path where the model will be serialized",
-                        default='nli_bert', type=str)
 
     parser.add_argument("--batch_size", help="Batch size", type=int, default=8)
     parser.add_argument("--accum_steps", help="Gradient accumulation steps",
@@ -225,10 +222,6 @@ if __name__ == "__main__":
     parser.add_argument("--lr", help="Learning Rate", type=float, default=1e-5)
     parser.add_argument("--max_len", help="Learning Rate", type=int,
                         default=512)
-    parser.add_argument("--window_size", help="Learning Rate", type=int,
-                        default=500)
-    parser.add_argument("--stride", help="Learning Rate", type=int,
-                        default=300)
     parser.add_argument("--epochs", help="Epochs number", type=int, default=4)
     parser.add_argument("--mode", help="Mode for the script", type=str,
                         default='train', choices=['train',
@@ -236,9 +229,23 @@ if __name__ == "__main__":
                                                   'test_dev',
                                                   'test_sentences',
                                                   'dev_sentences'])
+    parser.add_argument("--test_mode", help="Mode for testing", type=str,
+                        default='original_sentences', choices=['justification',
+                                                  'original_sentences',
+                                                  'lead_6',
+                                                  'lead_5',
+                                                  'lead_4',
+                                                  'lead_3',
+                                                  'top_5', 'top_6', 'top_3', 'top_4',
+                                                  'selected_sentences',
+                                                  'sentences_from_file'])
+    parser.add_argument("--sentences_path", help="Path to original split",
+                        type=str)
+    parser.add_argument("--file_path", help="Path to final explanations",
+                        type=str, default=None)
+
     parser.add_argument("--init_only", help="Whether to train the model",
                         action='store_true', default=False)
-
     parser.add_argument("--top_n", help="Eval top n sentences", type=int,
                         default=6)
 
@@ -251,16 +258,6 @@ if __name__ == "__main__":
     np.random.seed(args.seed)
 
     device = torch.device("cuda") if args.gpu else torch.device("cpu")
-
-    train, val, test = get_datasets(args.dataset_dir,
-                                    args.dataset,
-                                    args.labels,
-                                    add_logits=False)
-    val.dataset=val.dataset[:300]
-    print(f'Train size {len(train)}', flush=True)
-    print(f'Dev size {len(val)}', flush=True)
-
-    print('Loaded data...', flush=True)
 
     tokenizer = BertTokenizerFast.from_pretrained(args.pretrained_path)
     pretrained_bert = BertLongForMaskedLM.from_pretrained(args.pretrained_path).to(device)
@@ -283,37 +280,35 @@ if __name__ == "__main__":
                          max_length=args.max_len,
                          add_logits=False,
                          sep_sentences=True,
-                         cls_sentences=True)
+                         cls_sentences=True,
+                         sentence_source=args.test_mode)
 
     optimizer = AdamW(model.parameters(),
                       lr=args.lr,
                       betas=(0.9, 0.98))
 
-    if args.mode in ['test_sentences', 'dev_sentences']:
-        if args.mode == 'test_sentences':
-            test_dl = DataLoader(test, batch_size=args.batch_size,
-                                 collate_fn=collate_fn, shuffle=False)
-            ds = test
-        else:
-            test_dl = DataLoader(val, batch_size=args.batch_size,
-                                 collate_fn=collate_fn, shuffle=False)
-            ds = val
+    if args.mode in ['test', 'test_dev']:
+        from data_loader import LIARDataset, PubHealth
 
-        checkpoint = torch.load(args.model_path)
+        if args.dataset == 'liar':
+            if args.mode == 'test':
+                dataset_path = 'ruling_oracles_test.tsv'
+            else:
+                dataset_path = 'ruling_oracles_val.tsv'
 
-        model.load_state_dict(checkpoint['model'])
-        result = eval_sentences(args, model, test_dl, ds)
-        print(result, flush=True)
+            ds = LIARDataset(args, f'{args.dataset_dir}/{dataset_path}',
+                             num_labels=args.labels)
 
-    elif args.mode in ['test', 'test_dev']:
-        if args.mode == 'test':
-            test_dl = DataLoader(test, batch_size=args.batch_size,
-                                 collate_fn=collate_fn, shuffle=False)
-            ds = test
-        else:
-            test_dl = DataLoader(val, batch_size=args.batch_size,
-                                 collate_fn=collate_fn, shuffle=False)
-            ds = val
+        elif args.dataset == 'pubhealth':
+            if args.mode == 'test':
+                dataset_path = 'test.tsv'
+            else:
+                dataset_path = 'dev.tsv'
+
+            ds = PubHealth(args, f'{args.dataset_dir}/{dataset_path}')
+
+        test_dl = DataLoader(ds, batch_size=args.batch_size,
+                             collate_fn=collate_fn, shuffle=False)
 
         checkpoint = torch.load(args.model_path)
 
@@ -322,6 +317,15 @@ if __name__ == "__main__":
         print(result, flush=True)
 
     else:
+        train, val, test = get_datasets(args, args.dataset_dir,
+                                        args.dataset,
+                                        args.labels,
+                                        add_logits=False)
+        print(f'Train size {len(train)}', flush=True)
+        print(f'Dev size {len(val)}', flush=True)
+
+        print('Loaded data...', flush=True)
+
         train_dl = DataLoader(batch_size=args.batch_size,
                               dataset=train, shuffle=True,
                               collate_fn=collate_fn)
@@ -342,12 +346,5 @@ if __name__ == "__main__":
                                                   train_dl, dev_dl,
                                                   optimizer)
 
-        checkpoint = {
-            'performance': best_perf,
-            'args': vars(args),
-            'model': best_model_w,
-        }
         print(best_perf)
         print(args)
-
-        torch.save(checkpoint, args.model_path)
