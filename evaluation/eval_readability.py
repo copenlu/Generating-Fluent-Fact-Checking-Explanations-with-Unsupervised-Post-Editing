@@ -62,8 +62,6 @@ def is_readable(justification: str):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument("--gpu", help="Flag for training on gpu.",
-                        action='store_true', default=False)
     parser.add_argument("--top_n", help="Top sentences to select from file.",
                         type=int, default=6)
     parser.add_argument("--dataset_path", help="Path to original split.",

@@ -29,5 +29,10 @@ python run_sa.py --sentences_path /image/image-copenlu/unsupervised_fc/sup_sccor
 ## Readability
 Example call:
 ```
-python3.8 eval_readability.py --dataset_path <path to dataset split> --dataset_name pubhealth --gpu --mode justification --file_path <path to file with explanations output> --sentences_path <path to pre-selected explanations/input to the iterative editing>
+python eval_readability.py --dataset_path <path to dataset split> --dataset_name pubhealth --mode justification --file_path <path to file with explanations output> --sentences_path <path to pre-selected explanations/input to the iterative editing>
+```
+
+## ROUGE scores
+```
+python eval_rouge.py --dataset_path <path to dataset split> --dataset_name pubhealth --mode from_file --file_path <path to file with explanations output> --sentences_path <path to pre-selected explanations/input to the iterative editing>
 ```
