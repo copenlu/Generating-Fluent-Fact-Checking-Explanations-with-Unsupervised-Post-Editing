@@ -6,8 +6,21 @@ from tqdm import tqdm
 
 from data_loader import get_dataset_df
 
+textstat.set_lang('en_US')
 
-def get_dataset(args):
+
+def clean_str(sent):
+    sent = sent.replace("’", "'")
+    sent = sent.replace("‘", "`")
+    sent = sent.replace('"', "''")
+    sent = sent.replace("—", "--")
+    sent = sent.replace("…", "...")
+    sent = sent.replace("–", "--")
+
+    return sent.strip()
+
+
+def get_dataset(args, fp):
     df = get_dataset_df(args.dataset_name, args.dataset_path)
     df['claim_id'] = df['claim_id'].astype('str')
 
@@ -39,7 +52,7 @@ def get_dataset(args):
 
     print(f'Size of dataset: {len(dataset)}')
 
-    with open(args.file_path) as out:
+    with open(fp) as out:
         total_expl = 0
         for i, line in enumerate(out):
             total_expl += 1
@@ -47,9 +60,6 @@ def get_dataset(args):
 
     print(total_expl)
     return dataset
-
-
-textstat.set_lang('en_US')
 
 
 def is_readable(justification: str):

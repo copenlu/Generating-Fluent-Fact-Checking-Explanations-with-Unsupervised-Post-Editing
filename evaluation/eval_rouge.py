@@ -6,7 +6,7 @@ from tqdm import tqdm
 from rouge_score import rouge_scorer, scoring
 
 from data_loader import get_dataset_df
-from old.eval_coherence import get_dataset
+from evaluation.eval_readability import get_dataset
 from baselines import aggregate_print_rouges
 
 textstat.set_lang('en_US')
