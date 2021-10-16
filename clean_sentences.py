@@ -8,22 +8,29 @@ from data_loader import get_dataset_df
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--file_path", help="Random seed", type=str)
-    parser.add_argument("--output_file", help="Random seed", type=str)
-    parser.add_argument("--df_path", help="Random seed", type=str)
+    parser.add_argument("--file_path",
+                        help="Path for the initially scored sentence.",
+                        type=str)
+    parser.add_argument("--output_file",
+                        help="Path to serialise the cleaned sentences.",
+                        type=str)
+    parser.add_argument("--df_path", help="Path to original dataset", type=str)
     parser.add_argument("--top_n",
-                        help="Top n sentences to consider for clean-up",
+                        help="Top n sentences to consider for clean-up.",
                         type=int)
-    parser.add_argument("--remove_forbidden", help="Flag for training on gpu",
+    parser.add_argument("--remove_forbidden",
+                        help="Remove sentences containing forbidden words.",
                         action='store_true', default=False)
-    parser.add_argument("--remove_questions", help="Flag for training on gpu",
+    parser.add_argument("--remove_questions", help="Remove questions.",
                         action='store_true', default=False)
-    parser.add_argument("--remove_short", help="Flag for training on gpu",
+    parser.add_argument("--remove_short", help="Remove short sentences.",
                         action='store_true', default=False)
-    parser.add_argument("--remove_long", help="Flag for training on gpu",
+    parser.add_argument("--remove_long", help="Remove long sentences.",
                         action='store_true', default=False)
-    parser.add_argument("--dataset", help="Flag for training on gpu",
+    parser.add_argument("--dataset", help="Type of the dataset.",
                         choices=['liar', 'pubhealth'])
+    parser.add_argument("--max_tokens", help="Max tokens in each sentence",
+                        type=int, default=70)
     args = parser.parse_args()
 
     score_names = ['rouge1', 'rouge2', 'rougeLsum']
@@ -51,7 +58,7 @@ if __name__ == "__main__":
                         pass
                     elif args.remove_short and len(tokens) <= 1:
                         pass
-                    elif args.remove_long and len(tokens) > 70:
+                    elif args.remove_long and len(tokens) > args.max_tokens:
                         pass
                     elif args.remove_questions and sentence_text.endswith('?'):
                         pass
