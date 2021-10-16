@@ -36,3 +36,8 @@ python eval_readability.py --dataset_path <path to dataset split> --dataset_name
 ```
 python eval_rouge.py --dataset_path <path to dataset split> --dataset_name pubhealth --mode from_file --file_path <path to file with explanations output> --sentences_path <path to pre-selected explanations/input to the iterative editing>
 ```
+
+## Significance testing of ROUGE and readability scores
+```
+python significance_testing.py  --dataset_path <path to dataset split> --dataset_name pubhealth --file_path1 <path to first file with explanations output> --file_path2 <path to second file with explanations output> --sentences_path <path to pre-selected explanations/input to the iterative editing> --mode from_top --top_n 6
+```
