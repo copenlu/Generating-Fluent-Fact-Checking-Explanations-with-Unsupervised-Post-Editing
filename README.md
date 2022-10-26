@@ -1,4 +1,4 @@
-# low_resource_fact_checking
+# Generating Fluent Fact Checking Explanations with Unsupervised Post-Editing
 
 # Phrase extraction Set-up:
 ```
